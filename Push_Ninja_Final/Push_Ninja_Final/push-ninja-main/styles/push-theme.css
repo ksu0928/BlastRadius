@@ -1,0 +1,402 @@
+/* Push Chain Theme - Purple/Pink Color Scheme */
+
+/* Push Chain Colors */
+:root {
+  --push-purple: #9B5DE5;
+  --push-pink: #F15BB5;
+  --push-cyan: #00BBF9;
+  --push-green: #00F5D4;
+  --push-dark: #0D0D0D;
+  --push-gradient: linear-gradient(135deg, #9B5DE5 0%, #F15BB5 100%);
+  --push-gradient-alt: linear-gradient(135deg, #F15BB5 0%, #9B5DE5 100%);
+}
+
+/* Push Landing Page Overrides */
+.push-landing {
+  background: linear-gradient(135deg, #0D0D0D 0%, #1a0a1a 50%, #0D0D0D 100%);
+}
+
+.push-landing::before {
+  background: 
+    radial-gradient(circle at 15% 25%, rgba(155, 93, 229, 0.2) 0%, transparent 60%),
+    radial-gradient(circle at 85% 75%, rgba(241, 91, 181, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 50% 10%, rgba(155, 93, 229, 0.1) 0%, transparent 70%),
+    radial-gradient(circle at 90% 20%, rgba(241, 91, 181, 0.08) 0%, transparent 60%);
+}
+
+/* Push Video Overlay */
+.push-overlay {
+  background: rgba(0, 0, 0, 0.4);
+  background: linear-gradient(
+    135deg,
+    rgba(155, 93, 229, 0.1) 0%,
+    rgba(0, 0, 0, 0.5) 50%,
+    rgba(241, 91, 181, 0.1) 100%
+  );
+}
+
+/* Push Play Button - Cyan/Teal */
+.push-play-btn {
+  background: linear-gradient(135deg, #00D9A5 0%, #00BBF9 100%) !important;
+  box-shadow: 0 0 30px rgba(0, 217, 165, 0.4),
+              0 10px 30px rgba(0, 0, 0, 0.3) !important;
+  border: none !important;
+  color: #0D0D0D !important;
+  font-weight: 800 !important;
+}
+
+.push-play-btn:hover {
+  box-shadow: 0 0 40px rgba(0, 217, 165, 0.6),
+              0 15px 40px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* Push Multiplayer Button - Pink */
+.push-multiplayer-btn {
+  background: linear-gradient(135deg, #F15BB5 0%, #9B5DE5 100%) !important;
+  border: 2px solid rgba(241, 91, 181, 0.5) !important;
+  box-shadow: 0 0 25px rgba(241, 91, 181, 0.4),
+              0 8px 25px rgba(0, 0, 0, 0.3) !important;
+}
+
+.push-multiplayer-btn:hover {
+  box-shadow: 0 0 35px rgba(241, 91, 181, 0.6),
+              0 12px 35px rgba(0, 0, 0, 0.4) !important;
+  border-color: rgba(241, 91, 181, 0.8) !important;
+}
+
+/* Push Connect Button */
+.push-connect-btn {
+  background: linear-gradient(135deg, #F15BB5 0%, #9B5DE5 100%) !important;
+  border: 1px solid rgba(241, 91, 181, 0.3) !important;
+  box-shadow: 0 4px 15px rgba(241, 91, 181, 0.3) !important;
+  color: white !important;
+  font-weight: 600 !important;
+  padding: 11px 22px !important;
+  border-radius: 12px !important;
+  font-size: 15px !important;
+  transition: all 0.3s ease !important;
+}
+
+.push-connect-btn:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 20px rgba(241, 91, 181, 0.4) !important;
+}
+
+/* Push Nav Play Button */
+.push-landing .nav-link.play-btn {
+  background: linear-gradient(135deg, #00D9A5 0%, #00BBF9 100%) !important;
+  color: #0D0D0D !important;
+  font-weight: 700 !important;
+  box-shadow: 0 4px 15px rgba(0, 217, 165, 0.3) !important;
+}
+
+.push-landing .nav-link.play-btn:hover {
+  box-shadow: 0 6px 20px rgba(0, 217, 165, 0.4) !important;
+}
+
+/* Push Wallet Styles */
+.push-wallet .wallet-connect-btn {
+  background: linear-gradient(135deg, #F15BB5 0%, #9B5DE5 100%);
+}
+
+.push-wallet .wallet-connected {
+  background: rgba(155, 93, 229, 0.1);
+  border: 1px solid rgba(155, 93, 229, 0.3);
+}
+
+.push-wallet .nft-toggle-btn {
+  background: rgba(155, 93, 229, 0.2);
+  border: 1px solid rgba(155, 93, 229, 0.4);
+  color: #9B5DE5;
+}
+
+.push-wallet .nft-toggle-btn:hover {
+  background: rgba(155, 93, 229, 0.3);
+}
+
+.push-badge {
+  background: linear-gradient(135deg, #9B5DE5, #F15BB5) !important;
+}
+
+/* Push NFT Card */
+.push-wallet .nft-card {
+  border: 1px solid rgba(155, 93, 229, 0.3);
+  background: rgba(155, 93, 229, 0.05);
+}
+
+.push-wallet .nft-card:hover {
+  border-color: rgba(155, 93, 229, 0.6);
+  box-shadow: 0 10px 30px rgba(155, 93, 229, 0.2);
+}
+
+.push-wallet .view-nft-btn {
+  background: linear-gradient(135deg, #9B5DE5, #F15BB5);
+  color: white;
+}
+
+/* Switch Network Button */
+.switch-network-btn {
+  background: rgba(241, 91, 181, 0.2);
+  border: 1px solid rgba(241, 91, 181, 0.4);
+  border-radius: 4px;
+  padding: 2px 6px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.3s ease;
+}
+
+.switch-network-btn:hover {
+  background: rgba(241, 91, 181, 0.3);
+}
+
+/* Push Title Glow */
+.push-landing .title-slash {
+  color: #00D9A5 !important;
+  text-shadow: 0 0 30px rgba(0, 217, 165, 0.5),
+               0 0 60px rgba(0, 217, 165, 0.3) !important;
+}
+
+@keyframes pushPulseGlow {
+  0%, 100% {
+    text-shadow: 0 0 30px rgba(0, 217, 165, 0.5),
+                 0 0 60px rgba(0, 217, 165, 0.3);
+  }
+  50% {
+    text-shadow: 0 0 40px rgba(0, 217, 165, 0.8),
+                 0 0 80px rgba(0, 217, 165, 0.5),
+                 0 0 100px rgba(0, 217, 165, 0.3);
+  }
+}
+
+.push-landing .title-slash {
+  animation: pushPulseGlow 2s ease-in-out infinite;
+}
+
+/* Push Beta Tag */
+.push-landing ~ .beta-tag,
+.push-landing + .beta-tag {
+  background: linear-gradient(135deg, rgba(155, 93, 229, 0.9), rgba(241, 91, 181, 0.9)) !important;
+}
+
+/* Push Gradient Text */
+.push-gradient-text {
+  background: linear-gradient(135deg, #9B5DE5 0%, #F15BB5 50%, #00BBF9 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Push Wallet Popup */
+.push-wallet .wallet-popup {
+  background: linear-gradient(135deg, rgba(155, 93, 229, 0.95), rgba(241, 91, 181, 0.95));
+}
+
+/* Push Error */
+.push-wallet .wallet-error {
+  background: rgba(241, 91, 181, 0.1);
+  border: 1px solid rgba(241, 91, 181, 0.3);
+  color: #F15BB5;
+}
+
+/* Responsive Push Theme */
+@media (max-width: 768px) {
+  .push-play-btn {
+    font-size: 1.2rem !important;
+    padding: 16px 36px !important;
+  }
+
+  .push-multiplayer-btn {
+    font-size: 1.1rem !important;
+    padding: 14px 32px !important;
+  }
+
+  .push-connect-btn {
+    padding: 8px 16px !important;
+    font-size: 13px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .push-play-btn {
+    font-size: 1rem !important;
+    padding: 14px 28px !important;
+  }
+
+  .push-multiplayer-btn {
+    font-size: 0.9rem !important;
+    padding: 12px 24px !important;
+  }
+}
+
+
+/* ========================================
+   Push Chain Results Screen Theme
+   ======================================== */
+
+/* Results Screen Push Theme Override */
+.push-results.results-screen {
+  background: linear-gradient(135deg, #0D0D0D 0%, #1a0a1a 50%, #0D0D0D 100%);
+}
+
+.push-results.results-screen::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: 
+    radial-gradient(circle at 15% 25%, rgba(155, 93, 229, 0.15) 0%, transparent 60%),
+    radial-gradient(circle at 85% 75%, rgba(241, 91, 181, 0.12) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(0, 217, 165, 0.08) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Game Over Title - Push Theme */
+.push-results .game-over-title .unified-title {
+  background: linear-gradient(135deg, #9B5DE5 0%, #F15BB5 50%, #00D9A5 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+@keyframes pushTitleGlow {
+  0%, 100% { filter: drop-shadow(0 0 20px rgba(155, 93, 229, 0.6)); }
+  50% { filter: drop-shadow(0 0 35px rgba(241, 91, 181, 0.9)); }
+}
+
+.push-results .game-over-title .unified-title {
+  animation: pushTitleGlow 2s ease-in-out infinite;
+}
+
+/* New Best Badge - Push Theme */
+.push-results .new-best-badge {
+  background: linear-gradient(135deg, #9B5DE5 0%, #F15BB5 100%);
+  box-shadow: 0 6px 24px rgba(155, 93, 229, 0.5);
+}
+
+/* Score Section - Push Theme */
+.push-results .final-score {
+  border: 3px solid #9B5DE5;
+  box-shadow: 
+    0 0 50px rgba(155, 93, 229, 0.4),
+    inset 0 0 30px rgba(155, 93, 229, 0.1);
+}
+
+.push-results .final-score::before {
+  background: linear-gradient(90deg, transparent, rgba(155, 93, 229, 0.2), transparent);
+}
+
+.push-results .score-value {
+  color: #00D9A5;
+  text-shadow: 
+    0 0 25px rgba(0, 217, 165, 0.8),
+    0 0 50px rgba(0, 217, 165, 0.5),
+    0 3px 6px rgba(0, 0, 0, 0.5);
+}
+
+/* Stats Row - Push Theme */
+.push-results .stats-row .stat {
+  border: 2px solid rgba(155, 93, 229, 0.2);
+}
+
+.push-results .stats-row .stat::before {
+  background: linear-gradient(135deg, #9B5DE5 0%, #F15BB5 100%);
+}
+
+.push-results .stats-row .stat:hover {
+  border-color: rgba(155, 93, 229, 0.5);
+}
+
+.push-results .stats-row .stat-value {
+  color: #00D9A5;
+}
+
+/* NFT Minting Section - Push Theme */
+.push-results .mint-success {
+  border: 2px solid rgba(0, 217, 165, 0.5);
+  box-shadow: 0 0 30px rgba(0, 217, 165, 0.3);
+}
+
+.push-results .success-title {
+  color: #00D9A5;
+  text-shadow: 0 0 16px rgba(0, 217, 165, 0.5);
+}
+
+.push-results .nft-link {
+  border: 2px solid rgba(155, 93, 229, 0.3);
+}
+
+.push-results .nft-link:hover {
+  background: rgba(155, 93, 229, 0.2);
+  border-color: #9B5DE5;
+  box-shadow: 0 6px 20px rgba(155, 93, 229, 0.3);
+}
+
+.push-results .detail-value {
+  color: #00D9A5;
+  background: rgba(0, 217, 165, 0.1);
+  border: 1px solid rgba(0, 217, 165, 0.2);
+}
+
+.push-results .nft-note {
+  background: rgba(0, 217, 165, 0.1);
+  border: 1px solid rgba(0, 217, 165, 0.3);
+}
+
+/* Push Mint Button */
+.push-results .push-mint-btn {
+  background: linear-gradient(135deg, #9B5DE5 0%, #F15BB5 100%) !important;
+  box-shadow: 0 6px 24px rgba(155, 93, 229, 0.4);
+}
+
+.push-results .push-mint-btn:hover:not(:disabled) {
+  box-shadow: 0 10px 32px rgba(155, 93, 229, 0.6);
+}
+
+/* Games Needed - Push Theme */
+.push-results .games-needed {
+  color: #F15BB5;
+}
+
+/* Navigation Buttons - Push Theme */
+.push-results .push-play-btn {
+  background: linear-gradient(135deg, #00D9A5 0%, #00BBF9 100%) !important;
+  color: #0D0D0D !important;
+  box-shadow: 0 8px 32px rgba(0, 217, 165, 0.4);
+}
+
+.push-results .push-play-btn:hover {
+  box-shadow: 0 12px 40px rgba(0, 217, 165, 0.6);
+}
+
+.push-results .push-secondary-btn {
+  background: rgba(155, 93, 229, 0.1);
+  border: 2px solid rgba(155, 93, 229, 0.3);
+}
+
+.push-results .push-secondary-btn:hover {
+  background: rgba(155, 93, 229, 0.2);
+  border-color: #9B5DE5;
+}
+
+.push-results .push-home-btn {
+  background: linear-gradient(135deg, #F15BB5 0%, #9B5DE5 100%);
+  color: #fff;
+  box-shadow: 0 8px 32px rgba(241, 91, 181, 0.4);
+}
+
+.push-results .push-home-btn:hover {
+  box-shadow: 0 12px 40px rgba(241, 91, 181, 0.6);
+}
+
+/* Scrollbar - Push Theme */
+.push-results::-webkit-scrollbar-thumb {
+  background: #9B5DE5;
+}
+
+.push-results::-webkit-scrollbar-thumb:hover {
+  background: #F15BB5;
+}
+
+.push-results {
+  scrollbar-color: #9B5DE5 rgba(255, 255, 255, 0.1);
+}

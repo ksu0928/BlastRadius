@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Environment files
+.env
+.env.local
+.env.production
+backend/.env
+
+# Build outputs
+build/
+.next/
+out/
+
+# Cache and artifacts
+.aptos
+contracts/cache/
+contracts/artifacts/
+gaseless
+
+# OS files
+.DS_Store
+*.log
+
+# IDE
+.vscode/
+.idea/
