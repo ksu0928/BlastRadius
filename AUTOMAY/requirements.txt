@@ -1,0 +1,8 @@
+streamlit
+pandas
+matplotlib
+langchain
+langchain-openai
+groq
+openpyxl
+python-dotenv
