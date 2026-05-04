@@ -1,0 +1,410 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* DecideAI Dark Theme — all HSL */
+    --background: 222 41% 8%;          /* #0A0F1E deep navy */
+    --foreground: 210 40% 98%;         /* #F8FAFC */
+
+    --card: 220 25% 7%;                /* #0D1117 */
+    --card-foreground: 210 40% 98%;
+
+    --popover: 220 25% 7%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 239 84% 67%;            /* #6366F1 indigo-500 */
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 239 84% 75%;
+
+    --accent: 258 90% 66%;             /* #8B5CF6 violet-500 */
+    --accent-foreground: 0 0% 100%;
+
+    --secondary: 222 30% 14%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 222 25% 12%;
+    --muted-foreground: 215 20% 65%;   /* #94A3B8 */
+
+    --success: 158 64% 40%;            /* #10B981 */
+    --warning: 38 92% 50%;             /* #F59E0B */
+    --destructive: 0 84% 60%;          /* #EF4444 */
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 222 24% 16%;             /* #1E2433 */
+    --input: 222 24% 14%;
+    --ring: 239 84% 67%;
+
+    --radius: 0.75rem;
+
+    --gradient-primary: linear-gradient(135deg, hsl(239 84% 67%), hsl(258 90% 66%));
+    --gradient-hero: radial-gradient(ellipse at top, hsl(239 84% 67% / 0.18), transparent 60%);
+    --shadow-glow: 0 0 24px hsl(239 84% 67% / 0.15);
+    --shadow-glow-strong: 0 0 40px hsl(239 84% 67% / 0.35);
+    --shadow-card: 0 4px 24px -8px hsl(222 50% 2% / 0.8);
+    --shadow-bias: 0 0 30px rgba(245, 158, 11, 0.3);
+  }
+}
+
+@layer base {
+  * { @apply border-border; }
+  html, body, #root { height: 100%; }
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-feature-settings: 'cv11', 'ss01';
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+@layer components {
+  /* ─── Cards ─── */
+  .surface-card {
+    @apply rounded-xl;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(12px);
+    box-shadow: var(--shadow-card);
+  }
+  .surface-card-glow {
+    @apply rounded-xl;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(12px);
+    box-shadow: var(--shadow-glow), var(--shadow-card);
+  }
+
+  /* ─── Gradient Text ─── */
+  .text-gradient {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* ─── Buttons ─── */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-semibold text-primary-foreground transition-all cursor-pointer;
+    background: var(--gradient-primary);
+    box-shadow: 0 8px 24px -8px hsl(239 84% 67% / 0.6);
+  }
+  .btn-primary:hover { box-shadow: var(--shadow-glow-strong); transform: translateY(-2px); }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+
+  .btn-outline {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-semibold border border-border text-foreground transition-all cursor-pointer;
+    background: rgba(255, 255, 255, 0.03);
+  }
+  .btn-outline:hover { @apply border-primary; background: rgba(255, 255, 255, 0.06); transform: translateY(-1px); }
+
+  /* ─── Chips ─── */
+  .chip {
+    @apply inline-flex items-center px-4 py-2 rounded-full border border-border text-sm text-muted-foreground transition-all cursor-pointer;
+    background: rgba(255, 255, 255, 0.03);
+  }
+  .chip:hover { @apply border-primary text-foreground; }
+  .chip-active { @apply border-primary text-foreground; background: hsl(239 84% 67% / 0.12); }
+
+  /* ─── Input ─── */
+  .input-field {
+    @apply w-full px-4 py-3 rounded-lg border border-border text-foreground placeholder:text-muted-foreground/60 outline-none transition-all;
+    background: hsl(var(--input));
+  }
+  .input-field:focus { @apply border-primary ring-2 ring-primary/30; }
+
+  /* ─── Severity Badges ─── */
+  .badge-sev-low { @apply text-[10px] uppercase font-bold px-2.5 py-1 rounded; background: hsl(var(--success) / 0.15); color: hsl(var(--success)); }
+  .badge-sev-medium { @apply text-[10px] uppercase font-bold px-2.5 py-1 rounded; background: hsl(var(--warning) / 0.15); color: hsl(var(--warning)); }
+  .badge-sev-high { @apply text-[10px] uppercase font-bold px-2.5 py-1 rounded; background: hsl(var(--destructive) / 0.15); color: hsl(var(--destructive)); }
+
+  /* ─── Bias Severity Badges (amber/orange/red theme) ─── */
+  .bias-sev-mild {
+    @apply text-[10px] uppercase font-bold px-2.5 py-1 rounded-full whitespace-nowrap;
+    background: hsl(50 92% 50% / 0.15);
+    color: hsl(50 92% 60%);
+    border: 1px solid hsl(50 92% 50% / 0.3);
+  }
+  .bias-sev-moderate {
+    @apply text-[10px] uppercase font-bold px-2.5 py-1 rounded-full whitespace-nowrap;
+    background: hsl(30 92% 50% / 0.15);
+    color: hsl(30 92% 60%);
+    border: 1px solid hsl(30 92% 50% / 0.3);
+  }
+  .bias-sev-strong {
+    @apply text-[10px] uppercase font-bold px-2.5 py-1 rounded-full whitespace-nowrap;
+    background: hsl(0 84% 55% / 0.18);
+    color: hsl(0 84% 65%);
+    border: 1px solid hsl(0 84% 55% / 0.3);
+  }
+
+  /* ─── Bias Cards (expandable) ─── */
+  .bias-card {
+    @apply rounded-xl p-5;
+    background: linear-gradient(135deg, hsl(38 92% 50% / 0.08), hsl(0 84% 60% / 0.04), hsl(38 92% 50% / 0.08));
+    border: 1px solid hsl(38 92% 50% / 0.30);
+    transition: all 0.3s ease;
+    animation: fadeUp 0.5s ease-out both;
+  }
+  .bias-card:hover {
+    border-color: hsl(38 92% 50% / 0.50);
+    box-shadow: 0 0 20px rgba(245, 158, 11, 0.10);
+  }
+  .bias-card-body {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+  }
+  .bias-card-body-open {
+    max-height: 400px;
+    opacity: 1;
+  }
+
+  /* ─── Confidence Meter Bar ─── */
+  .confidence-bar {
+    @apply w-full h-2.5 rounded-full overflow-hidden;
+    background: hsl(var(--border));
+  }
+  .confidence-bar-fill {
+    @apply h-full rounded-full;
+    transition: width 1.8s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* ─── Counterfactual Panel ─── */
+  .counterfactual-panel {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .counterfactual-panel-open {
+    max-height: 600px;
+  }
+  .counterfactual-card {
+    @apply rounded-lg p-4;
+    background: hsl(239 84% 67% / 0.06);
+    border: 1px solid hsl(239 84% 67% / 0.15);
+    transition: all 0.3s ease;
+  }
+  .counterfactual-card:hover {
+    border-color: hsl(239 84% 67% / 0.35);
+    background: hsl(239 84% 67% / 0.10);
+  }
+
+  /* ─── Page Progress Bar (GitHub/YouTube-style) ─── */
+  .page-progress-bar {
+    @apply fixed top-0 left-0 right-0 h-[3px] z-[9999];
+    pointer-events: none;
+  }
+  .page-progress-fill {
+    @apply h-full;
+    background: var(--gradient-primary);
+    box-shadow: 0 0 10px hsl(239 84% 67% / 0.5), 0 0 5px hsl(258 90% 66% / 0.3);
+    transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* ─── Decision History Drawer ─── */
+  .history-drawer-backdrop {
+    @apply fixed inset-0 z-[100];
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    animation: fadeIn 0.2s ease-out;
+  }
+  .history-drawer {
+    @apply fixed right-0 top-0 bottom-0 z-[101] w-full max-w-md overflow-y-auto;
+    background: hsl(222 41% 8%);
+    border-left: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: -8px 0 40px rgba(0, 0, 0, 0.4);
+    animation: slideFromRight 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  @keyframes slideFromRight {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .history-card {
+    @apply rounded-lg p-4 cursor-pointer transition-all;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+  }
+  .history-card:hover {
+    border-color: hsl(239 84% 67% / 0.3);
+    background: rgba(255, 255, 255, 0.05);
+    transform: translateY(-1px);
+  }
+
+  /* ─── Recurring Bias Profile ─── */
+  .bias-profile-card {
+    @apply rounded-xl p-5;
+    background: linear-gradient(135deg, hsl(258 90% 66% / 0.08), hsl(239 84% 67% / 0.06));
+    border: 1px solid hsl(258 90% 66% / 0.25);
+  }
+
+  /* ─── Bias Spotlight (legacy, kept for fallback) ─── */
+  .bias-spotlight {
+    @apply relative rounded-xl p-8 overflow-hidden;
+    background: linear-gradient(135deg, hsl(38 92% 50% / 0.10), hsl(0 84% 60% / 0.06), hsl(38 92% 50% / 0.10));
+    border: 1.5px solid hsl(38 92% 50% / 0.40);
+    box-shadow:
+      0 0 30px rgba(245, 158, 11, 0.15),
+      0 0 60px rgba(245, 158, 11, 0.08),
+      inset 0 1px 0 rgba(245, 158, 11, 0.1);
+    animation: biasGlow 3s ease-in-out infinite alternate;
+  }
+  .bias-spotlight::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 200%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, hsl(38 92% 50% / 0.08), transparent);
+    animation: biasShimmer 4s ease-in-out infinite;
+  }
+  @keyframes biasShimmer {
+    0% { transform: translateX(-50%); }
+    100% { transform: translateX(50%); }
+  }
+  @keyframes biasGlow {
+    0% { box-shadow: 0 0 30px rgba(245, 158, 11, 0.12), 0 0 60px rgba(245, 158, 11, 0.05); }
+    100% { box-shadow: 0 0 40px rgba(245, 158, 11, 0.22), 0 0 80px rgba(245, 158, 11, 0.10); }
+  }
+
+  /* ─── McKinsey Advisory Card ─── */
+  .mckinsey-card {
+    @apply rounded-xl overflow-hidden;
+    background: hsl(220 20% 10%);
+    border: 1px solid hsl(45 50% 50% / 0.20);
+    box-shadow: 0 0 24px hsl(45 50% 50% / 0.06);
+  }
+  .mckinsey-card:hover {
+    border-color: hsl(45 50% 50% / 0.35);
+    box-shadow: 0 0 32px hsl(45 50% 50% / 0.10);
+  }
+  .mckinsey-card-header {
+    @apply px-6 py-4;
+    background: linear-gradient(90deg, hsl(45 50% 50% / 0.08), transparent);
+    border-bottom: 1px solid hsl(45 50% 50% / 0.15);
+  }
+  .mckinsey-confidence-bar {
+    @apply w-full h-2 rounded-full overflow-hidden;
+    background: hsl(var(--border));
+  }
+  .mckinsey-confidence-fill {
+    @apply h-full rounded-full;
+    background: linear-gradient(90deg, hsl(45 70% 45%), hsl(38 80% 55%));
+    transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .mckinsey-signal {
+    @apply rounded-lg p-4;
+    background: hsl(45 50% 50% / 0.06);
+    border: 1px solid hsl(45 50% 50% / 0.15);
+  }
+
+  /* ─── Devil's Advocate Card ─── */
+  .devils-card {
+    @apply rounded-xl overflow-hidden;
+    background: hsl(220 20% 10%);
+    border: 1px solid hsl(0 72% 55% / 0.20);
+    box-shadow: 0 0 24px hsl(0 72% 55% / 0.06);
+  }
+  .devils-card:hover { border-color: hsl(0 72% 55% / 0.35); box-shadow: 0 0 32px hsl(0 72% 55% / 0.10); }
+  .devils-card-header {
+    @apply px-6 py-4;
+    background: linear-gradient(90deg, hsl(0 72% 55% / 0.08), transparent);
+    border-bottom: 1px solid hsl(0 72% 55% / 0.15);
+  }
+  .devils-confidence-bar { @apply w-full h-2 rounded-full overflow-hidden; background: hsl(var(--border)); }
+  .devils-confidence-fill { @apply h-full rounded-full; background: linear-gradient(90deg, hsl(0 72% 45%), hsl(15 80% 55%)); transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1); }
+  .devils-blindspot { @apply rounded-lg p-4; background: hsl(0 72% 55% / 0.06); border: 1px solid hsl(0 72% 55% / 0.15); }
+
+  /* ─── Philosopher Card ─── */
+  .philosopher-card {
+    @apply rounded-xl overflow-hidden;
+    background: hsl(220 20% 10%);
+    border: 1px solid hsl(270 60% 55% / 0.20);
+    box-shadow: 0 0 24px hsl(270 60% 55% / 0.06);
+  }
+  .philosopher-card:hover { border-color: hsl(270 60% 55% / 0.35); box-shadow: 0 0 32px hsl(270 60% 55% / 0.10); }
+  .philosopher-card-header {
+    @apply px-6 py-4;
+    background: linear-gradient(90deg, hsl(270 60% 55% / 0.08), transparent);
+    border-bottom: 1px solid hsl(270 60% 55% / 0.15);
+  }
+  .philosopher-confidence-bar { @apply w-full h-2 rounded-full overflow-hidden; background: hsl(var(--border)); }
+  .philosopher-confidence-fill { @apply h-full rounded-full; background: linear-gradient(90deg, hsl(270 60% 50%), hsl(280 70% 60%)); transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1); }
+  .philosopher-regret { @apply rounded-lg p-4; background: hsl(270 60% 55% / 0.06); border: 1px solid hsl(270 60% 55% / 0.15); }
+
+  /* ─── Council Arbitration Card ─── */
+  .council-card {
+    @apply rounded-xl overflow-hidden;
+    background: hsl(220 20% 9%);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 4px 40px rgba(0, 0, 0, 0.4);
+  }
+  .council-chamber {
+    @apply px-8 py-8 text-center;
+    background: linear-gradient(135deg, hsl(45 50% 50% / 0.06), hsl(0 72% 55% / 0.04), hsl(270 60% 55% / 0.06));
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  .council-agent-card {
+    @apply rounded-lg p-4;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    transition: all 0.3s ease;
+  }
+  .council-agent-card:hover { border-color: rgba(255, 255, 255, 0.15); background: rgba(255, 255, 255, 0.05); }
+  .council-consensus-bar { @apply w-full h-2 rounded-full overflow-hidden; background: hsl(var(--border)); }
+  .council-consensus-fill { @apply h-full rounded-full; background: var(--gradient-primary); transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1); }
+  .council-tension { @apply rounded-lg p-4; background: hsl(239 84% 67% / 0.05); border: 1px solid hsl(239 84% 67% / 0.12); }
+
+  /* ─── Timer Badge ─── */
+  .timer-badge {
+    @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium;
+    background: hsl(var(--success) / 0.12);
+    color: hsl(var(--success));
+    border: 1px solid hsl(var(--success) / 0.25);
+  }
+
+  /* ─── Dimension Pill (interview sidebar) ─── */
+  .dim-pill {
+    @apply text-[11px] px-2.5 py-1 rounded-full border transition-all duration-500;
+    border-color: hsl(var(--border));
+    color: hsl(var(--muted-foreground));
+  }
+  .dim-pill.dim-active {
+    border-color: hsl(239 84% 67% / 0.6);
+    background: hsl(239 84% 67% / 0.15);
+    color: hsl(var(--foreground));
+    box-shadow: 0 0 12px hsl(239 84% 67% / 0.2);
+  }
+  .dim-pill.dim-done {
+    border-color: hsl(var(--success) / 0.4);
+    background: hsl(var(--success) / 0.08);
+    color: hsl(var(--success));
+  }
+}
+
+@layer utilities {
+  .animate-pulse-slow { animation: pulseSlow 2.4s ease-in-out infinite; }
+  @keyframes pulseSlow { 0%, 100% { opacity: 1; } 50% { opacity: 0.55; } }
+  .animate-fade-up { animation: fadeUp 0.5s ease-out both; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+  .animate-slide-in { animation: slideIn 0.4s ease-out both; }
+  @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+  .animate-spin-slow { animation: spin 2s linear infinite; }
+  .animate-count-up { animation: fadeUp 0.6s ease-out both; }
+  .font-serif-italic { font-family: 'Playfair Display', Georgia, serif; font-style: italic; }
+  .scrollbar-thin::-webkit-scrollbar { width: 6px; }
+  .scrollbar-thin::-webkit-scrollbar-thumb { background: hsl(var(--border)); border-radius: 3px; }
+}
+
+@media print {
+  body { background: white !important; color: black !important; }
+  .no-print { display: none !important; }
+  .bias-spotlight { border-color: #f59e0b !important; }
+}
