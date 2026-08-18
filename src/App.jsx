@@ -141,6 +141,29 @@ const IcClock = () => (
 )
 
 // ─────────────────────────────────────────────────────────────────────────────
+// SKELETON LOADER (Shimmer Effect for Loading States)
+// ─────────────────────────────────────────────────────────────────────────────
+function SkeletonLoader({width = "100%", height = 20, borderRadius = 6}) {
+  return (
+    <div style={{
+      width,
+      height,
+      borderRadius,
+      background: colors.bgElevated,
+      position: "relative",
+      overflow: "hidden"
+    }}>
+      <div style={{
+        position: "absolute",
+        inset: 0,
+        background: `linear-gradient(90deg, transparent, ${colors.bgHover}, transparent)`,
+        animation: "shimmer 2s infinite"
+      }}/>
+    </div>
+  )
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // BADGE COMPONENT — Production Design System
 // ─────────────────────────────────────────────────────────────────────────────
 function Badge({sev}) {
@@ -676,54 +699,224 @@ function GraphView({data, onDetails}) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// TIMELINE STRIP
+// ─────────────────────────────────────────────────────────────────────────────
+// TIMELINE STRIP (Exposure Timeline with Pulse Animations)
 // ─────────────────────────────────────────────────────────────────────────────
 function Timeline({data}) {
-  const {services:svcs, stats} = data
-  const maxM = Math.max(...svcs.map(s=>s.resolvedMinutes)) + 2
-  const pct = m => (m/maxM)*100
-  const sorted = [...svcs].sort((a,b)=>a.resolvedMinutes-b.resolvedMinutes)
+  const {services: svcs, stats} = data
+  const maxM = Math.max(...svcs.map(s => s.resolvedMinutes)) + 2
+  const pct = m => (m / maxM) * 100
+  const sorted = [...svcs].sort((a, b) => a.resolvedMinutes - b.resolvedMinutes)
   const dw = 6
+  
   return (
-    <div style={{background:"#111",border:"1px solid #1c1c1f",borderRadius:8,padding:"20px 24px"}}>
-      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:20}}>
+    <div style={{
+      background: colors.bgCard,
+      border: `1px solid ${colors.borderSubtle}`,
+      borderRadius: 12,
+      padding: "24px 28px",
+      boxShadow: colors.shadowCard
+    }}>
+      {/* Header */}
+      <div style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        marginBottom: 24
+      }}>
         <div>
-          <span style={{fontSize:13,fontWeight:600,color:"#fafafa"}}>Exposure Timeline</span>
-          <span style={{fontSize:11,color:"#52525b",marginLeft:8}}>&middot; relative to compromise event</span>
+          <span style={{
+            fontSize: 16,
+            fontWeight: 600,
+            color: colors.textPrimary,
+            letterSpacing: "-0.01em"
+          }}>
+            Exposure Timeline
+          </span>
+          <span style={{
+            fontSize: 12,
+            color: colors.textTertiary,
+            marginLeft: 10
+          }}>
+            · relative to compromise event
+          </span>
         </div>
-        <div style={{display:"flex",gap:14,alignItems:"center"}}>
-          <div style={{display:"flex",alignItems:"center",gap:5}}>
-            <div style={{width:8,height:8,background:"rgba(239,68,68,.4)",borderRadius:2,border:"1px solid #ef4444"}}/>
-            <span style={{fontSize:10,color:"#52525b"}}>First {dw}m danger window</span>
+        
+        {/* Legend */}
+        <div style={{display: "flex", gap: 16, alignItems: "center"}}>
+          <div style={{display: "flex", alignItems: "center", gap: 6}}>
+            <div style={{
+              width: 10,
+              height: 10,
+              background: "rgba(220, 38, 38, 0.2)",
+              borderRadius: 3,
+              border: `2px solid ${colors.critical}`
+            }}/>
+            <span style={{fontSize: 11, color: colors.textSecondary}}>
+              First {dw}m danger window
+            </span>
           </div>
-          <div style={{display:"flex",alignItems:"center",gap:5}}>
-            <div style={{width:8,height:2,background:"#3b82f6"}}/>
-            <span style={{fontSize:10,color:"#52525b"}}>Detection</span>
+          <div style={{display: "flex", alignItems: "center", gap: 6}}>
+            <div style={{
+              width: 10,
+              height: 3,
+              background: colors.info,
+              borderRadius: 1
+            }}/>
+            <span style={{fontSize: 11, color: colors.textSecondary}}>Detection</span>
           </div>
         </div>
       </div>
-      <div style={{position:"relative",height:80}}>
-        <div style={{position:"absolute",top:36,left:0,right:0,height:2,background:"#1c1c1f",borderRadius:1}}/>
-        <div style={{position:"absolute",top:16,left:0,width:`${pct(dw)}%`,height:42,background:"rgba(239,68,68,.06)",borderLeft:"2px solid rgba(239,68,68,.4)",borderRight:"1px dashed rgba(239,68,68,.3)",borderRadius:2}}/>
-        <span style={{position:"absolute",top:7,left:`${Math.max(1,pct(dw)-8)}%`,fontSize:9,color:"rgba(239,68,68,.6)",letterSpacing:"0.05em",textTransform:"uppercase",fontWeight:600}}>{dw}m window</span>
-        <div style={{position:"absolute",top:12,left:`${pct(stats.detectionMinutes+stats.detectionSeconds/60)}%`,width:1,height:50,background:"#3b82f6",opacity:.6}}>
-          <span style={{position:"absolute",top:-14,left:4,fontSize:9,color:"#3b82f6",whiteSpace:"nowrap",fontFamily:"'JetBrains Mono',monospace"}}>DETECTED +{stats.detectionMinutes}m{stats.detectionSeconds}s</span>
+      
+      {/* Timeline Visualization */}
+      <div style={{position: "relative", height: 90}}>
+        {/* Base timeline track */}
+        <div style={{
+          position: "absolute",
+          top: 40,
+          left: 0,
+          right: 0,
+          height: 3,
+          background: colors.borderSubtle,
+          borderRadius: 2
+        }}/>
+        
+        {/* Danger window */}
+        <div style={{
+          position: "absolute",
+          top: 18,
+          left: 0,
+          width: `${pct(dw)}%`,
+          height: 46,
+          background: "rgba(220, 38, 38, 0.08)",
+          borderLeft: `3px solid ${colors.critical}`,
+          borderRight: `2px dashed ${colors.critical}40`,
+          borderRadius: 6
+        }}/>
+        <span style={{
+          position: "absolute",
+          top: 8,
+          left: `${Math.max(1, pct(dw) - 8)}%`,
+          fontSize: 10,
+          color: colors.critical,
+          letterSpacing: "0.06em",
+          textTransform: "uppercase",
+          fontWeight: 600,
+          fontFamily: "'IBM Plex Mono', monospace"
+        }}>
+          {dw}m window
+        </span>
+        
+        {/* Detection marker */}
+        <div style={{
+          position: "absolute",
+          top: 14,
+          left: `${pct(stats.detectionMinutes + stats.detectionSeconds / 60)}%`,
+          width: 2,
+          height: 54,
+          background: colors.info,
+          opacity: 0.8,
+          borderRadius: 1
+        }}>
+          <span style={{
+            position: "absolute",
+            top: -16,
+            left: 6,
+            fontSize: 10,
+            color: colors.info,
+            whiteSpace: "nowrap",
+            fontFamily: "'IBM Plex Mono', monospace",
+            fontWeight: 600
+          }}>
+            DETECTED +{stats.detectionMinutes}m{stats.detectionSeconds}s
+          </span>
         </div>
-        <div style={{position:"absolute",top:12,left:-1,display:"flex",flexDirection:"column",alignItems:"center"}}>
-          <div style={{color:"#ef4444"}}><IcFlag/></div>
-          <div style={{width:2,height:30,background:"#ef4444",opacity:.8}}/>
+        
+        {/* Compromise flag (T+0) */}
+        <div style={{
+          position: "absolute",
+          top: 14,
+          left: -2,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center"
+        }}>
+          <div style={{color: colors.critical, fontSize: 18}}>
+            <IcFlag/>
+          </div>
+          <div style={{
+            width: 3,
+            height: 32,
+            background: colors.critical,
+            opacity: 0.9,
+            borderRadius: 2
+          }}/>
         </div>
-        <span style={{position:"absolute",top:62,left:0,fontSize:9,color:"#ef4444",fontFamily:"'JetBrains Mono',monospace"}}>T+0</span>
-        {sorted.map((s,i)=>(
+        <span style={{
+          position: "absolute",
+          top: 70,
+          left: 0,
+          fontSize: 10,
+          color: colors.critical,
+          fontFamily: "'IBM Plex Mono', monospace",
+          fontWeight: 600
+        }}>
+          T+0
+        </span>
+        
+        {/* Service exposure dots with pulse animation */}
+        {sorted.map((s, i) => (
           <div key={s.id}>
-            <div title={`${s.name} \u00b7 ${minDisp(s.resolvedMinutes)}`} style={{position:"absolute",top:30,left:`calc(${pct(s.resolvedMinutes)}% - 5px)`,width:10,height:10,borderRadius:"50%",background:s.severity==="direct"?"#ef4444":"#f59e0b",border:"2px solid #0a0a0a",boxShadow:s.severity==="direct"?"0 0 8px rgba(239,68,68,.5)":"0 0 8px rgba(245,158,11,.4)",zIndex:2}}/>
-            <span style={{position:"absolute",top:i%2===0?50:62,left:`calc(${pct(s.resolvedMinutes)}% - 2px)`,fontSize:8,color:"#3f3f46",whiteSpace:"nowrap",transform:"rotate(-35deg)",transformOrigin:"left top",fontFamily:"'JetBrains Mono',monospace"}}>{s.name}</span>
+            {/* Pulsing dot */}
+            <div 
+              title={`${s.name} · ${minDisp(s.resolvedMinutes)}`}
+              style={{
+                position: "absolute",
+                top: 34,
+                left: `calc(${pct(s.resolvedMinutes)}% - 6px)`,
+                width: 12,
+                height: 12,
+                borderRadius: "50%",
+                background: s.severity === "direct" ? colors.critical : colors.warning,
+                border: `2px solid ${colors.bgCard}`,
+                boxShadow: s.severity === "direct" 
+                  ? `0 0 12px ${colors.critical}80, 0 0 20px ${colors.critical}40`
+                  : `0 0 12px ${colors.warning}80, 0 0 20px ${colors.warning}40`,
+                zIndex: 2,
+                animation: "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+                cursor: "pointer"
+              }}/>
+            
+            {/* Service label */}
+            <span style={{
+              position: "absolute",
+              top: i % 2 === 0 ? 56 : 70,
+              left: `calc(${pct(s.resolvedMinutes)}% - 2px)`,
+              fontSize: 9,
+              color: colors.textTertiary,
+              whiteSpace: "nowrap",
+              transform: "rotate(-35deg)",
+              transformOrigin: "left top",
+              fontFamily: "'IBM Plex Mono', monospace"
+            }}>
+              {s.name}
+            </span>
           </div>
         ))}
       </div>
-      <div style={{display:"flex",justifyContent:"space-between",marginTop:48}}>
-        {Array.from({length:7},(_,i)=>(
-          <span key={i} style={{fontSize:9,color:"#3f3f46",fontFamily:"'JetBrains Mono',monospace"}}>+{Math.round(maxM*i/6)}m</span>
+      
+      {/* Time axis labels */}
+      <div style={{display: "flex", justifyContent: "space-between", marginTop: 56}}>
+        {Array.from({length: 7}, (_, i) => (
+          <span 
+            key={i} 
+            style={{
+              fontSize: 10,
+              color: colors.textTertiary,
+              fontFamily: "'IBM Plex Mono', monospace"
+            }}>
+            +{Math.round(maxM * i / 6)}m
+          </span>
         ))}
       </div>
     </div>
@@ -731,77 +924,302 @@ function Timeline({data}) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// SLIDE-OVER DRAWER
+// ─────────────────────────────────────────────────────────────────────────────
+// SLIDE-OVER DRAWER (Service Details Panel) — Production Design System
 // ─────────────────────────────────────────────────────────────────────────────
 function Drawer({svc, onClose}) {
   const mt = svc.maintainer
-  useEffect(()=>{
-    const h = e => { if(e.key==="Escape") onClose() }
-    window.addEventListener("keydown",h)
-    return ()=>window.removeEventListener("keydown",h)
-  },[onClose])
+  useEffect(() => {
+    const h = e => { if (e.key === "Escape") onClose() }
+    window.addEventListener("keydown", h)
+    return () => window.removeEventListener("keydown", h)
+  }, [onClose])
+  
   return (
     <>
-      <div onClick={onClose} style={{position:"fixed",inset:0,background:"rgba(0,0,0,.5)",zIndex:40,backdropFilter:"blur(2px)"}}/>
-      <div style={{position:"fixed",top:0,right:0,bottom:0,width:360,zIndex:50,background:"#111",borderLeft:"1px solid #1c1c1f",overflowY:"auto",display:"flex",flexDirection:"column",animation:"slideIn .25s cubic-bezier(.4,0,.2,1) both"}}>
+      {/* Backdrop */}
+      <div 
+        onClick={onClose} 
+        style={{
+          position: "fixed",
+          inset: 0,
+          background: "rgba(0, 0, 0, 0.6)",
+          zIndex: 40,
+          backdropFilter: "blur(4px)",
+          animation: "fadeIn .25s ease-out both"
+        }}/>
+      
+      {/* Drawer Panel */}
+      <div style={{
+        position: "fixed",
+        top: 0,
+        right: 0,
+        bottom: 0,
+        width: 420,
+        zIndex: 50,
+        background: colors.bgCard,
+        borderLeft: `1px solid ${colors.borderSubtle}`,
+        overflowY: "auto",
+        display: "flex",
+        flexDirection: "column",
+        animation: "slideIn .3s cubic-bezier(.4,0,.2,1) both",
+        boxShadow: "-8px 0 32px rgba(0, 0, 0, 0.4)"
+      }}>
         {/* Header */}
-        <div style={{padding:"16px 20px",borderBottom:"1px solid #1c1c1f",display:"flex",alignItems:"center",justifyContent:"space-between",position:"sticky",top:0,background:"#111",zIndex:1}}>
+        <div style={{
+          padding: "20px 24px",
+          borderBottom: `1px solid ${colors.borderSubtle}`,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          position: "sticky",
+          top: 0,
+          background: colors.bgCard,
+          zIndex: 1,
+          backdropFilter: "blur(8px)"
+        }}>
           <div>
-            <div style={{fontSize:10,color:"#52525b",marginBottom:4,textTransform:"uppercase",letterSpacing:"0.06em"}}>Service Details</div>
-            <div style={{fontSize:15,fontWeight:600,color:"#fafafa",fontFamily:"'JetBrains Mono',monospace"}}>{svc.name}</div>
+            <div style={{
+              fontSize: 11,
+              color: colors.textTertiary,
+              marginBottom: 6,
+              textTransform: "uppercase",
+              letterSpacing: "0.06em",
+              fontWeight: 600
+            }}>
+              Service Details
+            </div>
+            <div style={{
+              fontSize: 16,
+              fontWeight: 600,
+              color: colors.textPrimary,
+              fontFamily: "'IBM Plex Mono', monospace"
+            }}>
+              {svc.name}
+            </div>
           </div>
-          <button onClick={onClose} style={{width:28,height:28,display:"flex",alignItems:"center",justifyContent:"center",borderRadius:6,border:"1px solid #27272a",background:"transparent",cursor:"pointer",color:"#71717a"}}><IcX/></button>
+          <button 
+            onClick={onClose} 
+            style={{
+              width: 32,
+              height: 32,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              borderRadius: 8,
+              border: `1px solid ${colors.borderSubtle}`,
+              background: "transparent",
+              cursor: "pointer",
+              color: colors.textSecondary,
+              transition: "all 0.2s ease"
+            }}
+            onMouseEnter={e => {
+              e.currentTarget.style.background = colors.bgHover
+              e.currentTarget.style.borderColor = colors.accent
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.background = "transparent"
+              e.currentTarget.style.borderColor = colors.borderSubtle
+            }}>
+            <IcX/>
+          </button>
         </div>
-        <div style={{padding:"16px 20px",display:"flex",flexDirection:"column",gap:20}}>
+        
+        <div style={{padding: "24px", display: "flex", flexDirection: "column", gap: 24}}>
           {/* Severity */}
           <div>
-            <div style={{fontSize:10,color:"#52525b",marginBottom:8,textTransform:"uppercase",letterSpacing:"0.05em"}}>Severity</div>
+            <div style={{
+              fontSize: 11,
+              color: colors.textTertiary,
+              marginBottom: 10,
+              textTransform: "uppercase",
+              letterSpacing: "0.06em",
+              fontWeight: 600
+            }}>
+              Severity
+            </div>
             <Badge sev={svc.severity}/>
           </div>
+          
           {/* Time */}
           <div>
-            <div style={{fontSize:10,color:"#52525b",marginBottom:8,textTransform:"uppercase",letterSpacing:"0.05em"}}>First Exposed</div>
-            <div style={{display:"flex",gap:16}}>
+            <div style={{
+              fontSize: 11,
+              color: colors.textTertiary,
+              marginBottom: 10,
+              textTransform: "uppercase",
+              letterSpacing: "0.06em",
+              fontWeight: 600
+            }}>
+              First Exposed
+            </div>
+            <div style={{display: "flex", gap: 20}}>
               <div>
-                <div style={{fontSize:13,color:"#fafafa",fontFamily:"'JetBrains Mono',monospace"}}>{fmtTime(svc.exposedAt)}</div>
-                <div style={{fontSize:10,color:"#52525b"}}>{fmtDate(svc.exposedAt)}</div>
+                <div style={{
+                  fontSize: 14,
+                  color: colors.textPrimary,
+                  fontFamily: "'IBM Plex Mono', monospace",
+                  marginBottom: 4,
+                  fontWeight: 500
+                }}>
+                  {fmtTime(svc.exposedAt)}
+                </div>
+                <div style={{fontSize: 11, color: colors.textTertiary}}>
+                  {fmtDate(svc.exposedAt)}
+                </div>
               </div>
-              <div>
-                <div style={{fontSize:13,color:svc.severity==="direct"?"#ef4444":"#f59e0b",fontFamily:"'JetBrains Mono',monospace"}}>{minDisp(svc.resolvedMinutes)}</div>
-                <div style={{fontSize:10,color:"#52525b"}}>after compromise</div>
+              <div style={{
+                borderLeft: `1px solid ${colors.borderSubtle}`,
+                paddingLeft: 20
+              }}>
+                <div style={{
+                  fontSize: 14,
+                  color: svc.severity === "direct" ? colors.critical : colors.warning,
+                  fontFamily: "'IBM Plex Mono', monospace",
+                  marginBottom: 4,
+                  fontWeight: 600
+                }}>
+                  {minDisp(svc.resolvedMinutes)}
+                </div>
+                <div style={{fontSize: 11, color: colors.textTertiary}}>
+                  after compromise
+                </div>
               </div>
             </div>
           </div>
+          
           {/* Chain */}
           <div>
-            <div style={{fontSize:10,color:"#52525b",marginBottom:8,textTransform:"uppercase",letterSpacing:"0.05em"}}>Dependency Chain</div>
+            <div style={{
+              fontSize: 11,
+              color: colors.textTertiary,
+              marginBottom: 10,
+              textTransform: "uppercase",
+              letterSpacing: "0.06em",
+              fontWeight: 600
+            }}>
+              Dependency Chain
+            </div>
             <Chain chain={svc.chain}/>
           </div>
+          
           {/* Maintainer */}
-          <div style={{borderTop:"1px solid #1c1c1f",paddingTop:16}}>
-            <div style={{fontSize:10,color:"#52525b",marginBottom:10,textTransform:"uppercase",letterSpacing:"0.05em"}}>Maintainer Intel</div>
-            <div style={{background:"#0e0e0e",borderRadius:6,padding:"10px 14px",border:"1px solid #1c1c1f",marginBottom:10}}>
-              <div style={{fontSize:13,fontWeight:600,color:"#fafafa",fontFamily:"'JetBrains Mono',monospace",marginBottom:2}}>{mt.name}</div>
-              <div style={{fontSize:11,color:"#52525b"}}>{mt.email}</div>
+          <div style={{
+            borderTop: `1px solid ${colors.borderSubtle}`,
+            paddingTop: 24
+          }}>
+            <div style={{
+              fontSize: 11,
+              color: colors.textTertiary,
+              marginBottom: 12,
+              textTransform: "uppercase",
+              letterSpacing: "0.06em",
+              fontWeight: 600
+            }}>
+              Maintainer Intel
             </div>
-            <div style={{fontSize:10,color:"#52525b",marginBottom:8,textTransform:"uppercase",letterSpacing:"0.05em"}}>Other packages by this maintainer</div>
-            <div style={{display:"flex",flexWrap:"wrap",gap:5,marginBottom:16}}>
-              {mt.packages.map(p=>(
-                <span key={p} style={{fontSize:11,padding:"2px 8px",borderRadius:3,background:"#0d0d0d",border:"1px solid #1c1c1f",color:"#a1a1aa",fontFamily:"'JetBrains Mono',monospace"}}>{p}</span>
+            <div style={{
+              background: colors.bgElevated,
+              borderRadius: 8,
+              padding: "12px 16px",
+              border: `1px solid ${colors.borderSubtle}`,
+              marginBottom: 16
+            }}>
+              <div style={{
+                fontSize: 14,
+                fontWeight: 600,
+                color: colors.textPrimary,
+                fontFamily: "'IBM Plex Mono', monospace",
+                marginBottom: 4
+              }}>
+                {mt.name}
+              </div>
+              <div style={{fontSize: 12, color: colors.textSecondary}}>
+                {mt.email}
+              </div>
+            </div>
+            <div style={{
+              fontSize: 11,
+              color: colors.textTertiary,
+              marginBottom: 10,
+              textTransform: "uppercase",
+              letterSpacing: "0.06em",
+              fontWeight: 600
+            }}>
+              Other packages by this maintainer
+            </div>
+            <div style={{display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 20}}>
+              {mt.packages.map(p => (
+                <span 
+                  key={p} 
+                  style={{
+                    fontSize: 11,
+                    padding: "4px 10px",
+                    borderRadius: 6,
+                    background: colors.bgPrimary,
+                    border: `1px solid ${colors.borderSubtle}`,
+                    color: colors.textSecondary,
+                    fontFamily: "'IBM Plex Mono', monospace"
+                  }}>
+                  {p}
+                </span>
               ))}
             </div>
           </div>
+          
           {/* Typosquats */}
           <div>
-            <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:10}}>
-              <span style={{color:"#f59e0b"}}><IcWarn/></span>
-              <span style={{fontSize:10,color:"#f59e0b",textTransform:"uppercase",letterSpacing:"0.05em",fontWeight:600}}>Possible Typosquats</span>
+            <div style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+              marginBottom: 12
+            }}>
+              <span style={{color: colors.warning, fontSize: 18}}>
+                <IcWarn/>
+              </span>
+              <span style={{
+                fontSize: 11,
+                color: colors.warning,
+                textTransform: "uppercase",
+                letterSpacing: "0.06em",
+                fontWeight: 600
+              }}>
+                Possible Typosquats
+              </span>
             </div>
-            <div style={{display:"flex",flexDirection:"column",gap:6}}>
-              {mt.typosquats.map(t=>(
-                <div key={t} style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"8px 12px",borderRadius:5,background:"rgba(245,158,11,.05)",border:"1px solid rgba(245,158,11,.2)"}}>
-                  <span style={{fontSize:12,color:"#f59e0b",fontFamily:"'JetBrains Mono',monospace"}}>{t}</span>
-                  <span style={{fontSize:10,color:"#71717a",padding:"1px 6px",borderRadius:3,background:"#0a0a0a",border:"1px solid #1c1c1f"}}>edit-dist 1</span>
+            <div style={{display: "flex", flexDirection: "column", gap: 8}}>
+              {mt.typosquats.map(t => (
+                <div 
+                  key={t} 
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    padding: "10px 14px",
+                    borderRadius: 8,
+                    background: "rgba(245, 158, 11, 0.06)",
+                    border: `1px solid ${colors.warning}40`
+                  }}>
+                  <span style={{
+                    fontSize: 13,
+                    color: colors.warning,
+                    fontFamily: "'IBM Plex Mono', monospace",
+                    fontWeight: 500
+                  }}>
+                    {t}
+                  </span>
+                  <span style={{
+                    fontSize: 10,
+                    color: colors.textTertiary,
+                    padding: "2px 8px",
+                    borderRadius: 4,
+                    background: colors.bgPrimary,
+                    border: `1px solid ${colors.borderSubtle}`,
+                    fontFamily: "'IBM Plex Mono', monospace"
+                  }}>
+                    edit-dist 1
+                  </span>
                 </div>
               ))}
             </div>
@@ -830,9 +1248,32 @@ function MaintainerIntelligence({data}) {
 
   if (loading) {
     return (
-      <div style={{textAlign:"center",padding:60}}>
-        <div style={{width:40,height:40,margin:"0 auto 16px",borderRadius:"50%",border:"3px solid #1c1c1f",borderTopColor:"#ef4444",animation:"spin .8s linear infinite"}}/>
-        <div style={{fontSize:13,color:"#52525b"}}>Analyzing maintainer network...</div>
+      <div style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: 16
+      }}>
+        {/* Skeleton Cards */}
+        {[1, 2, 3].map(i => (
+          <div 
+            key={i}
+            style={{
+              background: colors.bgCard,
+              border: `1px solid ${colors.borderSubtle}`,
+              borderRadius: 12,
+              padding: "20px 24px"
+            }}>
+            <SkeletonLoader width="40%" height={16} borderRadius={4}/>
+            <div style={{marginTop: 12}}>
+              <SkeletonLoader width="60%" height={14} borderRadius={4}/>
+            </div>
+            <div style={{marginTop: 16, display: "flex", gap: 8}}>
+              <SkeletonLoader width={80} height={24} borderRadius={6}/>
+              <SkeletonLoader width={100} height={24} borderRadius={6}/>
+              <SkeletonLoader width={90} height={24} borderRadius={6}/>
+            </div>
+          </div>
+        ))}
       </div>
     )
   }
@@ -1240,8 +1681,10 @@ export default function App() {
         @keyframes slideIn{from{transform:translateX(100%)}to{transform:translateX(0)}}
         @keyframes spin{to{transform:rotate(360deg)}}
         @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes shimmer{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+        @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
         select option{background:#1a1a1a;color:#a1a1aa}
-        button:focus-visible{outline:2px solid #ef4444;outline-offset:2px}
+        button:focus-visible{outline:2px solid ${colors.accent};outline-offset:2px}
         *{box-sizing:border-box}
       `}</style>
 
