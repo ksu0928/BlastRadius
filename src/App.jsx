@@ -1,6 +1,38 @@
 import { useState, useEffect, useRef, useCallback } from "react"
 
 // ─────────────────────────────────────────────────────────────────────────────
+// COLOR SYSTEM — Professional Production Palette
+// ─────────────────────────────────────────────────────────────────────────────
+const colors = {
+  // Backgrounds
+  bgPrimary: "#0F0F1E",
+  bgCard: "#1A1A2E",
+  bgElevated: "#16162A",
+  bgHover: "rgba(94, 106, 210, 0.08)",
+  
+  // Semantic
+  critical: "#DC2626",
+  warning: "#F59E0B",
+  success: "#10B981",
+  info: "#3B82F6",
+  
+  // Accent (single chromatic color)
+  accent: "#5E6AD2",
+  accentHover: "#7078E1",
+  
+  // Text
+  textPrimary: "#F1F5F9",
+  textSecondary: "#CBD5E1",
+  textTertiary: "#94A3B8",
+  textDisabled: "#64748B",
+  
+  // Borders
+  borderPrimary: "#2D2D44",
+  borderHover: "#3D3D5C",
+  borderAccent: "rgba(94, 106, 210, 0.3)",
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // API CLIENT
 // ─────────────────────────────────────────────────────────────────────────────
 const API_BASE = import.meta.env.PROD 
