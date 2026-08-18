@@ -276,20 +276,55 @@ function StatCard({label, value, sub, accent}) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// CHAIN BREADCRUMB
+// ─────────────────────────────────────────────────────────────────────────────
+// CHAIN BREADCRUMB (Dependency Path Visualization)
 // ─────────────────────────────────────────────────────────────────────────────
 function Chain({chain}) {
   return (
-    <div style={{display:"flex",alignItems:"center",flexWrap:"wrap",gap:6,padding:"10px 14px",background:"#0d0d0d",borderRadius:6}}>
-      {chain.map((node,i) => {
-        const first=i===0, last=i===chain.length-1
-        const col = first?"#ef4444":last?"#a1a1aa":"#f59e0b"
-        const bg  = first?"rgba(239,68,68,.1)":last?"rgba(255,255,255,.05)":"rgba(245,158,11,.08)"
-        const bdr = first?"rgba(239,68,68,.3)":last?"rgba(255,255,255,.1)":"rgba(245,158,11,.2)"
+    <div style={{
+      display: "flex",
+      alignItems: "center",
+      flexWrap: "wrap",
+      gap: 8,
+      padding: "12px 16px",
+      background: colors.bgElevated,
+      borderRadius: 8,
+      border: `1px solid ${colors.borderSubtle}`
+    }}>
+      {chain.map((node, i) => {
+        const first = i === 0
+        const last = i === chain.length - 1
+        const col = first ? colors.critical : last ? colors.textSecondary : colors.warning
+        const bg = first 
+          ? "rgba(220, 38, 38, 0.1)" 
+          : last 
+            ? "rgba(241, 245, 249, 0.05)" 
+            : "rgba(245, 158, 11, 0.1)"
+        const bdr = first 
+          ? colors.critical 
+          : last 
+            ? colors.borderSubtle 
+            : colors.warning
+        
         return (
-          <div key={i} style={{display:"flex",alignItems:"center",gap:6}}>
-            <span style={{fontSize:11,fontWeight:500,padding:"3px 10px",borderRadius:4,color:col,background:bg,border:`1px solid ${bdr}`,fontFamily:"'JetBrains Mono',monospace"}}>{node}</span>
-            {!last && <span style={{color:"#3f3f46"}}><IcArrow/></span>}
+          <div key={i} style={{display: "flex", alignItems: "center", gap: 8}}>
+            <span style={{
+              fontSize: 12,
+              fontWeight: 500,
+              padding: "5px 12px",
+              borderRadius: 6,
+              color: col,
+              background: bg,
+              border: `1px solid ${bdr}`,
+              fontFamily: "'IBM Plex Mono', monospace"
+            }}>
+              {node}
+            </span>
+            {!last && (
+              <span style={{color: colors.textTertiary, fontSize: 14}}>
+                <IcArrow/>
+              </span>
+            )}
           </div>
         )
       })}
@@ -298,33 +333,131 @@ function Chain({chain}) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// SERVICE ROW
+// ─────────────────────────────────────────────────────────────────────────────
+// SERVICE ROW (List Panel Item) — Production Design System
 // ─────────────────────────────────────────────────────────────────────────────
 function ServiceRow({svc, idx, onDetails}) {
   const [open, setOpen] = useState(false)
+  
   return (
-    <div style={{border:"1px solid #1c1c1f",borderRadius:6,overflow:"hidden",background:open?"#111":"#0e0e0e",transition:"background .15s",animation:"fadeUp .3s ease-out both",animationDelay:`${idx*40}ms`}}>
-      <div onClick={()=>setOpen(o=>!o)}
-        style={{display:"flex",alignItems:"center",gap:12,padding:"11px 14px",cursor:"pointer",borderBottom:open?"1px solid #1c1c1f":"none"}}>
-        <span style={{color:"#52525b",flexShrink:0}}><IcChev open={open}/></span>
-        <span style={{flex:1,display:"flex",alignItems:"center",gap:8,minWidth:0}}>
-          <span style={{fontSize:13,fontWeight:500,color:"#fafafa",fontFamily:"'JetBrains Mono',monospace",whiteSpace:"nowrap"}}>{svc.name}</span>
+    <div style={{
+      border: `1px solid ${colors.borderSubtle}`,
+      borderRadius: 8,
+      overflow: "hidden",
+      background: colors.bgCard,
+      transition: "all 0.2s ease",
+      animation: "fadeUp .3s ease-out both",
+      animationDelay: `${idx * 40}ms`,
+      boxShadow: colors.shadowCard
+    }}>
+      <div 
+        onClick={() => setOpen(o => !o)}
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 12,
+          padding: "14px 16px",
+          cursor: "pointer",
+          borderBottom: open ? `1px solid ${colors.borderSubtle}` : "none",
+          borderLeft: `3px solid transparent`,
+          transition: "all 0.2s ease"
+        }}
+        onMouseEnter={e => {
+          e.currentTarget.style.background = colors.bgHover
+          e.currentTarget.style.borderLeftColor = colors.accent
+        }}
+        onMouseLeave={e => {
+          e.currentTarget.style.background = "transparent"
+          e.currentTarget.style.borderLeftColor = "transparent"
+        }}>
+        
+        <span style={{color: colors.textTertiary, flexShrink: 0}}>
+          <IcChev open={open}/>
+        </span>
+        
+        <span style={{
+          flex: 1,
+          display: "flex",
+          alignItems: "center",
+          gap: 10,
+          minWidth: 0
+        }}>
+          <span style={{
+            fontSize: 13,
+            fontWeight: 500,
+            color: colors.textPrimary,
+            fontFamily: "'IBM Plex Mono', monospace",
+            whiteSpace: "nowrap"
+          }}>
+            {svc.name}
+          </span>
           <Badge sev={svc.severity}/>
         </span>
-        <span style={{display:"flex",alignItems:"center",gap:5,fontSize:11,color:"#52525b",flexShrink:0}}>
+        
+        <span style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 6,
+          fontSize: 11,
+          color: colors.textTertiary,
+          flexShrink: 0
+        }}>
           <IcClock/>
-          <span style={{fontFamily:"'JetBrains Mono',monospace",color:"#71717a"}}>{minDisp(svc.resolvedMinutes)}</span>
+          <span style={{
+            fontFamily: "'IBM Plex Mono', monospace",
+            color: colors.textSecondary
+          }}>
+            {minDisp(svc.resolvedMinutes)}
+          </span>
         </span>
-        <span style={{fontFamily:"'JetBrains Mono',monospace",fontSize:11,color:"#3f3f46",flexShrink:0}}>{fmtTime(svc.exposedAt)}</span>
-        <button onClick={e=>{e.stopPropagation();onDetails(svc)}}
-          style={{fontSize:11,padding:"3px 10px",borderRadius:4,border:"1px solid #27272a",background:"transparent",color:"#71717a",cursor:"pointer",fontFamily:"inherit",flexShrink:0}}>
-          Details
+        
+        <span style={{
+          fontFamily: "'IBM Plex Mono', monospace",
+          fontSize: 11,
+          color: colors.textTertiary,
+          flexShrink: 0
+        }}>
+          {fmtTime(svc.exposedAt)}
+        </span>
+        
+        <button 
+          onClick={e => {e.stopPropagation(); onDetails(svc)}}
+          style={{
+            fontSize: 12,
+            padding: "6px 14px",
+            borderRadius: 6,
+            border: `1px solid ${colors.borderSubtle}`,
+            background: "transparent",
+            color: colors.accent,
+            cursor: "pointer",
+            fontFamily: "inherit",
+            fontWeight: 500,
+            flexShrink: 0,
+            transition: "all 0.2s ease"
+          }}
+          onMouseEnter={e => {
+            e.currentTarget.style.background = colors.bgHover
+            e.currentTarget.style.borderColor = colors.accent
+          }}
+          onMouseLeave={e => {
+            e.currentTarget.style.background = "transparent"
+            e.currentTarget.style.borderColor = colors.borderSubtle
+          }}>
+          Details →
         </button>
       </div>
+      
       {open && (
-        <div style={{padding:"10px 14px",background:"#0a0a0a"}}>
-          <div style={{fontSize:10,color:"#52525b",letterSpacing:"0.05em",textTransform:"uppercase",marginBottom:6}}>
-            Dependency Chain &middot; {svc.chain.length-1} hop{svc.chain.length-2!==1?"s":""}
+        <div style={{padding: "14px 16px", background: colors.bgPrimary}}>
+          <div style={{
+            fontSize: 11,
+            color: colors.textTertiary,
+            letterSpacing: "0.06em",
+            textTransform: "uppercase",
+            marginBottom: 12,
+            fontWeight: 600
+          }}>
+            Dependency Chain · {svc.chain.length - 1} hop{svc.chain.length - 2 !== 1 ? "s" : ""}
           </div>
           <Chain chain={svc.chain}/>
         </div>
@@ -373,67 +506,170 @@ function GraphView({data, onDetails}) {
     }
   })
   return (
-    <div style={{position:"relative",background:"#0a0a0a",borderRadius:8,border:"1px solid #1c1c1f",overflow:"hidden"}}>
-      <div style={{position:"absolute",top:12,left:12,display:"flex",gap:12,zIndex:10}}>
-        {[{c:"#ef4444",l:"Compromised"},{c:"#f59e0b",l:"Intermediate"},{c:"#71717a",l:"Service"}].map(x=>(
-          <div key={x.l} style={{display:"flex",alignItems:"center",gap:5}}>
-            <div style={{width:7,height:7,borderRadius:"50%",background:x.c}}/>
-            <span style={{fontSize:10,color:"#52525b"}}>{x.l}</span>
+    <div style={{
+      position: "relative",
+      background: colors.bgCard,
+      borderRadius: 12,
+      border: `1px solid ${colors.borderSubtle}`,
+      overflow: "hidden",
+      boxShadow: colors.shadowCard
+    }}>
+      {/* Legend */}
+      <div style={{
+        position: "absolute",
+        top: 16,
+        left: 16,
+        display: "flex",
+        gap: 16,
+        zIndex: 10,
+        background: colors.bgElevated,
+        padding: "8px 14px",
+        borderRadius: 8,
+        border: `1px solid ${colors.borderSubtle}`
+      }}>
+        {[
+          {c: colors.critical, l: "Compromised"},
+          {c: colors.warning, l: "Intermediate"},
+          {c: colors.textSecondary, l: "Service"}
+        ].map(x => (
+          <div key={x.l} style={{display: "flex", alignItems: "center", gap: 6}}>
+            <div style={{
+              width: 8,
+              height: 8,
+              borderRadius: "50%",
+              background: x.c,
+              boxShadow: `0 0 8px ${x.c}40`
+            }}/>
+            <span style={{fontSize: 11, color: colors.textSecondary, fontWeight: 500}}>{x.l}</span>
           </div>
         ))}
       </div>
-      <svg viewBox={`0 0 ${W} ${H}`} style={{width:"100%",height:440}}>
+      
+      <svg viewBox={`0 0 ${W} ${H}`} style={{width: "100%", height: 440}}>
         <defs>
           <pattern id="grid" width="36" height="36" patternUnits="userSpaceOnUse">
-            <path d="M 36 0 L 0 0 0 36" fill="none" stroke="#141414" strokeWidth="1"/>
+            <path d="M 36 0 L 0 0 0 36" fill="none" stroke={colors.borderSubtle} strokeWidth="0.5" opacity="0.3"/>
           </pattern>
           <radialGradient id="rg" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="#ef4444" stopOpacity="0.18"/>
-            <stop offset="100%" stopColor="#ef4444" stopOpacity="0"/>
+            <stop offset="0%" stopColor={colors.critical} stopOpacity="0.2"/>
+            <stop offset="100%" stopColor={colors.critical} stopOpacity="0"/>
           </radialGradient>
         </defs>
         <rect width={W} height={H} fill="url(#grid)"/>
         <circle cx={CX} cy={CY} r="58" fill="url(#rg)"/>
-        {edges.map((e,i)=>(
-          <line key={i} x1={e.ax} y1={e.ay} x2={e.bx} y2={e.by} stroke="#27272a" strokeWidth="1.5" opacity="0.6"/>
+        {edges.map((e, i) => (
+          <line 
+            key={i} 
+            x1={e.ax} 
+            y1={e.ay} 
+            x2={e.bx} 
+            y2={e.by} 
+            stroke={colors.borderStrong} 
+            strokeWidth="1.5" 
+            opacity="0.5"/>
         ))}
-        {innerNodes.map(n=>(
-          <g key={n.name} onMouseEnter={()=>setHov(n.name)} onMouseLeave={()=>setHov(null)}>
-            <circle cx={n.x} cy={n.y} r={hov===n.name?10:7} fill="#1a1a1a" stroke="#f59e0b" strokeWidth="1.5" style={{transition:"r .15s"}}/>
-            <text x={n.x} y={n.y-12} textAnchor="middle" fill="#a1a1aa" fontSize="9" fontFamily="'JetBrains Mono',monospace">
-              {n.name.split("@")[0].substring(0,14)}
+        {innerNodes.map(n => (
+          <g key={n.name} onMouseEnter={() => setHov(n.name)} onMouseLeave={() => setHov(null)}>
+            <circle 
+              cx={n.x} 
+              cy={n.y} 
+              r={hov === n.name ? 10 : 7} 
+              fill={colors.bgCard} 
+              stroke={colors.warning} 
+              strokeWidth="2" 
+              style={{transition: "r .2s ease"}}/>
+            <text 
+              x={n.x} 
+              y={n.y - 14} 
+              textAnchor="middle" 
+              fill={colors.textSecondary} 
+              fontSize="9" 
+              fontFamily="'IBM Plex Mono',monospace">
+              {n.name.split("@")[0].substring(0, 14)}
             </text>
           </g>
         ))}
-        {outerNodes.map(sn=>{
-          const dx=sn.x-CX,dy=sn.y-CY,len=Math.sqrt(dx*dx+dy*dy)
-          const lx=sn.x+dx/len*18,ly=sn.y+dy/len*13
+        {outerNodes.map(sn => {
+          const dx = sn.x - CX, dy = sn.y - CY, len = Math.sqrt(dx * dx + dy * dy)
+          const lx = sn.x + dx / len * 18, ly = sn.y + dy / len * 13
           return (
-            <g key={sn.id} onClick={()=>onDetails(sn)} style={{cursor:"pointer"}} onMouseEnter={()=>setHov(sn.id)} onMouseLeave={()=>setHov(null)}>
-              <circle cx={sn.x} cy={sn.y} r={hov===sn.id?10:7} fill="#0e0e0e"
-                stroke={sn.severity==="direct"?"#ef4444":"#f59e0b"}
-                strokeWidth={hov===sn.id?2.5:1.5} style={{transition:"all .15s"}}/>
-              <text x={lx} y={ly+3}
-                textAnchor={sn.x<CX-15?"end":sn.x>CX+15?"start":"middle"}
-                fill={hov===sn.id?"#e4e4e7":"#71717a"} fontSize="9.5"
-                fontFamily="'JetBrains Mono',monospace" style={{transition:"fill .15s"}}>
+            <g 
+              key={sn.id} 
+              onClick={() => onDetails(sn)} 
+              style={{cursor: "pointer"}} 
+              onMouseEnter={() => setHov(sn.id)} 
+              onMouseLeave={() => setHov(null)}>
+              <circle 
+                cx={sn.x} 
+                cy={sn.y} 
+                r={hov === sn.id ? 10 : 7} 
+                fill={colors.bgPrimary}
+                stroke={sn.severity === "direct" ? colors.critical : colors.warning}
+                strokeWidth={hov === sn.id ? 2.5 : 1.5} 
+                style={{transition: "all .2s ease"}}/>
+              <text 
+                x={lx} 
+                y={ly + 3}
+                textAnchor={sn.x < CX - 15 ? "end" : sn.x > CX + 15 ? "start" : "middle"}
+                fill={hov === sn.id ? colors.textPrimary : colors.textSecondary} 
+                fontSize="10"
+                fontFamily="'IBM Plex Mono',monospace" 
+                style={{transition: "fill .2s ease"}}>
                 {sn.name}
               </text>
             </g>
           )
         })}
-        <circle cx={CX} cy={CY} r="20" fill="#1c1c1f" stroke="#ef4444" strokeWidth="2.5"
-          style={{animation:"pulseR 2s ease-in-out infinite"}}/>
-        <circle cx={CX} cy={CY} r="26" fill="none" stroke="#ef4444" strokeWidth="1" opacity="0.3"/>
-        <text x={CX} y={CY-28} textAnchor="middle" fill="#ef4444" fontSize="10"
-          fontFamily="'JetBrains Mono',monospace" fontWeight="600">
+        <circle 
+          cx={CX} 
+          cy={CY} 
+          r="20" 
+          fill={colors.bgCard} 
+          stroke={colors.critical} 
+          strokeWidth="3"
+          style={{animation: "pulseR 2s ease-in-out infinite"}}/>
+        <circle 
+          cx={CX} 
+          cy={CY} 
+          r="26" 
+          fill="none" 
+          stroke={colors.critical} 
+          strokeWidth="1" 
+          opacity="0.4"/>
+        <text 
+          x={CX} 
+          y={CY - 28} 
+          textAnchor="middle" 
+          fill={colors.critical} 
+          fontSize="11"
+          fontFamily="'IBM Plex Mono',monospace" 
+          fontWeight="600">
           {rootName.split("@")[0]}
         </text>
-        <text x={CX} y={CY+3} textAnchor="middle" fill="#ef4444" fontSize="7"
-          fontFamily="'JetBrains Mono',monospace" opacity="0.75">COMPROMISED</text>
+        <text 
+          x={CX} 
+          y={CY + 3} 
+          textAnchor="middle" 
+          fill={colors.critical} 
+          fontSize="8"
+          fontFamily="'IBM Plex Mono',monospace" 
+          opacity="0.8">
+          COMPROMISED
+        </text>
       </svg>
-      <div style={{position:"absolute",bottom:10,right:12,fontSize:10,color:"#3f3f46"}}>
-        Click a service node to open details
+      
+      <div style={{
+        position: "absolute",
+        bottom: 16,
+        right: 16,
+        fontSize: 11,
+        color: colors.textTertiary,
+        background: colors.bgElevated,
+        padding: "6px 12px",
+        borderRadius: 6,
+        border: `1px solid ${colors.borderSubtle}`
+      }}>
+        Click a service node to view details
       </div>
     </div>
   )
@@ -1274,55 +1510,150 @@ export default function App() {
           </>
         )}
 
-        {/* ── MAIN ──────────────────────────────────────────────────────────── */}
+        {/* ── CONTROLS BAR ─────────────────────────────────────────────────────── */}
         {data && (
-          <div style={{marginBottom:28}}>
-            <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:14}}>
-              <div style={{display:"flex",alignItems:"center",gap:10}}>
-                <span style={{fontSize:13,fontWeight:600,color:"#fafafa"}}>
+          <div style={{marginBottom: 28}}>
+            <div style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              marginBottom: 20,
+              padding: "16px 20px",
+              background: colors.bgCard,
+              border: `1px solid ${colors.borderSubtle}`,
+              borderRadius: 12
+            }}>
+              <div style={{display: "flex", alignItems: "center", gap: 12}}>
+                <span style={{
+                  fontSize: 16,
+                  fontWeight: 600,
+                  color: colors.textPrimary,
+                  letterSpacing: "-0.01em"
+                }}>
                   {view === "maintainers" ? "Maintainer Intelligence" : "Exposed Services"}
                 </span>
                 {view !== "maintainers" && (
-                  <span style={{fontSize:11,fontWeight:600,padding:"1px 7px",borderRadius:10,background:"rgba(239,68,68,.1)",color:"#ef4444",border:"1px solid rgba(239,68,68,.2)"}}>{data.services.length}</span>
+                  <span style={{
+                    fontSize: 12,
+                    fontWeight: 600,
+                    padding: "4px 10px",
+                    borderRadius: 9999,
+                    background: "rgba(220, 38, 38, 0.1)",
+                    color: colors.critical,
+                    border: `1px solid ${colors.critical}30`,
+                    fontFamily: "'IBM Plex Mono', monospace"
+                  }}>
+                    {data.services.length}
+                  </span>
                 )}
               </div>
-              <div style={{display:"flex",alignItems:"center",gap:10}}>
-                {view==="list" && (
+              
+              <div style={{display: "flex", alignItems: "center", gap: 12}}>
+                {view === "list" && (
                   <>
-                    <select value={filter} onChange={e=>setFilter(e.target.value)}
-                      style={{fontSize:11,background:"#111",color:"#a1a1aa",border:"1px solid #27272a",borderRadius:4,padding:"4px 8px",cursor:"pointer",outline:"none",fontFamily:"inherit"}}>
+                    <select 
+                      value={filter} 
+                      onChange={e => setFilter(e.target.value)}
+                      style={{
+                        fontSize: 12,
+                        background: colors.bgPrimary,
+                        color: colors.textSecondary,
+                        border: `1px solid ${colors.borderSubtle}`,
+                        borderRadius: 8,
+                        padding: "8px 12px",
+                        cursor: "pointer",
+                        outline: "none",
+                        fontFamily: "inherit",
+                        fontWeight: 500
+                      }}>
                       <option value="all">All Severities</option>
                       <option value="direct">Direct Only</option>
                       <option value="transitive">Transitive Only</option>
                     </select>
-                    <select value={sortBy} onChange={e=>setSortBy(e.target.value)}
-                      style={{fontSize:11,background:"#111",color:"#a1a1aa",border:"1px solid #27272a",borderRadius:4,padding:"4px 8px",cursor:"pointer",outline:"none",fontFamily:"inherit"}}>
+                    <select 
+                      value={sortBy} 
+                      onChange={e => setSortBy(e.target.value)}
+                      style={{
+                        fontSize: 12,
+                        background: colors.bgPrimary,
+                        color: colors.textSecondary,
+                        border: `1px solid ${colors.borderSubtle}`,
+                        borderRadius: 8,
+                        padding: "8px 12px",
+                        cursor: "pointer",
+                        outline: "none",
+                        fontFamily: "inherit",
+                        fontWeight: 500
+                      }}>
                       <option value="severity">Sort: Severity</option>
                       <option value="time">Sort: Time</option>
                     </select>
                   </>
                 )}
-                <div style={{display:"flex",alignItems:"center",background:"#111",border:"1px solid #27272a",borderRadius:6,padding:2}}>
-                  {["list","graph","maintainers"].map(v=>(
-                    <button key={v} onClick={()=>setView(v)}
-                      style={{padding:"4px 14px",borderRadius:4,border:"none",background:v===view?"#1c1c1f":"transparent",color:v===view?"#fafafa":"#71717a",fontSize:12,fontWeight:v===view?600:400,cursor:"pointer",fontFamily:"inherit",transition:"all .15s"}}>
-                      {v==="list"?"&#9776; List":v==="graph"?"&#9673; Graph":"&#128100; Intel"}
+                
+                {/* View Tabs */}
+                <div style={{
+                  display: "flex",
+                  alignItems: "center",
+                  background: colors.bgPrimary,
+                  border: `1px solid ${colors.borderSubtle}`,
+                  borderRadius: 8,
+                  padding: 3
+                }}>
+                  {["list", "graph", "maintainers"].map(v => (
+                    <button 
+                      key={v} 
+                      onClick={() => setView(v)}
+                      style={{
+                        padding: "8px 16px",
+                        borderRadius: 6,
+                        border: "none",
+                        background: v === view ? colors.accent : "transparent",
+                        color: v === view ? "#fff" : colors.textSecondary,
+                        fontSize: 12,
+                        fontWeight: v === view ? 600 : 500,
+                        cursor: "pointer",
+                        fontFamily: "inherit",
+                        transition: "all 0.2s ease"
+                      }}
+                      onMouseEnter={e => {
+                        if (v !== view) e.currentTarget.style.background = colors.bgHover
+                      }}
+                      onMouseLeave={e => {
+                        if (v !== view) e.currentTarget.style.background = "transparent"
+                      }}>
+                      {v === "list" ? "☰ List" : v === "graph" ? "◉ Graph" : "👤 Intel"}
                     </button>
                   ))}
                 </div>
               </div>
             </div>
 
-            {view==="list" && (
-              <div style={{display:"flex",flexDirection:"column",gap:6}}>
-                {sorted.length===0
-                  ? <div style={{textAlign:"center",padding:40,color:"#3f3f46",fontSize:13}}>No services match the current filter.</div>
-                  : sorted.map((s,i)=><ServiceRow key={s.id} svc={s} idx={i} onDetails={setDrawer}/>)
-                }
+            {/* List View Panel */}
+            {view === "list" && (
+              <div style={{display: "flex", flexDirection: "column", gap: 8}}>
+                {sorted.length === 0 ? (
+                  <div style={{
+                    textAlign: "center",
+                    padding: "80px 40px",
+                    color: colors.textTertiary,
+                    fontSize: 14
+                  }}>
+                    <div style={{fontSize: 48, marginBottom: 16, opacity: 0.3}}>🔍</div>
+                    <div style={{fontWeight: 500, marginBottom: 8}}>No services match the current filter</div>
+                    <div style={{fontSize: 12, color: colors.textDisabled}}>Try adjusting your filter settings</div>
+                  </div>
+                ) : (
+                  sorted.map((s, i) => <ServiceRow key={s.id} svc={s} idx={i} onDetails={setDrawer}/>)
+                )}
               </div>
             )}
-            {view==="graph" && <GraphView data={data} onDetails={setDrawer}/>}
-            {view==="maintainers" && <MaintainerIntelligence data={data}/>}
+            
+            {/* Graph View Panel */}
+            {view === "graph" && <GraphView data={data} onDetails={setDrawer}/>}
+            
+            {/* Maintainer Intelligence Panel */}
+            {view === "maintainers" && <MaintainerIntelligence data={data}/>}
           </div>
         )}
 
