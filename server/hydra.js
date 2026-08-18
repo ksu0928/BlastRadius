@@ -72,6 +72,44 @@ export async function getRelations(entityId) {
   return result?.data || {};
 }
 
+// ── Simulate compromise with real-time measurement ────────────────────────
+export async function simulateCompromise(packageId) {
+  const client = getClient();
+  const startTime = performance.now();
+
+  // Extract package name from ID (pkg:name@version)
+  const packageName = packageId.replace(/^pkg:/, "").split("@")[0];
+
+  const result = await client.query({
+    database: DATABASE,
+    query: `${packageName} compromised blast radius affected packages services`,
+    type: "knowledge",
+    queryBy: "hybrid",
+    mode: "thinking",
+    graphContext: true,
+    queryForcefulRelations: true,
+    maxResults: 50,
+  });
+
+  const endTime = performance.now();
+  const latencyMs = Math.round(endTime - startTime);
+
+  const transformed = transformResponse(result, packageName);
+
+  return {
+    ...transformed,
+    simulation: {
+      packageId,
+      packageName,
+      startTime: new Date(Date.now() - latencyMs).toISOString(),
+      endTime: new Date().toISOString(),
+      latencyMs,
+      traversalDepth: transformed.stats.deepestChain,
+      nodesExplored: transformed.stats.packagesAffected + transformed.stats.servicesExposed,
+    },
+  };
+}
+
 // ── Transform HydraDB query response → frontend shape ──────────────────────
 function transformResponse(result, packageQuery) {
   const chunks = result?.data?.chunks || [];

@@ -21,6 +21,16 @@ async function fetchSuggestions() {
   return res.json()
 }
 
+async function fetchSimulateCompromise(packageId) {
+  const res = await fetch(`${API_BASE}/simulate-compromise`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ packageId }),
+  })
+  if (!res.ok) throw new Error(`Simulation failed: ${res.status} ${res.statusText}`)
+  return res.json()
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // HELPERS
 // ─────────────────────────────────────────────────────────────────────────────
@@ -419,6 +429,150 @@ function Drawer({svc, onClose}) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// SIMULATION MODAL
+// ─────────────────────────────────────────────────────────────────────────────
+function SimulationModal({packageId, onClose}) {
+  const [status, setStatus] = useState("running") // running | complete | error
+  const [elapsed, setElapsed] = useState(0)
+  const [result, setResult] = useState(null)
+  const [error, setError] = useState(null)
+  const startTimeRef = useRef(null)
+
+  useEffect(() => {
+    startTimeRef.current = Date.now()
+    const timer = setInterval(() => {
+      setElapsed(Date.now() - startTimeRef.current)
+    }, 27)
+
+    fetchSimulateCompromise(packageId)
+      .then(data => {
+        setResult(data)
+        setStatus("complete")
+        clearInterval(timer)
+      })
+      .catch(err => {
+        setError(err.message)
+        setStatus("error")
+        clearInterval(timer)
+      })
+
+    return () => clearInterval(timer)
+  }, [packageId])
+
+  useEffect(() => {
+    const h = e => { if(e.key === "Escape") onClose() }
+    window.addEventListener("keydown", h)
+    return () => window.removeEventListener("keydown", h)
+  }, [onClose])
+
+  const pkgName = packageId.replace(/^pkg:/, "")
+
+  return (
+    <>
+      <div onClick={onClose} style={{position:"fixed",inset:0,background:"rgba(0,0,0,.7)",zIndex:40,backdropFilter:"blur(3px)",animation:"fadeIn .2s"}}/>
+      <div style={{position:"fixed",top:"50%",left:"50%",transform:"translate(-50%,-50%)",zIndex:50,background:"#111",border:"1px solid #27272a",borderRadius:12,width:"90%",maxWidth:580,boxShadow:"0 20px 60px rgba(0,0,0,.6)",animation:"popIn .3s cubic-bezier(.4,0,.2,1)"}}>
+        
+        {/* Header */}
+        <div style={{padding:"20px 24px",borderBottom:"1px solid #1c1c1f",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+          <div>
+            <div style={{fontSize:11,color:"#52525b",marginBottom:4,textTransform:"uppercase",letterSpacing:"0.06em"}}>
+              Live Blast Radius Simulation
+            </div>
+            <div style={{fontSize:15,fontWeight:600,color:"#fafafa",fontFamily:"'JetBrains Mono',monospace"}}>{pkgName}</div>
+          </div>
+          <button onClick={onClose} style={{width:32,height:32,display:"flex",alignItems:"center",justifyContent:"center",borderRadius:6,border:"1px solid #27272a",background:"transparent",cursor:"pointer",color:"#71717a"}}><IcX/></button>
+        </div>
+
+        {/* Body */}
+        <div style={{padding:"32px 24px"}}>
+          {status === "running" && (
+            <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:20}}>
+              <div style={{position:"relative",width:120,height:120}}>
+                <svg viewBox="0 0 120 120" style={{position:"absolute",inset:0,animation:"spin 2s linear infinite"}}>
+                  <circle cx="60" cy="60" r="54" fill="none" stroke="#1c1c1f" strokeWidth="4"/>
+                  <circle cx="60" cy="60" r="54" fill="none" stroke="#ef4444" strokeWidth="4" strokeDasharray="170 170" strokeDashoffset="42" strokeLinecap="round"/>
+                </svg>
+                <div style={{position:"absolute",inset:0,display:"flex",alignItems:"center",justifyContent:"center",flexDirection:"column"}}>
+                  <div style={{fontSize:28,fontWeight:700,color:"#ef4444",fontFamily:"'JetBrains Mono',monospace"}}>{(elapsed/1000).toFixed(2)}</div>
+                  <div style={{fontSize:10,color:"#52525b",marginTop:2}}>seconds</div>
+                </div>
+              </div>
+              <div style={{textAlign:"center"}}>
+                <div style={{fontSize:13,color:"#fafafa",marginBottom:6}}>Traversing dependency graph...</div>
+                <div style={{fontSize:11,color:"#52525b"}}>Analyzing transitive relationships with HydraDB</div>
+              </div>
+            </div>
+          )}
+
+          {status === "complete" && result && (
+            <div style={{display:"flex",flexDirection:"column",gap:20}}>
+              {/* Timer Result */}
+              <div style={{textAlign:"center",padding:"20px 0",borderBottom:"1px solid #1c1c1f"}}>
+                <div style={{fontSize:11,color:"#52525b",marginBottom:8,textTransform:"uppercase",letterSpacing:"0.06em"}}>Blast Radius Resolved In</div>
+                <div style={{fontSize:42,fontWeight:700,color:"#22c55e",fontFamily:"'JetBrains Mono',monospace",lineHeight:1}}>{result.simulation.latencyMs}<span style={{fontSize:20,color:"#71717a"}}>ms</span></div>
+                <div style={{fontSize:11,color:"#52525b",marginTop:6}}>Single graph traversal query • {result.simulation.traversalDepth} hops deep</div>
+              </div>
+
+              {/* Stats Grid */}
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>
+                <div style={{background:"#0e0e0e",border:"1px solid #1c1c1f",borderRadius:6,padding:"14px 16px"}}>
+                  <div style={{fontSize:10,color:"#52525b",marginBottom:6,textTransform:"uppercase",letterSpacing:"0.05em"}}>Packages</div>
+                  <div style={{fontSize:28,fontWeight:700,color:"#f59e0b",fontFamily:"'JetBrains Mono',monospace"}}>{result.stats.packagesAffected}</div>
+                </div>
+                <div style={{background:"#0e0e0e",border:"1px solid #1c1c1f",borderRadius:6,padding:"14px 16px"}}>
+                  <div style={{fontSize:10,color:"#52525b",marginBottom:6,textTransform:"uppercase",letterSpacing:"0.05em"}}>Services</div>
+                  <div style={{fontSize:28,fontWeight:700,color:"#ef4444",fontFamily:"'JetBrains Mono',monospace"}}>{result.stats.servicesExposed}</div>
+                </div>
+                <div style={{background:"#0e0e0e",border:"1px solid #1c1c1f",borderRadius:6,padding:"14px 16px"}}>
+                  <div style={{fontSize:10,color:"#52525b",marginBottom:6,textTransform:"uppercase",letterSpacing:"0.05em"}}>Deepest Chain</div>
+                  <div style={{fontSize:28,fontWeight:700,color:"#71717a",fontFamily:"'JetBrains Mono',monospace"}}>{result.stats.deepestChain}</div>
+                </div>
+                <div style={{background:"#0e0e0e",border:"1px solid #1c1c1f",borderRadius:6,padding:"14px 16px"}}>
+                  <div style={{fontSize:10,color:"#52525b",marginBottom:6,textTransform:"uppercase",letterSpacing:"0.05em"}}>Nodes Explored</div>
+                  <div style={{fontSize:28,fontWeight:700,color:"#71717a",fontFamily:"'JetBrains Mono',monospace"}}>{result.simulation.nodesExplored}</div>
+                </div>
+              </div>
+
+              {/* Performance Note */}
+              <div style={{background:"rgba(34,197,94,.08)",border:"1px solid rgba(34,197,94,.2)",borderRadius:6,padding:"12px 14px",display:"flex",gap:10}}>
+                <span style={{color:"#22c55e",flexShrink:0}}><IcShield/></span>
+                <div style={{flex:1}}>
+                  <div style={{fontSize:11,fontWeight:600,color:"#22c55e",marginBottom:2}}>Real-Time Performance</div>
+                  <div style={{fontSize:10,color:"#71717a"}}>
+                    HydraDB resolved {result.simulation.traversalDepth}-hop transitive dependencies in {result.simulation.latencyMs}ms. 
+                    Equivalent SQL would require {result.simulation.traversalDepth}+ recursive queries.
+                  </div>
+                </div>
+              </div>
+
+              {/* Action */}
+              <button onClick={() => window.location.reload()} 
+                style={{padding:"10px 18px",borderRadius:6,border:"1px solid #27272a",background:"#1c1c1f",color:"#fafafa",fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>
+                View Full Analysis
+              </button>
+            </div>
+          )}
+
+          {status === "error" && (
+            <div style={{textAlign:"center",padding:"20px 0"}}>
+              <div style={{fontSize:36,marginBottom:12}}>⚠️</div>
+              <div style={{fontSize:13,color:"#ef4444",marginBottom:6}}>Simulation Failed</div>
+              <div style={{fontSize:11,color:"#52525b"}}>{error}</div>
+              <button onClick={onClose} style={{marginTop:20,padding:"8px 16px",borderRadius:5,border:"1px solid #27272a",background:"#1c1c1f",color:"#a1a1aa",fontSize:11,cursor:"pointer"}}>Close</button>
+            </div>
+          )}
+        </div>
+
+      </div>
+      <style>{`
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes popIn { from { opacity: 0; transform: translate(-50%, -48%) scale(0.96); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+      `}</style>
+    </>
+  )
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // ERROR BANNER
 // ─────────────────────────────────────────────────────────────────────────────
 function ErrorBanner({msg, onDismiss}) {
@@ -453,6 +607,7 @@ export default function App() {
   const [suggestions, setSuggestions] = useState([])
   const [error, setError]       = useState(null)
   const [sugsLoading, setSugsLoading] = useState(false)
+  const [simulating, setSimulating] = useState(null) // packageId when modal is open
 
   // Load suggestions on mount
   useEffect(() => {
@@ -575,12 +730,35 @@ export default function App() {
 
         {/* ── STATS ─────────────────────────────────────────────────────────── */}
         {data && (
-          <div style={{display:"flex",gap:12,marginBottom:28}}>
-            <StatCard label="Packages Affected" value={data.stats.packagesAffected} sub="transitive + direct" accent="amber"/>
-            <StatCard label="Services Exposed" value={data.stats.servicesExposed} sub={`${data.services.filter(s=>s.severity==="direct").length} direct \u00b7 ${data.services.filter(s=>s.severity==="transitive").length} transitive`} accent="red"/>
-            <StatCard label="Time to Detection" value={`${data.stats.detectionMinutes}m ${data.stats.detectionSeconds}s`} sub={`compromise: ${fmtTime(data.compromisedAt)}`} accent={data.stats.detectionMinutes<10?"green":"red"}/>
-            <StatCard label="Deepest Chain" value={`${data.stats.deepestChain} hops`} sub="longest dependency path"/>
-          </div>
+          <>
+            <div style={{display:"flex",gap:12,marginBottom:16}}>
+              <StatCard label="Packages Affected" value={data.stats.packagesAffected} sub="transitive + direct" accent="amber"/>
+              <StatCard label="Services Exposed" value={data.stats.servicesExposed} sub={`${data.services.filter(s=>s.severity==="direct").length} direct \u00b7 ${data.services.filter(s=>s.severity==="transitive").length} transitive`} accent="red"/>
+              <StatCard label="Time to Detection" value={`${data.stats.detectionMinutes}m ${data.stats.detectionSeconds}s`} sub={`compromise: ${fmtTime(data.compromisedAt)}`} accent={data.stats.detectionMinutes<10?"green":"red"}/>
+              <StatCard label="Deepest Chain" value={`${data.stats.deepestChain} hops`} sub="longest dependency path"/>
+            </div>
+            <div style={{marginBottom:28,display:"flex",alignItems:"center",justifyContent:"center",gap:8}}>
+              <button 
+                onClick={() => {
+                  const pkgId = data.services[0]?.chain[0] ? `pkg:${data.services[0].chain[0]}` : `pkg:${activeQ}`
+                  setSimulating(pkgId)
+                }}
+                style={{
+                  padding:"10px 20px",borderRadius:8,border:"2px solid #ef4444",background:"rgba(239,68,68,.1)",
+                  color:"#ef4444",fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit",
+                  display:"flex",alignItems:"center",gap:8,transition:"all .2s"
+                }}
+                onMouseEnter={e => { e.currentTarget.style.background = "rgba(239,68,68,.2)"; e.currentTarget.style.transform = "translateY(-1px)" }}
+                onMouseLeave={e => { e.currentTarget.style.background = "rgba(239,68,68,.1)"; e.currentTarget.style.transform = "translateY(0)" }}>
+                <span style={{fontSize:16}}>⚡</span>
+                <span>Simulate Live Compromise</span>
+                <span style={{fontSize:9,padding:"2px 6px",borderRadius:3,background:"rgba(239,68,68,.3)",color:"#fff",fontWeight:700}}>NEW</span>
+              </button>
+              <div style={{fontSize:10,color:"#52525b",maxWidth:280,textAlign:"center"}}>
+                Watch real-time graph traversal with measured query latency
+              </div>
+            </div>
+          </>
         )}
 
         {/* ── MAIN ──────────────────────────────────────────────────────────── */}
@@ -634,6 +812,7 @@ export default function App() {
       </div>
 
       {drawer && <Drawer svc={drawer} onClose={()=>setDrawer(null)}/>}
+      {simulating && <SimulationModal packageId={simulating} onClose={()=>setSimulating(null)}/>}
     </div>
   )
 }

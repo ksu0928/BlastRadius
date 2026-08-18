@@ -8,7 +8,7 @@
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
-import { queryBlastRadius, listCompromisedPackages, getRelations } from "./hydra.js";
+import { queryBlastRadius, listCompromisedPackages, getRelations, simulateCompromise } from "./hydra.js";
 
 const PORT = process.env.PORT || 3001;
 const app = express();
@@ -68,6 +68,26 @@ app.get("/api/relations/:id", async (req, res) => {
     console.error("[relations] error:", err.message);
     res.status(err.status || 500).json({
       error: err.message || "Failed to fetch relations",
+    });
+  }
+});
+
+// ── Simulate compromise event ───────────────────────────────────────────────
+app.post("/api/simulate-compromise", async (req, res) => {
+  try {
+    const { packageId } = req.body;
+    if (!packageId || typeof packageId !== "string") {
+      return res.status(400).json({ error: "packageId is required" });
+    }
+
+    console.log(`[simulate] packageId="${packageId}"`);
+    const result = await simulateCompromise(packageId);
+    res.json(result);
+  } catch (err) {
+    console.error("[simulate] error:", err.message);
+    res.status(err.status || 500).json({
+      error: err.message || "Simulation failed",
+      code: err?.body?.error?.code || "INTERNAL_ERROR",
     });
   }
 });
