@@ -4,43 +4,46 @@
 @import "tailwindcss";
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   DESIGN TOKENS — Production-Grade Color System
-   Based on: Datadog (purple), Vercel (minimalism), Linear (lavender accent)
+   DESIGN TOKENS — Logistics-Inspired Color System
+   Based on: Blue Dart (trust), DHL (urgency), FedEx (authority), Amazon (action)
+   Psychology: Trust + Security + Urgent Action (Supply Chain Operations)
    ───────────────────────────────────────────────────────────────────────────── */
 
 :root {
-  /* Background Layers */
-  --bg-primary: #0F0F1E;        /* Dark canvas */
-  --bg-card: #1A1A2E;           /* Lifted surfaces */
-  --bg-elevated: #16162A;       /* Modals, dropdowns */
-  --bg-hover: rgba(94, 106, 210, 0.1);  /* Hover state tint */
+  /* Background Layers (Darker = Security Signal) */
+  --bg-primary: #0F1419;        /* Dark canvas (true dark, no purple tint) */
+  --bg-card: #1A1F2E;           /* Lifted surfaces (cooler blue-gray) */
+  --bg-elevated: #1E242F;       /* Modals, dropdowns */
+  --bg-hover: rgba(0, 117, 186, 0.08);  /* Blue Dart blue hover tint */
   
-  /* Semantic Colors (Threat Levels) */
-  --critical: #DC2626;          /* Direct vulnerabilities */
-  --warning: #F59E0B;           /* Transitive exposure */
-  --success: #10B981;           /* Resolved/Safe */
-  --info: #06B6D4;              /* Secondary highlights */
+  /* Semantic Colors (Logistics Alert System) */
+  --critical: #D40511;          /* DHL Speed Red - "STOP, handle now" */
+  --warning: #FF9900;           /* Amazon Action Orange - "attention needed" */
+  --success: #00A758;           /* Blue Dart Delivery Green - "cleared" */
+  --info: #FFCC00;              /* DHL Energy Yellow - "additional info" */
   
-  /* Accent (Single Chromatic Color, like Linear) */
-  --accent-primary: #5E6AD2;    /* Lavender-blue, CTAs only */
-  --accent-hover: #7078E1;      /* Hover state */
-  --accent-active: #4E5AC2;     /* Active state */
+  /* Accent (Trust Blue - Blue Dart Brand) */
+  --accent-primary: #0075BA;    /* Blue Dart Trust Blue, CTAs only */
+  --accent-hover: #0088D6;      /* Hover state (lighter) */
+  --accent-active: #005A8F;     /* Active state (darker) */
   
-  /* Text (WCAG AAA Contrast) */
-  --text-primary: #F1F5F9;      /* 8.5:1 contrast */
-  --text-secondary: #CBD5E1;    /* 7:1 contrast */
-  --text-tertiary: #94A3B8;     /* 4.8:1 contrast */
-  --text-disabled: #64748B;     /* Disabled state */
+  /* Text (WCAG AAA Contrast - Pure White) */
+  --text-primary: #FFFFFF;      /* Pure white, maximum clarity */
+  --text-secondary: #D0D4DB;    /* High contrast gray */
+  --text-tertiary: #9BA1AC;     /* Medium contrast gray */
+  --text-disabled: #6B7280;     /* Disabled state */
   
-  /* Borders */
-  --border-subtle: #334155;     /* Default borders */
-  --border-strong: #475569;     /* Hover borders */
-  --border-accent: rgba(94, 106, 210, 0.3);  /* Focus rings */
+  /* Borders (Cooler Blue-Gray Tones) */
+  --border-subtle: #2D3748;     /* Default borders */
+  --border-strong: #4A5568;     /* Hover borders */
+  --border-accent: rgba(0, 117, 186, 0.3);  /* Blue Dart blue focus rings */
   
-  /* Shadows (Elevated Depth) */
-  --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.3);
-  --shadow-card-hover: 0 8px 20px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+  /* Shadows (Stronger Depth) */
+  --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.35);
+  --shadow-card-hover: 0 8px 20px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
+  --shadow-glow-critical: 0 0 16px rgba(212, 5, 17, 0.4);  /* DHL red glow */
+  --shadow-glow-trust: 0 0 20px rgba(0, 117, 186, 0.3);     /* Blue Dart glow */
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -199,9 +202,9 @@ body {
    UTILITY CLASSES
    ───────────────────────────────────────────────────────────────────────────── */
 
-/* Focus Ring (Keyboard Navigation) */
+/* Focus Ring (Keyboard Navigation - Blue Dart Blue) */
 :focus-visible {
-  outline: 2px solid var(--accent-primary);
+  outline: 2px solid var(--accent-primary);  /* Blue Dart Trust Blue */
   outline-offset: 2px;
   border-radius: 4px;
 }
@@ -212,7 +215,7 @@ a:focus-visible,
 [role="button"]:focus-visible,
 select:focus-visible,
 input:focus-visible {
-  outline: 2px solid var(--accent-primary);
+  outline: 2px solid var(--accent-primary);  /* Blue Dart Trust Blue */
   outline-offset: 2px;
 }
 

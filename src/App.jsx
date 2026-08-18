@@ -1,40 +1,43 @@
 import { useState, useEffect, useRef, useCallback } from "react"
 
 // ─────────────────────────────────────────────────────────────────────────────
-// COLOR SYSTEM — Professional Production Palette (Datadog/Linear/Vercel)
+// COLOR SYSTEM — Logistics-Inspired Production Palette
+// Blue Dart (trust) + DHL (urgency) + FedEx (authority) + Amazon (action)
 // ─────────────────────────────────────────────────────────────────────────────
 const colors = {
-  // Backgrounds
-  bgPrimary: "#0F0F1E",
-  bgCard: "#1A1A2E",
-  bgElevated: "#16162A",
-  bgHover: "rgba(94, 106, 210, 0.1)",
+  // Backgrounds (Darker = Security Signal)
+  bgPrimary: "#0F1419",
+  bgCard: "#1A1F2E",
+  bgElevated: "#1E242F",
+  bgHover: "rgba(0, 117, 186, 0.08)",  // Blue Dart blue at 8%
   
-  // Semantic (Threat Levels)
-  critical: "#DC2626",
-  warning: "#F59E0B",
-  success: "#10B981",
-  info: "#06B6D4",
+  // Semantic (Logistics Alert System)
+  critical: "#D40511",    // DHL Speed Red - "STOP, handle now"
+  warning: "#FF9900",     // Amazon Action Orange - "attention needed"
+  success: "#00A758",     // Blue Dart Delivery Green - "cleared"
+  info: "#FFCC00",        // DHL Energy Yellow - "additional info"
   
-  // Accent (Single Chromatic Color - Like Linear)
-  accent: "#5E6AD2",
-  accentHover: "#7078E1",
-  accentActive: "#4E5AC2",
+  // Accent (Trust Blue - Blue Dart Brand)
+  accent: "#0075BA",      // Blue Dart Trust Blue, CTAs only
+  accentHover: "#0088D6", // Hover state (lighter)
+  accentActive: "#005A8F", // Active state (darker)
   
-  // Text (WCAG AAA Contrast)
-  textPrimary: "#F1F5F9",
-  textSecondary: "#CBD5E1",
-  textTertiary: "#94A3B8",
-  textDisabled: "#64748B",
+  // Text (WCAG AAA Contrast - Pure White)
+  textPrimary: "#FFFFFF",    // Pure white, maximum clarity
+  textSecondary: "#D0D4DB",  // High contrast gray
+  textTertiary: "#9BA1AC",   // Medium contrast gray
+  textDisabled: "#6B7280",   // Disabled state
   
-  // Borders
-  borderSubtle: "#334155",
-  borderStrong: "#475569",
-  borderAccent: "rgba(94, 106, 210, 0.3)",
+  // Borders (Cooler Blue-Gray)
+  borderSubtle: "#2D3748",
+  borderStrong: "#4A5568",
+  borderAccent: "rgba(0, 117, 186, 0.3)",  // Blue Dart blue focus
   
-  // Shadows
-  shadowCard: "0 4px 12px rgba(0, 0, 0, 0.3)",
-  shadowCardHover: "0 8px 20px rgba(0, 0, 0, 0.4)",
+  // Shadows (Stronger Depth)
+  shadowCard: "0 4px 12px rgba(0, 0, 0, 0.35)",
+  shadowCardHover: "0 8px 20px rgba(0, 0, 0, 0.45)",
+  shadowGlowCritical: "0 0 16px rgba(212, 5, 17, 0.4)",   // DHL red glow
+  shadowGlowTrust: "0 0 20px rgba(0, 117, 186, 0.3)",     // Blue Dart glow
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -164,26 +167,27 @@ function SkeletonLoader({width = "100%", height = 20, borderRadius = 6}) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// BADGE COMPONENT — Production Design System
+// BADGE COMPONENT — Logistics Status System
+// Inspired by Blue Dart/DHL/FedEx delivery status badges
 // ─────────────────────────────────────────────────────────────────────────────
 function Badge({sev}) {
   const config = {
     direct: {
-      bg: "rgba(220, 38, 38, 0.1)",
+      bg: "rgba(212, 5, 17, 0.12)",    // DHL red background
       color: colors.critical,
       border: colors.critical,
       label: "DIRECT",
       icon: "●"
     },
     transitive: {
-      bg: "rgba(245, 158, 11, 0.1)",
+      bg: "rgba(255, 153, 0, 0.12)",   // Amazon orange background
       color: colors.warning,
       border: colors.warning,
       label: "TRANSITIVE",
       icon: "◆"
     },
     safe: {
-      bg: "rgba(16, 185, 129, 0.1)",
+      bg: "rgba(0, 167, 88, 0.12)",    // Blue Dart green background
       color: colors.success,
       border: colors.success,
       label: "SAFE",
@@ -197,7 +201,7 @@ function Badge({sev}) {
       display: "inline-flex",
       alignItems: "center",
       gap: 6,
-      padding: "4px 10px",
+      padding: "6px 12px",
       borderRadius: 9999,
       fontSize: 11,
       fontWeight: 600,
@@ -251,14 +255,14 @@ function StatCard({label, value, sub, accent}) {
       e.currentTarget.style.boxShadow = colors.shadowCard
       e.currentTarget.style.borderColor = colors.borderSubtle
     }}>
-      {/* Gradient Accent Border (Top) */}
+      {/* Gradient Accent Border (Top) - DHL Red → Amazon Orange */}
       <div style={{
         position: "absolute",
         top: 0,
         left: 0,
         right: 0,
-        height: 3,
-        background: `linear-gradient(90deg, ${accentColor}, ${colors.warning})`,
+        height: 4,
+        background: `linear-gradient(90deg, ${colors.critical}, ${colors.warning})`,  // DHL red → Amazon orange
         borderRadius: "12px 12px 0 0"
       }}/>
       
@@ -317,17 +321,17 @@ function Chain({chain}) {
       {chain.map((node, i) => {
         const first = i === 0
         const last = i === chain.length - 1
-        const col = first ? colors.critical : last ? colors.textSecondary : colors.warning
+        const col = first ? colors.critical : last ? colors.textSecondary : colors.warning  // DHL red / Amazon orange
         const bg = first 
-          ? "rgba(220, 38, 38, 0.1)" 
+          ? "rgba(212, 5, 17, 0.12)"     // DHL red background
           : last 
-            ? "rgba(241, 245, 249, 0.05)" 
-            : "rgba(245, 158, 11, 0.1)"
+            ? "rgba(208, 212, 219, 0.05)" 
+            : "rgba(255, 153, 0, 0.12)"   // Amazon orange background
         const bdr = first 
-          ? colors.critical 
+          ? colors.critical                // DHL red border
           : last 
             ? colors.borderSubtle 
-            : colors.warning
+            : colors.warning                // Amazon orange border
         
         return (
           <div key={i} style={{display: "flex", alignItems: "center", gap: 8}}>
@@ -781,16 +785,16 @@ function Timeline({data}) {
           borderRadius: 2
         }}/>
         
-        {/* Danger window */}
+        {/* Danger window - DHL Red Shaded Region */}
         <div style={{
           position: "absolute",
           top: 18,
           left: 0,
           width: `${pct(dw)}%`,
           height: 46,
-          background: "rgba(220, 38, 38, 0.08)",
+          background: "rgba(212, 5, 17, 0.08)",  // DHL red at 8%
           borderLeft: `3px solid ${colors.critical}`,
-          borderRight: `2px dashed ${colors.critical}40`,
+          borderRight: `2px dashed rgba(212, 5, 17, 0.4)`,
           borderRadius: 6
         }}/>
         <span style={{
@@ -880,8 +884,8 @@ function Timeline({data}) {
                 background: s.severity === "direct" ? colors.critical : colors.warning,
                 border: `2px solid ${colors.bgCard}`,
                 boxShadow: s.severity === "direct" 
-                  ? `0 0 12px ${colors.critical}80, 0 0 20px ${colors.critical}40`
-                  : `0 0 12px ${colors.warning}80, 0 0 20px ${colors.warning}40`,
+                  ? colors.shadowGlowCritical   // DHL red glow
+                  : `0 0 12px rgba(255, 153, 0, 0.6), 0 0 20px rgba(255, 153, 0, 0.3)`,  // Amazon orange glow
                 zIndex: 2,
                 animation: "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
                 cursor: "pointer"
@@ -1199,8 +1203,8 @@ function Drawer({svc, onClose}) {
                     justifyContent: "space-between",
                     padding: "10px 14px",
                     borderRadius: 8,
-                    background: "rgba(245, 158, 11, 0.06)",
-                    border: `1px solid ${colors.warning}40`
+                    background: "rgba(255, 153, 0, 0.08)",  // Amazon orange at 8%
+                    border: `1px solid rgba(255, 153, 0, 0.4)`  // Amazon orange border
                   }}>
                   <span style={{
                     fontSize: 13,
@@ -1955,7 +1959,7 @@ export default function App() {
                   padding: "12px 24px",
                   borderRadius: 9999,
                   border: `2px solid ${colors.critical}`,
-                  background: "rgba(220, 38, 38, 0.1)",
+                  background: "rgba(212, 5, 17, 0.12)",  // DHL red at 12% opacity
                   color: colors.critical,
                   fontSize: 14,
                   fontWeight: 600,
@@ -1965,17 +1969,17 @@ export default function App() {
                   alignItems: "center",
                   gap: 10,
                   transition: "all 0.2s ease",
-                  boxShadow: `0 0 20px ${colors.critical}20`
+                  boxShadow: colors.shadowGlowCritical  // DHL red glow
                 }}
                 onMouseEnter={e => { 
-                  e.currentTarget.style.background = "rgba(220, 38, 38, 0.15)"
+                  e.currentTarget.style.background = "rgba(212, 5, 17, 0.18)"  // Darker on hover
                   e.currentTarget.style.transform = "translateY(-2px)"
-                  e.currentTarget.style.boxShadow = `0 4px 24px ${colors.critical}30`
+                  e.currentTarget.style.boxShadow = `0 4px 24px rgba(212, 5, 17, 0.5)`  // Stronger glow
                 }}
                 onMouseLeave={e => { 
-                  e.currentTarget.style.background = "rgba(220, 38, 38, 0.1)"
+                  e.currentTarget.style.background = "rgba(212, 5, 17, 0.12)"
                   e.currentTarget.style.transform = "translateY(0)"
-                  e.currentTarget.style.boxShadow = `0 0 20px ${colors.critical}20`
+                  e.currentTarget.style.boxShadow = colors.shadowGlowCritical
                 }}>
                 <span style={{fontSize: 18}}>⚡</span>
                 <span>Simulate Live Compromise</span>
@@ -2033,9 +2037,9 @@ export default function App() {
                     fontWeight: 600,
                     padding: "4px 10px",
                     borderRadius: 9999,
-                    background: "rgba(220, 38, 38, 0.1)",
+                    background: "rgba(212, 5, 17, 0.12)",  // DHL red background
                     color: colors.critical,
-                    border: `1px solid ${colors.critical}30`,
+                    border: `1px solid ${colors.critical}`,
                     fontFamily: "'IBM Plex Mono', monospace"
                   }}>
                     {data.services.length}
