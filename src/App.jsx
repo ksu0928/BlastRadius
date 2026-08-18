@@ -1,39 +1,24 @@
 import { useState, useEffect, useRef, useCallback } from "react"
 
 // ─────────────────────────────────────────────────────────────────────────────
-// MOCK DATA
+// API CLIENT
 // ─────────────────────────────────────────────────────────────────────────────
-const MOCK_DB = {
-  "event-stream@3.3.6": {
-    compromisedAt: "2024-11-26T08:31:00Z",
-    detectedAt: "2024-11-26T08:36:42Z",
-    stats: { packagesAffected: 14, servicesExposed: 11, detectionMinutes: 5, detectionSeconds: 42, deepestChain: 4 },
-    services: [
-      { id:"s1",  name:"payments-api",       severity:"direct",     exposedAt:"2024-11-26T08:31:00Z", resolvedMinutes:0,    chain:["event-stream@3.3.6","payments-api"],                                              maintainer:{name:"dominictarr",email:"dominic.tarr@example.com",packages:["event-stream","through","map-stream","split","JSONStream"],typosquats:["event_stream","eventstream","eventt-stream"]} },
-      { id:"s2",  name:"auth-service",       severity:"direct",     exposedAt:"2024-11-26T08:31:15Z", resolvedMinutes:0.25, chain:["event-stream@3.3.6","auth-service"],                                              maintainer:{name:"dominictarr",email:"dominic.tarr@example.com",packages:["event-stream","through","map-stream","split","JSONStream"],typosquats:["event_stream","eventstream","eventt-stream"]} },
-      { id:"s3",  name:"billing-worker",     severity:"transitive", exposedAt:"2024-11-26T08:32:18Z", resolvedMinutes:1.3,  chain:["event-stream@3.3.6","flatmap-stream@0.1.1","billing-worker"],                     maintainer:{name:"right9ctrl",email:"right9ctrl@protonmail.com",packages:["flatmap-stream","event-stream"],typosquats:["flatmap_stream","flat-map-stream","flatmapstream"]} },
-      { id:"s4",  name:"notification-svc",   severity:"transitive", exposedAt:"2024-11-26T08:33:04Z", resolvedMinutes:2.07, chain:["event-stream@3.3.6","through@2.3.8","pump@3.0.0","notification-svc"],             maintainer:{name:"mafintosh",email:"mathias.buus@example.com",packages:["pump","through2","end-of-stream","pumpify","duplexify"],typosquats:["puump","pumpp","pump-stream"]} },
-      { id:"s5",  name:"audit-logger",       severity:"transitive", exposedAt:"2024-11-26T08:33:40Z", resolvedMinutes:2.67, chain:["event-stream@3.3.6","through@2.3.8","split@1.0.1","audit-logger"],                maintainer:{name:"mafintosh",email:"mathias.buus@example.com",packages:["pump","through2","end-of-stream","pumpify","duplexify"],typosquats:["puump","pumpp","pump-stream"]} },
-      { id:"s6",  name:"fraud-detector",     severity:"transitive", exposedAt:"2024-11-26T08:34:12Z", resolvedMinutes:3.2,  chain:["event-stream@3.3.6","flatmap-stream@0.1.1","JSONStream@1.3.5","fraud-detector"],   maintainer:{name:"right9ctrl",email:"right9ctrl@protonmail.com",packages:["flatmap-stream","event-stream"],typosquats:["flatmap_stream","flat-map-stream","flatmapstream"]} },
-      { id:"s7",  name:"report-generator",   severity:"transitive", exposedAt:"2024-11-26T08:34:55Z", resolvedMinutes:3.92, chain:["event-stream@3.3.6","through@2.3.8","pump@3.0.0","archiver@5.3.1","report-generator"], maintainer:{name:"ctalkington",email:"chris@talkington.com",packages:["archiver","archiver-utils","compress-commons","zip-stream"],typosquats:["archiveer","archiver-js","archiverr"]} },
-      { id:"s8",  name:"webhook-dispatcher", severity:"transitive", exposedAt:"2024-11-26T08:35:22Z", resolvedMinutes:4.37, chain:["event-stream@3.3.6","flatmap-stream@0.1.1","JSONStream@1.3.5","request@2.88.2","webhook-dispatcher"], maintainer:{name:"mikeal",email:"mikeal.rogers@gmail.com",packages:["request","concat-stream","JSONStream","caseless","aws-sign2"],typosquats:["requestt","request-lib","requuest"]} },
-      { id:"s9",  name:"data-pipeline",      severity:"transitive", exposedAt:"2024-11-26T08:36:00Z", resolvedMinutes:5.0,  chain:["event-stream@3.3.6","through@2.3.8","split@1.0.1","csv-parse@4.16.3","data-pipeline"], maintainer:{name:"wdavidw",email:"david@adaltas.com",packages:["csv","csv-parse","csv-stringify","csv-generate","stream-transform"],typosquats:["csv_parse","csv-parser","csvparse"]} },
-      { id:"s10", name:"analytics-ingester", severity:"transitive", exposedAt:"2024-11-26T08:37:11Z", resolvedMinutes:6.18, chain:["event-stream@3.3.6","through@2.3.8","pump@3.0.0","archiver@5.3.1","analytics-ingester"], maintainer:{name:"ctalkington",email:"chris@talkington.com",packages:["archiver","archiver-utils","compress-commons","zip-stream"],typosquats:["archiveer","archiver-js","archiverr"]} },
-      { id:"s11", name:"config-sync",        severity:"transitive", exposedAt:"2024-11-26T08:43:00Z", resolvedMinutes:12.0, chain:["event-stream@3.3.6","flatmap-stream@0.1.1","JSONStream@1.3.5","request@2.88.2","node-config@3.3.6","config-sync"], maintainer:{name:"lorenwest",email:"loren.west@example.com",packages:["node-config","config","node-int64"],typosquats:["node_config","nodeconfig","node-configurr"]} },
-    ],
-  },
-  "left-pad@1.3.0": {
-    compromisedAt: "2024-09-10T14:00:00Z",
-    detectedAt: "2024-09-10T14:22:15Z",
-    stats: { packagesAffected: 6, servicesExposed: 5, detectionMinutes: 22, detectionSeconds: 15, deepestChain: 3 },
-    services: [
-      { id:"lp1", name:"web-frontend", severity:"direct",     exposedAt:"2024-09-10T14:00:00Z", resolvedMinutes:0,    chain:["left-pad@1.3.0","web-frontend"],                               maintainer:{name:"stevemao",email:"steve.mao@example.com",packages:["left-pad","right-pad","pad"],typosquats:["left_pad","leftpad","left-padd"]} },
-      { id:"lp2", name:"ssr-renderer", severity:"transitive", exposedAt:"2024-09-10T14:08:22Z", resolvedMinutes:8.37, chain:["left-pad@1.3.0","babel-runtime@6.26.0","ssr-renderer"],        maintainer:{name:"hzoo",email:"h.zhu@example.com",packages:["babel-runtime","@babel/runtime","babel-core"],typosquats:["babel_runtime","babelruntime","babel-runtim"]} },
-      { id:"lp3", name:"cdn-worker",   severity:"transitive", exposedAt:"2024-09-10T14:12:00Z", resolvedMinutes:12.0, chain:["left-pad@1.3.0","babel-runtime@6.26.0","webpack@4.46.0","cdn-worker"], maintainer:{name:"sokra",email:"tobias.koppers@example.com",packages:["webpack","enhanced-resolve","loader-runner","tapable"],typosquats:["webpackk","webpack-js","webpak"]} },
-      { id:"lp4", name:"build-server", severity:"transitive", exposedAt:"2024-09-10T14:16:30Z", resolvedMinutes:16.5, chain:["left-pad@1.3.0","babel-runtime@6.26.0","webpack@4.46.0","build-server"], maintainer:{name:"sokra",email:"tobias.koppers@example.com",packages:["webpack","enhanced-resolve","loader-runner","tapable"],typosquats:["webpackk","webpack-js","webpak"]} },
-      { id:"lp5", name:"test-runner",  severity:"transitive", exposedAt:"2024-09-10T14:20:00Z", resolvedMinutes:20.0, chain:["left-pad@1.3.0","jest-cli@29.0.0","test-runner"],               maintainer:{name:"fb-open-source",email:"jest@fb.com",packages:["jest","jest-cli","jest-runtime","jest-config","jest-circus"],typosquats:["jestt","jest-js","gest"]} },
-    ],
-  },
+const API_BASE = "http://localhost:3001/api"
+
+async function fetchSearch(query) {
+  const res = await fetch(`${API_BASE}/search`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ query }),
+  })
+  if (!res.ok) throw new Error(`Search failed: ${res.status} ${res.statusText}`)
+  return res.json()
+}
+
+async function fetchSuggestions() {
+  const res = await fetch(`${API_BASE}/suggestions`)
+  if (!res.ok) throw new Error(`Suggestions failed: ${res.status} ${res.statusText}`)
+  return res.json()
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -434,30 +419,76 @@ function Drawer({svc, onClose}) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// ERROR BANNER
+// ─────────────────────────────────────────────────────────────────────────────
+function ErrorBanner({msg, onDismiss}) {
+  return (
+    <div style={{
+      position:"fixed",top:60,left:32,right:32,maxWidth:500,
+      background:"rgba(239,68,68,.15)",borderLeft:"4px solid #ef4444",
+      borderRadius:6,padding:"12px 16px",border:"1px solid rgba(239,68,68,.3)",
+      zIndex:100,display:"flex",alignItems:"center",justifyContent:"space-between"
+    }}>
+      <div style={{fontSize:12,color:"#ef4444"}}>
+        <span style={{fontWeight:600}}>Error:</span> {msg}
+      </div>
+      <button onClick={onDismiss} style={{background:"transparent",border:"none",color:"#ef4444",cursor:"pointer",fontSize:16}}>✕</button>
+    </div>
+  )
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // APP
 // ─────────────────────────────────────────────────────────────────────────────
 export default function App() {
-  const [query, setQuery]     = useState("")
-  const [activeQ, setActiveQ] = useState("event-stream@3.3.6")
-  const [data, setData]       = useState(MOCK_DB["event-stream@3.3.6"])
-  const [view, setView]       = useState("list")
-  const [sortBy, setSortBy]   = useState("severity")
-  const [filter, setFilter]   = useState("all")
-  const [drawer, setDrawer]   = useState(null)
+  const [query, setQuery]       = useState("")
+  const [activeQ, setActiveQ]   = useState(null)
+  const [data, setData]         = useState(null)
+  const [view, setView]         = useState("list")
+  const [sortBy, setSortBy]     = useState("severity")
+  const [filter, setFilter]     = useState("all")
+  const [drawer, setDrawer]     = useState(null)
   const [searching, setSearching] = useState(false)
-  const [showSug, setShowSug] = useState(false)
-  const suggestions = Object.keys(MOCK_DB)
+  const [showSug, setShowSug]   = useState(false)
+  const [suggestions, setSuggestions] = useState([])
+  const [error, setError]       = useState(null)
+  const [sugsLoading, setSugsLoading] = useState(false)
 
-  const search = useCallback(()=>{
-    if(!query.trim()) return
+  // Load suggestions on mount
+  useEffect(() => {
+    setSugsLoading(true)
+    fetchSuggestions()
+      .then(setSuggestions)
+      .catch(err => console.warn("Failed to load suggestions:", err))
+      .finally(() => setSugsLoading(false))
+  }, [])
+
+  // Load initial data (event-stream as default)
+  useEffect(() => {
+    if (!data) {
+      performSearch("event-stream@3.3.6")
+    }
+  }, [])
+
+  const performSearch = async (q) => {
+    if (!q.trim()) return
     setSearching(true)
-    setTimeout(()=>{
-      const d = MOCK_DB[query.trim()] || MOCK_DB["event-stream@3.3.6"]
-      setData(d)
-      setActiveQ(MOCK_DB[query.trim()] ? query.trim() : "event-stream@3.3.6 (fallback)")
+    setError(null)
+    try {
+      const result = await fetchSearch(q.trim())
+      setData(result)
+      setActiveQ(q.trim())
+    } catch (err) {
+      setError(err.message)
+      console.error("Search error:", err)
+    } finally {
       setSearching(false)
-    },600)
-  },[query])
+    }
+  }
+
+  const search = useCallback(() => {
+    performSearch(query)
+  }, [query])
 
   const sorted = [...(data?.services||[])].filter(s=>filter==="all"||s.severity===filter).sort((a,b)=>{
     if(sortBy==="severity") return a.severity===b.severity?a.resolvedMinutes-b.resolvedMinutes:a.severity==="direct"?-1:1
@@ -475,6 +506,8 @@ export default function App() {
         button:focus-visible{outline:2px solid #ef4444;outline-offset:2px}
         *{box-sizing:border-box}
       `}</style>
+
+      {error && <ErrorBanner msg={error} onDismiss={() => setError(null)} />}
 
       {/* ── NAV ─────────────────────────────────────────────────────────────── */}
       <div style={{borderBottom:"1px solid #1c1c1f",padding:"0 32px",display:"flex",alignItems:"center",justifyContent:"space-between",height:52,background:"rgba(10,10,10,.95)",backdropFilter:"blur(8px)",position:"sticky",top:0,zIndex:30}}>
@@ -503,7 +536,7 @@ export default function App() {
                 onKeyDown={e=>e.key==="Enter"&&search()}
                 onFocus={()=>setShowSug(true)}
                 onBlur={()=>setTimeout(()=>setShowSug(false),150)}
-                placeholder="event-stream@3.3.6"
+                placeholder="e.g., event-stream@3.3.6"
                 style={{flex:1,background:"transparent",border:"none",outline:"none",fontFamily:"'JetBrains Mono',monospace",fontSize:14,color:"#fafafa",padding:"14px 0",caretColor:"#ef4444"}}
               />
               {searching
@@ -513,16 +546,22 @@ export default function App() {
             </div>
             {showSug && (
               <div style={{position:"absolute",top:"calc(100% + 6px)",left:0,right:0,background:"#111",border:"1px solid #27272a",borderRadius:6,zIndex:20,overflow:"hidden",boxShadow:"0 8px 24px rgba(0,0,0,.4)"}}>
-                <div style={{padding:"6px 12px 4px",fontSize:10,color:"#3f3f46",textTransform:"uppercase",letterSpacing:"0.06em"}}>Known compromised packages</div>
-                {suggestions.map(s=>(
-                  <div key={s} onMouseDown={()=>{setQuery(s);setShowSug(false)}}
-                    style={{padding:"9px 14px",cursor:"pointer",display:"flex",alignItems:"center",gap:8}}
-                    onMouseEnter={e=>e.currentTarget.style.background="#161616"}
-                    onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
-                    <span style={{color:"#ef4444",fontSize:9}}>&#11044;</span>
-                    <span style={{fontSize:13,color:"#a1a1aa",fontFamily:"'JetBrains Mono',monospace"}}>{s}</span>
-                  </div>
-                ))}
+                <div style={{padding:"6px 12px 4px",fontSize:10,color:"#3f3f46",textTransform:"uppercase",letterSpacing:"0.06em"}}>
+                  {sugsLoading ? "Loading..." : "Known compromised packages"}
+                </div>
+                {suggestions.length === 0 ? (
+                  <div style={{padding:"12px",fontSize:11,color:"#52525b"}}>No suggestions available. Backend may not be running.</div>
+                ) : (
+                  suggestions.map(s=>(
+                    <div key={s.id} onMouseDown={()=>{setQuery(s.name);setShowSug(false)}}
+                      style={{padding:"9px 14px",cursor:"pointer",display:"flex",alignItems:"center",gap:8}}
+                      onMouseEnter={e=>e.currentTarget.style.background="#161616"}
+                      onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
+                      <span style={{color:"#ef4444",fontSize:9}}>&#11044;</span>
+                      <span style={{fontSize:13,color:"#a1a1aa",fontFamily:"'JetBrains Mono',monospace"}}>{s.name}</span>
+                    </div>
+                  ))
+                )}
               </div>
             )}
           </div>
