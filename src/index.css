@@ -203,6 +203,17 @@ body {
 :focus-visible {
   outline: 2px solid var(--accent-primary);
   outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Enhanced focus for interactive elements */
+button:focus-visible,
+a:focus-visible,
+[role="button"]:focus-visible,
+select:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
 }
 
 /* Transitions */
@@ -222,17 +233,80 @@ body {
   pointer-events: none;
 }
 
+/* Accessibility: Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Screen Reader Only */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Skip to Content Link */
+.skip-to-content {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--accent-primary);
+  color: white;
+  padding: 8px 16px;
+  text-decoration: none;
+  border-radius: 0 0 4px 0;
+  z-index: 100;
+}
+
+.skip-to-content:focus {
+  top: 0;
+}
+
 /* ─────────────────────────────────────────────────────────────────────────────
    RESPONSIVE BREAKPOINTS
+   Mobile: 375px-767px | Tablet: 768px-1023px | Desktop: 1024px+
    ───────────────────────────────────────────────────────────────────────────── */
 
+/* Mobile (375px - 767px) */
 @media (max-width: 767px) {
   .text-display { font-size: 36px; }
   .text-h2 { font-size: 24px; }
+  .text-h3 { font-size: 16px; }
   body { font-size: 13px; }
+  
+  /* Hide secondary elements on mobile */
+  .hide-mobile { display: none !important; }
 }
 
+/* Tablet (768px - 1023px) */
 @media (min-width: 768px) and (max-width: 1023px) {
   .text-display { font-size: 42px; }
   .text-h2 { font-size: 28px; }
+}
+
+/* Desktop (1024px+) */
+@media (min-width: 1024px) {
+  .hide-desktop { display: none !important; }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+  button,
+  a,
+  [role="button"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
 }

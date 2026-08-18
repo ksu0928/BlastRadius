@@ -955,7 +955,8 @@ function Drawer({svc, onClose}) {
         top: 0,
         right: 0,
         bottom: 0,
-        width: 420,
+        width: "min(420px, 100vw)",
+        maxWidth: "100%",
         zIndex: 50,
         background: colors.bgCard,
         borderLeft: `1px solid ${colors.borderSubtle}`,
@@ -1675,7 +1676,11 @@ export default function App() {
   })
 
   return (
-    <div style={{minHeight:"100vh",background:"#0a0a0a",paddingBottom:60}}>
+    <div style={{
+      minHeight: "100vh",
+      background: colors.bgPrimary,
+      paddingBottom: 60
+    }}>
       <style>{`
         @keyframes pulseR{0%,100%{transform:scale(1);opacity:.8}50%{transform:scale(1.08);opacity:.4}}
         @keyframes slideIn{from{transform:translateX(100%)}to{transform:translateX(0)}}
@@ -1693,16 +1698,18 @@ export default function App() {
       {/* ── HERO HEADER ──────────────────────────────────────────────────────── */}
       <div style={{
         borderBottom: `1px solid ${colors.borderSubtle}`,
-        padding: "0 32px",
+        padding: "0 clamp(16px, 4vw, 32px)",
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
-        height: 64,
+        minHeight: 64,
         background: colors.bgCard,
         backdropFilter: "blur(8px)",
         position: "sticky",
         top: 0,
-        zIndex: 30
+        zIndex: 30,
+        flexWrap: "wrap",
+        gap: 12
       }}>
         <div style={{display: "flex", alignItems: "center", gap: 12}}>
           <div style={{
@@ -1757,7 +1764,11 @@ export default function App() {
         </div>
       </div>
 
-      <div style={{maxWidth:1100,margin:"0 auto",padding:"0 32px"}}>
+      <div style={{
+        maxWidth: 1200,
+        margin: "0 auto",
+        padding: "0 clamp(16px, 4vw, 32px)"
+      }}>
 
         {/* ── HERO SEARCH ──────────────────────────────────────────────────────── */}
         <div style={{padding: "48px 0 40px", display: "flex", flexDirection: "column", alignItems: "center", gap: 16}}>
@@ -1923,30 +1934,69 @@ export default function App() {
         {/* ── KPI STATS GRID ───────────────────────────────────────────────────── */}
         {data && (
           <>
-            <div style={{display:"grid",gridTemplateColumns:"repeat(4, 1fr)",gap:16,marginBottom:24}}>
+            <div style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+              gap: 16,
+              marginBottom: 24
+            }}>
               <StatCard label="Packages Affected" value={data.stats.packagesAffected} sub="transitive + direct" accent="warning"/>
               <StatCard label="Services Exposed" value={data.stats.servicesExposed} sub={`${data.services.filter(s=>s.severity==="direct").length} direct • ${data.services.filter(s=>s.severity==="transitive").length} transitive`} accent="critical"/>
               <StatCard label="Time to Detection" value={`${data.stats.detectionMinutes}m ${data.stats.detectionSeconds}s`} sub={`compromise: ${fmtTime(data.compromisedAt)}`} accent={data.stats.detectionMinutes<10?"success":"critical"}/>
               <StatCard label="Deepest Chain" value={`${data.stats.deepestChain} hops`} sub="longest dependency path" accent="info"/>
             </div>
-            <div style={{marginBottom:28,display:"flex",alignItems:"center",justifyContent:"center",gap:8}}>
+            <div style={{marginBottom: 28, display: "flex", alignItems: "center", justifyContent: "center", gap: 10}}>
               <button 
                 onClick={() => {
                   const pkgId = data.services[0]?.chain[0] ? `pkg:${data.services[0].chain[0]}` : `pkg:${activeQ}`
                   setSimulating(pkgId)
                 }}
                 style={{
-                  padding:"10px 20px",borderRadius:8,border:"2px solid #ef4444",background:"rgba(239,68,68,.1)",
-                  color:"#ef4444",fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit",
-                  display:"flex",alignItems:"center",gap:8,transition:"all .2s"
+                  padding: "12px 24px",
+                  borderRadius: 9999,
+                  border: `2px solid ${colors.critical}`,
+                  background: "rgba(220, 38, 38, 0.1)",
+                  color: colors.critical,
+                  fontSize: 14,
+                  fontWeight: 600,
+                  cursor: "pointer",
+                  fontFamily: "inherit",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 10,
+                  transition: "all 0.2s ease",
+                  boxShadow: `0 0 20px ${colors.critical}20`
                 }}
-                onMouseEnter={e => { e.currentTarget.style.background = "rgba(239,68,68,.2)"; e.currentTarget.style.transform = "translateY(-1px)" }}
-                onMouseLeave={e => { e.currentTarget.style.background = "rgba(239,68,68,.1)"; e.currentTarget.style.transform = "translateY(0)" }}>
-                <span style={{fontSize:16}}>⚡</span>
+                onMouseEnter={e => { 
+                  e.currentTarget.style.background = "rgba(220, 38, 38, 0.15)"
+                  e.currentTarget.style.transform = "translateY(-2px)"
+                  e.currentTarget.style.boxShadow = `0 4px 24px ${colors.critical}30`
+                }}
+                onMouseLeave={e => { 
+                  e.currentTarget.style.background = "rgba(220, 38, 38, 0.1)"
+                  e.currentTarget.style.transform = "translateY(0)"
+                  e.currentTarget.style.boxShadow = `0 0 20px ${colors.critical}20`
+                }}>
+                <span style={{fontSize: 18}}>⚡</span>
                 <span>Simulate Live Compromise</span>
-                <span style={{fontSize:9,padding:"2px 6px",borderRadius:3,background:"rgba(239,68,68,.3)",color:"#fff",fontWeight:700}}>NEW</span>
+                <span style={{
+                  fontSize: 10,
+                  padding: "3px 8px",
+                  borderRadius: 9999,
+                  background: colors.critical,
+                  color: "#fff",
+                  fontWeight: 700,
+                  fontFamily: "'IBM Plex Mono', monospace"
+                }}>
+                  NEW
+                </span>
               </button>
-              <div style={{fontSize:10,color:"#52525b",maxWidth:280,textAlign:"center"}}>
+              <div style={{
+                fontSize: 12,
+                color: colors.textTertiary,
+                maxWidth: 300,
+                textAlign: "center"
+              }}>
                 Watch real-time graph traversal with measured query latency
               </div>
             </div>
@@ -1964,7 +2014,9 @@ export default function App() {
               padding: "16px 20px",
               background: colors.bgCard,
               border: `1px solid ${colors.borderSubtle}`,
-              borderRadius: 12
+              borderRadius: 12,
+              flexWrap: "wrap",
+              gap: 12
             }}>
               <div style={{display: "flex", alignItems: "center", gap: 12}}>
                 <span style={{
