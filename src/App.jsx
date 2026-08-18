@@ -31,6 +31,16 @@ async function fetchSimulateCompromise(packageId) {
   return res.json()
 }
 
+async function fetchMaintainerAnalysis(data) {
+  const res = await fetch(`${API_BASE}/maintainer-analysis`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ data }),
+  })
+  if (!res.ok) throw new Error(`Analysis failed: ${res.status} ${res.statusText}`)
+  return res.json()
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // HELPERS
 // ─────────────────────────────────────────────────────────────────────────────
@@ -429,6 +439,205 @@ function Drawer({svc, onClose}) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// MAINTAINER INTELLIGENCE VIEW
+// ─────────────────────────────────────────────────────────────────────────────
+function MaintainerIntelligence({data}) {
+  const [analysis, setAnalysis] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [selectedMaint, setSelectedMaint] = useState(null)
+
+  useEffect(() => {
+    setLoading(true)
+    fetchMaintainerAnalysis(data)
+      .then(setAnalysis)
+      .catch(err => console.error("Maintainer analysis error:", err))
+      .finally(() => setLoading(false))
+  }, [data])
+
+  if (loading) {
+    return (
+      <div style={{textAlign:"center",padding:60}}>
+        <div style={{width:40,height:40,margin:"0 auto 16px",borderRadius:"50%",border:"3px solid #1c1c1f",borderTopColor:"#ef4444",animation:"spin .8s linear infinite"}}/>
+        <div style={{fontSize:13,color:"#52525b"}}>Analyzing maintainer network...</div>
+      </div>
+    )
+  }
+
+  if (!analysis) return null
+
+  const riskColor = (level) => ({
+    critical: "#ef4444",
+    high: "#f59e0b",
+    moderate: "#eab308",
+    low: "#22c55e"
+  }[level] || "#71717a")
+
+  return (
+    <div style={{display:"flex",flexDirection:"column",gap:24}}>
+      
+      {/* Overview Stats */}
+      <div style={{display:"grid",gridTemplateColumns:"repeat(4, 1fr)",gap:12}}>
+        <div style={{background:"#111",border:"1px solid #1c1c1f",borderRadius:8,padding:"16px 20px",position:"relative",overflow:"hidden"}}>
+          <div style={{position:"absolute",top:0,left:0,right:0,height:2,background:"#71717a"}}/>
+          <div style={{fontSize:10,color:"#52525b",marginBottom:6,textTransform:"uppercase",letterSpacing:"0.05em"}}>Total Maintainers</div>
+          <div style={{fontSize:32,fontWeight:700,color:"#fafafa",fontFamily:"'JetBrains Mono',monospace"}}>{analysis.stats.totalMaintainers}</div>
+        </div>
+        <div style={{background:"#111",border:"1px solid #1c1c1f",borderRadius:8,padding:"16px 20px",position:"relative",overflow:"hidden"}}>
+          <div style={{position:"absolute",top:0,left:0,right:0,height:2,background:"#ef4444"}}/>
+          <div style={{fontSize:10,color:"#52525b",marginBottom:6,textTransform:"uppercase",letterSpacing:"0.05em"}}>Critical Risk</div>
+          <div style={{fontSize:32,fontWeight:700,color:"#ef4444",fontFamily:"'JetBrains Mono',monospace"}}>{analysis.stats.criticalMaintainers}</div>
+        </div>
+        <div style={{background:"#111",border:"1px solid #1c1c1f",borderRadius:8,padding:"16px 20px",position:"relative",overflow:"hidden"}}>
+          <div style={{position:"absolute",top:0,left:0,right:0,height:2,background:"#f59e0b"}}/>
+          <div style={{fontSize:10,color:"#52525b",marginBottom:6,textTransform:"uppercase",letterSpacing:"0.05em"}}>Typosquats</div>
+          <div style={{fontSize:32,fontWeight:700,color:"#f59e0b",fontFamily:"'JetBrains Mono',monospace"}}>{analysis.stats.totalTyposquats}</div>
+        </div>
+        <div style={{background:"#111",border:"1px solid #1c1c1f",borderRadius:8,padding:"16px 20px",position:"relative",overflow:"hidden"}}>
+          <div style={{position:"absolute",top:0,left:0,right:0,height:2,background:"#eab308"}}/>
+          <div style={{fontSize:10,color:"#52525b",marginBottom:6,textTransform:"uppercase",letterSpacing:"0.05em"}}>Single Points of Failure</div>
+          <div style={{fontSize:32,fontWeight:700,color:"#eab308",fontFamily:"'JetBrains Mono',monospace"}}>{analysis.stats.singlePointsOfFailure}</div>
+        </div>
+      </div>
+
+      {/* Recommendations */}
+      {analysis.recommendations.length > 0 && (
+        <div style={{background:"#111",border:"1px solid #1c1c1f",borderRadius:8,padding:"20px 24px"}}>
+          <div style={{fontSize:13,fontWeight:600,color:"#fafafa",marginBottom:16,display:"flex",alignItems:"center",gap:8}}>
+            <span style={{color:"#f59e0b"}}><IcWarn/></span>
+            Security Recommendations
+          </div>
+          <div style={{display:"flex",flexDirection:"column",gap:12}}>
+            {analysis.recommendations.map((rec, i) => (
+              <div key={i} style={{background:"#0e0e0e",border:`1px solid ${riskColor(rec.severity)}33`,borderLeft:`3px solid ${riskColor(rec.severity)}`,borderRadius:6,padding:"12px 16px"}}>
+                <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:4}}>
+                  <span style={{fontSize:10,fontWeight:700,color:riskColor(rec.severity),textTransform:"uppercase",letterSpacing:"0.06em"}}>{rec.severity}</span>
+                  <span style={{fontSize:12,fontWeight:600,color:"#fafafa"}}>{rec.title}</span>
+                </div>
+                <div style={{fontSize:11,color:"#71717a",marginBottom:6}}>{rec.description}</div>
+                <div style={{fontSize:11,color:"#a1a1aa",fontStyle:"italic"}}>→ {rec.action}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Critical Maintainers Table */}
+      <div style={{background:"#111",border:"1px solid #1c1c1f",borderRadius:8,padding:"20px 24px"}}>
+        <div style={{fontSize:13,fontWeight:600,color:"#fafafa",marginBottom:16}}>Maintainer Risk Ranking</div>
+        <div style={{display:"flex",flexDirection:"column",gap:8}}>
+          {analysis.maintainers.slice(0, 10).map((maint, i) => (
+            <div key={maint.handle} onClick={() => setSelectedMaint(maint)}
+              style={{background:"#0e0e0e",border:"1px solid #1c1c1f",borderRadius:6,padding:"12px 16px",cursor:"pointer",transition:"all .15s"}}
+              onMouseEnter={e => e.currentTarget.style.background = "#141414"}
+              onMouseLeave={e => e.currentTarget.style.background = "#0e0e0e"}>
+              <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+                <div style={{display:"flex",alignItems:"center",gap:12,flex:1}}>
+                  <div style={{fontSize:13,fontWeight:600,color:"#52525b",fontFamily:"'JetBrains Mono',monospace",width:20}}>#{i + 1}</div>
+                  <div style={{flex:1}}>
+                    <div style={{fontSize:13,fontWeight:600,color:"#fafafa",fontFamily:"'JetBrains Mono',monospace",marginBottom:2}}>{maint.handle}</div>
+                    <div style={{fontSize:10,color:"#52525b"}}>{maint.packageCount} packages • {maint.exposureCount} services exposed • {maint.typosquats?.length || 0} typosquats</div>
+                  </div>
+                </div>
+                <div style={{display:"flex",alignItems:"center",gap:12}}>
+                  <div style={{textAlign:"right"}}>
+                    <div style={{fontSize:24,fontWeight:700,color:riskColor(maint.riskScore.level),fontFamily:"'JetBrains Mono',monospace"}}>{maint.riskScore.total}</div>
+                    <div style={{fontSize:9,color:riskColor(maint.riskScore.level),textTransform:"uppercase",letterSpacing:"0.06em",fontWeight:600}}>{maint.riskScore.level}</div>
+                  </div>
+                  <div style={{width:60,height:60}}>
+                    <svg viewBox="0 0 36 36">
+                      <circle cx="18" cy="18" r="16" fill="none" stroke="#1c1c1f" strokeWidth="2.5"/>
+                      <circle cx="18" cy="18" r="16" fill="none" stroke={riskColor(maint.riskScore.level)} strokeWidth="2.5"
+                        strokeDasharray={`${maint.riskScore.total} 100`} strokeLinecap="round" transform="rotate(-90 18 18)"/>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Selected Maintainer Detail Modal */}
+      {selectedMaint && (
+        <>
+          <div onClick={() => setSelectedMaint(null)} style={{position:"fixed",inset:0,background:"rgba(0,0,0,.7)",zIndex:40,backdropFilter:"blur(3px)"}}/>
+          <div style={{position:"fixed",top:"50%",left:"50%",transform:"translate(-50%,-50%)",zIndex:50,background:"#111",border:"1px solid #27272a",borderRadius:12,width:"90%",maxWidth:700,maxHeight:"80vh",overflowY:"auto",boxShadow:"0 20px 60px rgba(0,0,0,.6)"}}>
+            
+            <div style={{padding:"20px 24px",borderBottom:"1px solid #1c1c1f",display:"flex",alignItems:"center",justifyContent:"space-between",position:"sticky",top:0,background:"#111",zIndex:1}}>
+              <div>
+                <div style={{fontSize:11,color:"#52525b",marginBottom:4}}>Maintainer Profile</div>
+                <div style={{fontSize:16,fontWeight:600,color:"#fafafa",fontFamily:"'JetBrains Mono',monospace"}}>{selectedMaint.handle}</div>
+              </div>
+              <button onClick={() => setSelectedMaint(null)} style={{width:32,height:32,display:"flex",alignItems:"center",justifyContent:"center",borderRadius:6,border:"1px solid #27272a",background:"transparent",cursor:"pointer",color:"#71717a"}}><IcX/></button>
+            </div>
+
+            <div style={{padding:"24px"}}>
+              {/* Risk Breakdown */}
+              <div style={{marginBottom:24}}>
+                <div style={{fontSize:12,color:"#52525b",marginBottom:12,textTransform:"uppercase",letterSpacing:"0.05em"}}>Risk Score Breakdown</div>
+                <div style={{display:"flex",gap:12}}>
+                  <div style={{flex:1,background:"#0e0e0e",border:"1px solid #1c1c1f",borderRadius:6,padding:"14px"}}>
+                    <div style={{fontSize:10,color:"#52525b",marginBottom:4}}>Package Control</div>
+                    <div style={{fontSize:24,fontWeight:700,color:"#f59e0b",fontFamily:"'JetBrains Mono',monospace"}}>{selectedMaint.riskScore.breakdown.packageControl}</div>
+                  </div>
+                  <div style={{flex:1,background:"#0e0e0e",border:"1px solid #1c1c1f",borderRadius:6,padding:"14px"}}>
+                    <div style={{fontSize:10,color:"#52525b",marginBottom:4}}>Typosquat Risk</div>
+                    <div style={{fontSize:24,fontWeight:700,color:"#f59e0b",fontFamily:"'JetBrains Mono',monospace"}}>{selectedMaint.riskScore.breakdown.typosquatRisk}</div>
+                  </div>
+                  <div style={{flex:1,background:"#0e0e0e",border:"1px solid #1c1c1f",borderRadius:6,padding:"14px"}}>
+                    <div style={{fontSize:10,color:"#52525b",marginBottom:4}}>Incident Role</div>
+                    <div style={{fontSize:24,fontWeight:700,color:"#ef4444",fontFamily:"'JetBrains Mono',monospace"}}>{selectedMaint.riskScore.breakdown.incidentInvolvement}</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Packages */}
+              <div style={{marginBottom:24}}>
+                <div style={{fontSize:12,color:"#52525b",marginBottom:8,textTransform:"uppercase",letterSpacing:"0.05em"}}>Maintained Packages ({selectedMaint.packageCount})</div>
+                <div style={{display:"flex",flexWrap:"wrap",gap:6}}>
+                  {selectedMaint.packages.slice(0, 20).map(pkg => (
+                    <span key={pkg} style={{fontSize:11,padding:"4px 10px",borderRadius:4,background:"#0d0d0d",border:"1px solid #1c1c1f",color:"#a1a1aa",fontFamily:"'JetBrains Mono',monospace"}}>{pkg}</span>
+                  ))}
+                  {selectedMaint.packageCount > 20 && (
+                    <span style={{fontSize:11,padding:"4px 10px",color:"#52525b"}}>+{selectedMaint.packageCount - 20} more</span>
+                  )}
+                </div>
+              </div>
+
+              {/* Typosquats */}
+              {selectedMaint.typosquatAnalysis && selectedMaint.typosquatAnalysis.length > 0 && (
+                <div>
+                  <div style={{fontSize:12,color:"#52525b",marginBottom:12,textTransform:"uppercase",letterSpacing:"0.05em",display:"flex",alignItems:"center",gap:8}}>
+                    <span style={{color:"#f59e0b"}}><IcWarn/></span>
+                    Typosquat Variants ({selectedMaint.typosquatAnalysis.length})
+                  </div>
+                  <div style={{display:"flex",flexDirection:"column",gap:8}}>
+                    {selectedMaint.typosquatAnalysis.map(typo => (
+                      <div key={typo.name} style={{background:"#0e0e0e",border:`1px solid ${riskColor(typo.severity)}33`,borderLeft:`3px solid ${riskColor(typo.severity)}`,borderRadius:6,padding:"12px 14px"}}>
+                        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:4}}>
+                          <span style={{fontSize:13,fontWeight:600,color:"#fafafa",fontFamily:"'JetBrains Mono',monospace"}}>{typo.name}</span>
+                          <div style={{display:"flex",alignItems:"center",gap:8}}>
+                            <span style={{fontSize:9,padding:"2px 8px",borderRadius:3,background:riskColor(typo.severity)+"22",color:riskColor(typo.severity),fontWeight:700,textTransform:"uppercase",letterSpacing:"0.05em"}}>{typo.severity}</span>
+                            <span style={{fontSize:11,color:"#52525b",fontFamily:"'JetBrains Mono',monospace"}}>edit distance: {typo.distance}</span>
+                          </div>
+                        </div>
+                        <div style={{fontSize:10,color:"#71717a"}}>{typo.risk}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+          </div>
+        </>
+      )}
+
+    </div>
+  )
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // SIMULATION MODAL
 // ─────────────────────────────────────────────────────────────────────────────
 function SimulationModal({packageId, onClose}) {
@@ -766,8 +975,12 @@ export default function App() {
           <div style={{marginBottom:28}}>
             <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:14}}>
               <div style={{display:"flex",alignItems:"center",gap:10}}>
-                <span style={{fontSize:13,fontWeight:600,color:"#fafafa"}}>Exposed Services</span>
-                <span style={{fontSize:11,fontWeight:600,padding:"1px 7px",borderRadius:10,background:"rgba(239,68,68,.1)",color:"#ef4444",border:"1px solid rgba(239,68,68,.2)"}}>{data.services.length}</span>
+                <span style={{fontSize:13,fontWeight:600,color:"#fafafa"}}>
+                  {view === "maintainers" ? "Maintainer Intelligence" : "Exposed Services"}
+                </span>
+                {view !== "maintainers" && (
+                  <span style={{fontSize:11,fontWeight:600,padding:"1px 7px",borderRadius:10,background:"rgba(239,68,68,.1)",color:"#ef4444",border:"1px solid rgba(239,68,68,.2)"}}>{data.services.length}</span>
+                )}
               </div>
               <div style={{display:"flex",alignItems:"center",gap:10}}>
                 {view==="list" && (
@@ -786,10 +999,10 @@ export default function App() {
                   </>
                 )}
                 <div style={{display:"flex",alignItems:"center",background:"#111",border:"1px solid #27272a",borderRadius:6,padding:2}}>
-                  {["list","graph"].map(v=>(
+                  {["list","graph","maintainers"].map(v=>(
                     <button key={v} onClick={()=>setView(v)}
                       style={{padding:"4px 14px",borderRadius:4,border:"none",background:v===view?"#1c1c1f":"transparent",color:v===view?"#fafafa":"#71717a",fontSize:12,fontWeight:v===view?600:400,cursor:"pointer",fontFamily:"inherit",transition:"all .15s"}}>
-                      {v==="list"?"&#9776; List":"&#9673; Graph"}
+                      {v==="list"?"&#9776; List":v==="graph"?"&#9673; Graph":"&#128100; Intel"}
                     </button>
                   ))}
                 </div>
@@ -805,6 +1018,7 @@ export default function App() {
               </div>
             )}
             {view==="graph" && <GraphView data={data} onDetails={setDrawer}/>}
+            {view==="maintainers" && <MaintainerIntelligence data={data}/>}
           </div>
         )}
 
