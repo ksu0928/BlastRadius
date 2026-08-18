@@ -1,50 +1,52 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 
 @import "tailwindcss";
 
+/* ─────────────────────────────────────────────────────────────────────────────
+   DESIGN TOKENS — Production-Grade Color System
+   Based on: Datadog (purple), Vercel (minimalism), Linear (lavender accent)
+   ───────────────────────────────────────────────────────────────────────────── */
+
 :root {
-  /* Dark Canvas (foundation) - Production-grade palette */
-  --bg-primary: #0F0F1E;
-  --bg-card: #1A1A2E;
-  --bg-elevated: #16162A;
-  --bg-hover: rgba(94, 106, 210, 0.1);
+  /* Background Layers */
+  --bg-primary: #0F0F1E;        /* Dark canvas */
+  --bg-card: #1A1A2E;           /* Lifted surfaces */
+  --bg-elevated: #16162A;       /* Modals, dropdowns */
+  --bg-hover: rgba(94, 106, 210, 0.1);  /* Hover state tint */
   
-  /* Semantic Colors (threat levels) */
-  --critical: #DC2626;
-  --warning: #F59E0B;
-  --success: #10B981;
-  --info: #3B82F6;
+  /* Semantic Colors (Threat Levels) */
+  --critical: #DC2626;          /* Direct vulnerabilities */
+  --warning: #F59E0B;           /* Transitive exposure */
+  --success: #10B981;           /* Resolved/Safe */
+  --info: #06B6D4;              /* Secondary highlights */
   
-  /* Accent (single chromatic color, like Linear) */
-  --accent: #5E6AD2;
-  --accent-hover: #7078E1;
-  --accent-active: #4E5AC2;
+  /* Accent (Single Chromatic Color, like Linear) */
+  --accent-primary: #5E6AD2;    /* Lavender-blue, CTAs only */
+  --accent-hover: #7078E1;      /* Hover state */
+  --accent-active: #4E5AC2;     /* Active state */
   
-  /* Text (WCAG AAA contrast) */
-  --text-primary: #F1F5F9;
-  --text-secondary: #CBD5E1;
-  --text-tertiary: #94A3B8;
-  --text-disabled: #64748B;
+  /* Text (WCAG AAA Contrast) */
+  --text-primary: #F1F5F9;      /* 8.5:1 contrast */
+  --text-secondary: #CBD5E1;    /* 7:1 contrast */
+  --text-tertiary: #94A3B8;     /* 4.8:1 contrast */
+  --text-disabled: #64748B;     /* Disabled state */
   
   /* Borders */
-  --border-primary: #2D2D44;
-  --border-hover: #3D3D5C;
-  --border-accent: rgba(94, 106, 210, 0.3);
+  --border-subtle: #334155;     /* Default borders */
+  --border-strong: #475569;     /* Hover borders */
+  --border-accent: rgba(94, 106, 210, 0.3);  /* Focus rings */
   
-  /* Shadows (elevated depth) */
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+  /* Shadows (Elevated Depth) */
+  --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.3);
+  --shadow-card-hover: 0 8px 20px rgba(0, 0, 0, 0.4);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
-  
-  /* Legacy aliases for compatibility */
-  --bg-page: var(--bg-primary);
-  --border: var(--border-primary);
-  --border-subtle: var(--border-primary);
-  --red: var(--critical);
-  --amber: var(--warning);
-  --green: var(--success);
-  --blue: var(--info);
 }
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   TYPOGRAPHY SCALE
+   Display: Geist-like (Inter Bold) | Body: Inter | Mono: IBM Plex Mono
+   ───────────────────────────────────────────────────────────────────────────── */
 
 * {
   box-sizing: border-box;
@@ -60,48 +62,89 @@ body {
   background-color: var(--bg-primary);
   color: var(--text-primary);
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 14px;
   font-weight: 400;
+  line-height: 1.5;
   letter-spacing: -0.011em;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
 }
 
+/* Typography Classes */
+.text-display {
+  font-size: 48px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.text-h2 {
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  line-height: 1.2;
+}
+
+.text-h3 {
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.text-body {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.text-small {
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
 .mono {
   font-family: 'IBM Plex Mono', 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 12px;
+  font-weight: 400;
   letter-spacing: -0.015em;
 }
 
-/* Custom scrollbar - Professional dark theme */
+/* ─────────────────────────────────────────────────────────────────────────────
+   SCROLLBAR STYLING
+   ───────────────────────────────────────────────────────────────────────────── */
+
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
+
 ::-webkit-scrollbar-track {
   background: transparent;
 }
+
 ::-webkit-scrollbar-thumb {
-  background: var(--border-primary);
+  background: var(--border-subtle);
   border-radius: 4px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--border-hover);
+  background: var(--border-strong);
 }
 
-/* Slider drawer animation */
-.drawer-enter {
-  transform: translateX(100%);
-}
-.drawer-enter-active {
-  transform: translateX(0);
-  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+/* ─────────────────────────────────────────────────────────────────────────────
+   ANIMATIONS
+   ───────────────────────────────────────────────────────────────────────────── */
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
 }
 
-/* Graph node pulse animation */
-@keyframes pulse-ring {
-  0% { transform: scale(1); opacity: 0.8; }
-  50% { transform: scale(1.08); opacity: 0.4; }
-  100% { transform: scale(1); opacity: 0.8; }
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }
 
 @keyframes fade-in-up {
@@ -114,9 +157,26 @@ body {
   100% { transform: translateX(0); }
 }
 
-@keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+@keyframes pulse-ring {
+  0%, 100% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.08); opacity: 0.4; }
+}
+
+@keyframes dot-appear {
+  0% { transform: scale(0); opacity: 0; }
+  60% { transform: scale(1.3); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Animation Classes */
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, var(--bg-card) 0%, var(--border-subtle) 50%, var(--bg-card) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
 }
 
 .animate-fade-in-up {
@@ -131,12 +191,48 @@ body {
   animation: pulse-ring 2s ease-in-out infinite;
 }
 
-/* Timeline dot pulse */
-@keyframes dot-appear {
-  0% { transform: scale(0); opacity: 0; }
-  60% { transform: scale(1.3); }
-  100% { transform: scale(1); opacity: 1; }
-}
 .dot-appear {
   animation: dot-appear 0.4s ease-out both;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   UTILITY CLASSES
+   ───────────────────────────────────────────────────────────────────────────── */
+
+/* Focus Ring (Keyboard Navigation) */
+:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+}
+
+/* Transitions */
+.transition-all {
+  transition: all 0.2s ease;
+}
+
+.transition-colors {
+  transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+}
+
+/* Disabled State */
+:disabled,
+.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   RESPONSIVE BREAKPOINTS
+   ───────────────────────────────────────────────────────────────────────────── */
+
+@media (max-width: 767px) {
+  .text-display { font-size: 36px; }
+  .text-h2 { font-size: 24px; }
+  body { font-size: 13px; }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .text-display { font-size: 42px; }
+  .text-h2 { font-size: 28px; }
 }

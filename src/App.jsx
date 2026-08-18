@@ -1,35 +1,40 @@
 import { useState, useEffect, useRef, useCallback } from "react"
 
 // ─────────────────────────────────────────────────────────────────────────────
-// COLOR SYSTEM — Professional Production Palette
+// COLOR SYSTEM — Professional Production Palette (Datadog/Linear/Vercel)
 // ─────────────────────────────────────────────────────────────────────────────
 const colors = {
   // Backgrounds
   bgPrimary: "#0F0F1E",
   bgCard: "#1A1A2E",
   bgElevated: "#16162A",
-  bgHover: "rgba(94, 106, 210, 0.08)",
+  bgHover: "rgba(94, 106, 210, 0.1)",
   
-  // Semantic
+  // Semantic (Threat Levels)
   critical: "#DC2626",
   warning: "#F59E0B",
   success: "#10B981",
-  info: "#3B82F6",
+  info: "#06B6D4",
   
-  // Accent (single chromatic color)
+  // Accent (Single Chromatic Color - Like Linear)
   accent: "#5E6AD2",
   accentHover: "#7078E1",
+  accentActive: "#4E5AC2",
   
-  // Text
+  // Text (WCAG AAA Contrast)
   textPrimary: "#F1F5F9",
   textSecondary: "#CBD5E1",
   textTertiary: "#94A3B8",
   textDisabled: "#64748B",
   
   // Borders
-  borderPrimary: "#2D2D44",
-  borderHover: "#3D3D5C",
+  borderSubtle: "#334155",
+  borderStrong: "#475569",
   borderAccent: "rgba(94, 106, 210, 0.3)",
+  
+  // Shadows
+  shadowCard: "0 4px 12px rgba(0, 0, 0, 0.3)",
+  shadowCardHover: "0 8px 20px rgba(0, 0, 0, 0.4)",
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -136,37 +141,136 @@ const IcClock = () => (
 )
 
 // ─────────────────────────────────────────────────────────────────────────────
-// BADGE
+// BADGE COMPONENT — Production Design System
 // ─────────────────────────────────────────────────────────────────────────────
 function Badge({sev}) {
-  const d = sev === "direct"
+  const config = {
+    direct: {
+      bg: "rgba(220, 38, 38, 0.1)",
+      color: colors.critical,
+      border: colors.critical,
+      label: "DIRECT",
+      icon: "●"
+    },
+    transitive: {
+      bg: "rgba(245, 158, 11, 0.1)",
+      color: colors.warning,
+      border: colors.warning,
+      label: "TRANSITIVE",
+      icon: "◆"
+    },
+    safe: {
+      bg: "rgba(16, 185, 129, 0.1)",
+      color: colors.success,
+      border: colors.success,
+      label: "SAFE",
+      icon: "✓"
+    }
+  }
+  const style = config[sev] || config.safe
+  
   return (
     <span style={{
-      display:"inline-flex",alignItems:"center",gap:4,
-      fontSize:10,fontWeight:700,letterSpacing:"0.08em",textTransform:"uppercase",
-      padding:"2px 8px",borderRadius:3,
-      background:d?"rgba(239,68,68,.15)":"rgba(245,158,11,.12)",
-      color:d?"#ef4444":"#f59e0b",
-      border:`1px solid ${d?"rgba(239,68,68,.3)":"rgba(245,158,11,.25)"}`,
-      fontFamily:"'JetBrains Mono',monospace",
+      display: "inline-flex",
+      alignItems: "center",
+      gap: 6,
+      padding: "4px 10px",
+      borderRadius: 9999,
+      fontSize: 11,
+      fontWeight: 600,
+      letterSpacing: "0.5px",
+      textTransform: "uppercase",
+      background: style.bg,
+      color: style.color,
+      border: `1px solid ${style.border}`,
+      fontFamily: "'IBM Plex Mono', monospace",
     }}>
-      {d ? "● Direct" : "◆ Transitive"}
+      <span>{style.icon}</span>
+      {style.label}
     </span>
   )
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// STAT CARD
+// STAT CARD (KPI Card Component) — Production Design System
 // ─────────────────────────────────────────────────────────────────────────────
 function StatCard({label, value, sub, accent}) {
-  const colors = {red:"#ef4444",amber:"#f59e0b",green:"#22c55e"}
-  const c = colors[accent] || null
+  const accentColors = {
+    critical: colors.critical,
+    warning: colors.warning,
+    success: colors.success,
+    info: colors.info,
+    accent: colors.accent
+  }
+  const accentColor = accentColors[accent] || colors.textPrimary
+  
   return (
-    <div style={{flex:1,background:"#111",border:"1px solid #1c1c1f",borderRadius:8,padding:"20px 24px",display:"flex",flexDirection:"column",gap:6,position:"relative",overflow:"hidden"}}>
-      {c && <div style={{position:"absolute",top:0,left:0,right:0,height:2,background:c}}/>}
-      <span style={{fontSize:11,fontWeight:500,color:"#71717a",letterSpacing:"0.06em",textTransform:"uppercase"}}>{label}</span>
-      <span style={{fontSize:36,fontWeight:700,lineHeight:1,color:c||"#fafafa",fontFamily:"'JetBrains Mono',monospace"}}>{value}</span>
-      {sub && <span style={{fontSize:11,color:"#52525b"}}>{sub}</span>}
+    <div style={{
+      flex: 1,
+      position: "relative",
+      background: colors.bgCard,
+      border: `1px solid ${colors.borderSubtle}`,
+      borderRadius: 12,
+      padding: "20px 24px",
+      display: "flex",
+      flexDirection: "column",
+      gap: 8,
+      overflow: "hidden",
+      boxShadow: colors.shadowCard,
+      transition: "all 0.2s ease",
+      cursor: "default"
+    }}
+    onMouseEnter={e => {
+      e.currentTarget.style.boxShadow = colors.shadowCardHover
+      e.currentTarget.style.borderColor = colors.borderStrong
+    }}
+    onMouseLeave={e => {
+      e.currentTarget.style.boxShadow = colors.shadowCard
+      e.currentTarget.style.borderColor = colors.borderSubtle
+    }}>
+      {/* Gradient Accent Border (Top) */}
+      <div style={{
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
+        height: 3,
+        background: `linear-gradient(90deg, ${accentColor}, ${colors.warning})`,
+        borderRadius: "12px 12px 0 0"
+      }}/>
+      
+      {/* Label */}
+      <span style={{
+        fontSize: 12,
+        fontWeight: 500,
+        color: colors.textTertiary,
+        letterSpacing: "0.06em",
+        textTransform: "uppercase"
+      }}>
+        {label}
+      </span>
+      
+      {/* Value (Large Number) */}
+      <span style={{
+        fontSize: 60,
+        fontWeight: 700,
+        lineHeight: 1,
+        color: accentColor,
+        fontFamily: "'IBM Plex Mono', monospace"
+      }}>
+        {value}
+      </span>
+      
+      {/* Subtitle Detail */}
+      {sub && (
+        <span style={{
+          fontSize: 14,
+          color: colors.textSecondary,
+          marginTop: 4
+        }}>
+          {sub}
+        </span>
+      )}
     </div>
   )
 }
@@ -907,56 +1011,216 @@ export default function App() {
 
       {error && <ErrorBanner msg={error} onDismiss={() => setError(null)} />}
 
-      {/* ── NAV ─────────────────────────────────────────────────────────────── */}
-      <div style={{borderBottom:"1px solid #1c1c1f",padding:"0 32px",display:"flex",alignItems:"center",justifyContent:"space-between",height:52,background:"rgba(10,10,10,.95)",backdropFilter:"blur(8px)",position:"sticky",top:0,zIndex:30}}>
-        <div style={{display:"flex",alignItems:"center",gap:8}}>
-          <div style={{width:20,height:20,borderRadius:4,background:"#ef4444",display:"flex",alignItems:"center",justifyContent:"center",color:"#fff"}}><IcShield/></div>
-          <span style={{fontSize:14,fontWeight:700,color:"#fafafa",letterSpacing:"-0.01em"}}>BlastRadius</span>
-          <span style={{fontSize:11,color:"#3f3f46",marginLeft:4,padding:"1px 6px",border:"1px solid #27272a",borderRadius:3}}>by HydraDB</span>
+      {/* ── HERO HEADER ──────────────────────────────────────────────────────── */}
+      <div style={{
+        borderBottom: `1px solid ${colors.borderSubtle}`,
+        padding: "0 32px",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        height: 64,
+        background: colors.bgCard,
+        backdropFilter: "blur(8px)",
+        position: "sticky",
+        top: 0,
+        zIndex: 30
+      }}>
+        <div style={{display: "flex", alignItems: "center", gap: 12}}>
+          <div style={{
+            width: 24,
+            height: 24,
+            borderRadius: 6,
+            background: colors.accent,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            color: "#fff"
+          }}>
+            <IcShield/>
+          </div>
+          <span style={{
+            fontSize: 18,
+            fontWeight: 700,
+            color: colors.textPrimary,
+            letterSpacing: "-0.02em"
+          }}>
+            BlastRadius
+          </span>
+          <span style={{
+            fontSize: 11,
+            color: colors.textTertiary,
+            marginLeft: 4,
+            padding: "2px 8px",
+            border: `1px solid ${colors.borderSubtle}`,
+            borderRadius: 4,
+            fontFamily: "'IBM Plex Mono', monospace"
+          }}>
+            by HydraDB
+          </span>
         </div>
-        <div style={{display:"flex",alignItems:"center",gap:14}}>
-          <span style={{fontSize:11,color:"#3f3f46",fontFamily:"'JetBrains Mono',monospace"}}>supply-chain &middot; threat-intel</span>
-          <div style={{width:6,height:6,borderRadius:"50%",background:"#22c55e",boxShadow:"0 0 6px rgba(34,197,94,.6)"}}/>
-          <span style={{fontSize:11,color:"#52525b"}}>Live</span>
+        <div style={{display: "flex", alignItems: "center", gap: 16}}>
+          <span style={{
+            fontSize: 11,
+            color: colors.textTertiary,
+            fontFamily: "'IBM Plex Mono', monospace"
+          }}>
+            supply-chain &middot; threat-intel
+          </span>
+          <div style={{
+            width: 8,
+            height: 8,
+            borderRadius: "50%",
+            background: colors.success,
+            boxShadow: `0 0 8px ${colors.success}80`,
+            animation: "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite"
+          }}/>
+          <span style={{fontSize: 11, color: colors.textSecondary}}>Live</span>
         </div>
       </div>
 
       <div style={{maxWidth:1100,margin:"0 auto",padding:"0 32px"}}>
 
-        {/* ── SEARCH ────────────────────────────────────────────────────────── */}
-        <div style={{padding:"48px 0 36px",display:"flex",flexDirection:"column",alignItems:"center",gap:14}}>
-          <div style={{fontSize:11,color:"#52525b",letterSpacing:"0.08em",textTransform:"uppercase"}}>Supply Chain Threat Analysis</div>
-          <div style={{position:"relative",width:"100%",maxWidth:580}}>
-            <div style={{display:"flex",alignItems:"center",background:"#111",border:"1px solid #27272a",borderRadius:8,padding:"0 16px",gap:10}}>
-              <span style={{color:"#52525b",flexShrink:0}}><IcSearch/></span>
-              <input value={query}
-                onChange={e=>setQuery(e.target.value)}
-                onKeyDown={e=>e.key==="Enter"&&search()}
-                onFocus={()=>setShowSug(true)}
-                onBlur={()=>setTimeout(()=>setShowSug(false),150)}
-                placeholder="e.g., event-stream@3.3.6"
-                style={{flex:1,background:"transparent",border:"none",outline:"none",fontFamily:"'JetBrains Mono',monospace",fontSize:14,color:"#fafafa",padding:"14px 0",caretColor:"#ef4444"}}
+        {/* ── HERO SEARCH ──────────────────────────────────────────────────────── */}
+        <div style={{padding: "48px 0 40px", display: "flex", flexDirection: "column", alignItems: "center", gap: 16}}>
+          <div style={{textAlign: "center", marginBottom: 8}}>
+            <h1 style={{
+              fontSize: 48,
+              fontWeight: 700,
+              letterSpacing: "-0.02em",
+              color: colors.textPrimary,
+              margin: "0 0 12px 0",
+              lineHeight: 1.1
+            }}>
+              Supply Chain Threat Analysis
+            </h1>
+            <p style={{
+              fontSize: 16,
+              color: colors.textSecondary,
+              margin: 0,
+              letterSpacing: "-0.01em"
+            }}>
+              Understand your attack surface in seconds
+            </p>
+          </div>
+          
+          <div style={{position: "relative", width: "100%", maxWidth: 640}}>
+            <div style={{
+              display: "flex",
+              alignItems: "center",
+              background: colors.bgCard,
+              border: `1px solid ${colors.borderSubtle}`,
+              borderRadius: 9999,
+              padding: "0 6px 0 20px",
+              gap: 12,
+              transition: "all 0.2s ease"
+            }}
+            onMouseEnter={e => e.currentTarget.style.borderColor = colors.borderStrong}
+            onMouseLeave={e => e.currentTarget.style.borderColor = colors.borderSubtle}>
+              <span style={{color: colors.textTertiary, flexShrink: 0}}>
+                <IcSearch/>
+              </span>
+              <input 
+                value={query}
+                onChange={e => setQuery(e.target.value)}
+                onKeyDown={e => e.key === "Enter" && search()}
+                onFocus={() => setShowSug(true)}
+                onBlur={() => setTimeout(() => setShowSug(false), 150)}
+                placeholder="Search npm package, org, or CVE…"
+                style={{
+                  flex: 1,
+                  background: "transparent",
+                  border: "none",
+                  outline: "none",
+                  fontFamily: "'IBM Plex Mono', monospace",
+                  fontSize: 14,
+                  color: colors.textPrimary,
+                  padding: "14px 0",
+                  caretColor: colors.accent
+                }}
               />
-              {searching
-                ? <div style={{width:16,height:16,borderRadius:"50%",border:"2px solid #27272a",borderTopColor:"#ef4444",animation:"spin .6s linear infinite",flexShrink:0}}/>
-                : <button onClick={search} style={{padding:"5px 14px",borderRadius:5,border:"none",background:"#ef4444",color:"#fff",fontFamily:"inherit",fontSize:12,fontWeight:600,cursor:"pointer",flexShrink:0}}>Analyze</button>
-              }
+              {searching ? (
+                <div style={{
+                  width: 18,
+                  height: 18,
+                  borderRadius: "50%",
+                  border: `2px solid ${colors.borderSubtle}`,
+                  borderTopColor: colors.accent,
+                  animation: "spin .6s linear infinite",
+                  flexShrink: 0,
+                  marginRight: 10
+                }}/>
+              ) : (
+                <button 
+                  onClick={search}
+                  style={{
+                    padding: "10px 24px",
+                    borderRadius: 9999,
+                    border: "none",
+                    background: colors.accent,
+                    color: "#fff",
+                    fontFamily: "inherit",
+                    fontSize: 13,
+                    fontWeight: 600,
+                    cursor: "pointer",
+                    flexShrink: 0,
+                    transition: "all 0.2s ease"
+                  }}
+                  onMouseEnter={e => e.currentTarget.style.background = colors.accentHover}
+                  onMouseLeave={e => e.currentTarget.style.background = colors.accent}>
+                  Analyze
+                </button>
+              )}
             </div>
             {showSug && (
-              <div style={{position:"absolute",top:"calc(100% + 6px)",left:0,right:0,background:"#111",border:"1px solid #27272a",borderRadius:6,zIndex:20,overflow:"hidden",boxShadow:"0 8px 24px rgba(0,0,0,.4)"}}>
-                <div style={{padding:"6px 12px 4px",fontSize:10,color:"#3f3f46",textTransform:"uppercase",letterSpacing:"0.06em"}}>
+              <div style={{
+                position: "absolute",
+                top: "calc(100% + 8px)",
+                left: 0,
+                right: 0,
+                background: colors.bgCard,
+                border: `1px solid ${colors.borderSubtle}`,
+                borderRadius: 12,
+                zIndex: 20,
+                overflow: "hidden",
+                boxShadow: colors.shadowCardHover
+              }}>
+                <div style={{
+                  padding: "10px 16px 6px",
+                  fontSize: 11,
+                  color: colors.textTertiary,
+                  textTransform: "uppercase",
+                  letterSpacing: "0.06em",
+                  fontWeight: 600
+                }}>
                   {sugsLoading ? "Loading..." : "Known compromised packages"}
                 </div>
                 {suggestions.length === 0 ? (
-                  <div style={{padding:"12px",fontSize:11,color:"#52525b"}}>No suggestions available. Backend may not be running.</div>
+                  <div style={{padding: "16px", fontSize: 12, color: colors.textSecondary}}>
+                    No suggestions available. Backend may not be running.
+                  </div>
                 ) : (
-                  suggestions.map(s=>(
-                    <div key={s.id} onMouseDown={()=>{setQuery(s.name);setShowSug(false)}}
-                      style={{padding:"9px 14px",cursor:"pointer",display:"flex",alignItems:"center",gap:8}}
-                      onMouseEnter={e=>e.currentTarget.style.background="#161616"}
-                      onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
-                      <span style={{color:"#ef4444",fontSize:9}}>&#11044;</span>
-                      <span style={{fontSize:13,color:"#a1a1aa",fontFamily:"'JetBrains Mono',monospace"}}>{s.name}</span>
+                  suggestions.map(s => (
+                    <div 
+                      key={s.id}
+                      onMouseDown={() => {setQuery(s.name); setShowSug(false)}}
+                      style={{
+                        padding: "12px 16px",
+                        cursor: "pointer",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 10,
+                        transition: "all 0.2s ease"
+                      }}
+                      onMouseEnter={e => e.currentTarget.style.background = colors.bgHover}
+                      onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
+                      <span style={{color: colors.critical, fontSize: 10}}>●</span>
+                      <span style={{
+                        fontSize: 13,
+                        color: colors.textPrimary,
+                        fontFamily: "'IBM Plex Mono', monospace"
+                      }}>
+                        {s.name}
+                      </span>
                     </div>
                   ))
                 )}
@@ -964,21 +1228,27 @@ export default function App() {
             )}
           </div>
           {activeQ && (
-            <div style={{display:"flex",gap:6,fontSize:11}}>
-              <span style={{color:"#3f3f46"}}>Showing results for</span>
-              <span style={{color:"#ef4444",fontFamily:"'JetBrains Mono',monospace"}}>{activeQ}</span>
+            <div style={{display: "flex", gap: 8, fontSize: 12}}>
+              <span style={{color: colors.textTertiary}}>Showing results for</span>
+              <span style={{
+                color: colors.accent,
+                fontFamily: "'IBM Plex Mono', monospace",
+                fontWeight: 600
+              }}>
+                {activeQ}
+              </span>
             </div>
           )}
         </div>
 
-        {/* ── STATS ─────────────────────────────────────────────────────────── */}
+        {/* ── KPI STATS GRID ───────────────────────────────────────────────────── */}
         {data && (
           <>
-            <div style={{display:"flex",gap:12,marginBottom:16}}>
-              <StatCard label="Packages Affected" value={data.stats.packagesAffected} sub="transitive + direct" accent="amber"/>
-              <StatCard label="Services Exposed" value={data.stats.servicesExposed} sub={`${data.services.filter(s=>s.severity==="direct").length} direct \u00b7 ${data.services.filter(s=>s.severity==="transitive").length} transitive`} accent="red"/>
-              <StatCard label="Time to Detection" value={`${data.stats.detectionMinutes}m ${data.stats.detectionSeconds}s`} sub={`compromise: ${fmtTime(data.compromisedAt)}`} accent={data.stats.detectionMinutes<10?"green":"red"}/>
-              <StatCard label="Deepest Chain" value={`${data.stats.deepestChain} hops`} sub="longest dependency path"/>
+            <div style={{display:"grid",gridTemplateColumns:"repeat(4, 1fr)",gap:16,marginBottom:24}}>
+              <StatCard label="Packages Affected" value={data.stats.packagesAffected} sub="transitive + direct" accent="warning"/>
+              <StatCard label="Services Exposed" value={data.stats.servicesExposed} sub={`${data.services.filter(s=>s.severity==="direct").length} direct • ${data.services.filter(s=>s.severity==="transitive").length} transitive`} accent="critical"/>
+              <StatCard label="Time to Detection" value={`${data.stats.detectionMinutes}m ${data.stats.detectionSeconds}s`} sub={`compromise: ${fmtTime(data.compromisedAt)}`} accent={data.stats.detectionMinutes<10?"success":"critical"}/>
+              <StatCard label="Deepest Chain" value={`${data.stats.deepestChain} hops`} sub="longest dependency path" accent="info"/>
             </div>
             <div style={{marginBottom:28,display:"flex",alignItems:"center",justifyContent:"center",gap:8}}>
               <button 
