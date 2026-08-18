@@ -3,7 +3,9 @@ import { useState, useEffect, useRef, useCallback } from "react"
 // ─────────────────────────────────────────────────────────────────────────────
 // API CLIENT
 // ─────────────────────────────────────────────────────────────────────────────
-const API_BASE = "http://localhost:3001/api"
+const API_BASE = import.meta.env.PROD 
+  ? "/api" 
+  : "http://localhost:3001/api"
 
 async function fetchSearch(query) {
   const res = await fetch(`${API_BASE}/search`, {

@@ -11,6 +11,7 @@
     "seed": "node server/seed.js",
     "dev:all": "concurrently \"npm run dev:server\" \"npm run dev\"",
     "build": "vite build",
+    "vercel-build": "npm run fetch:data:quick && vite build",
     "lint": "oxlint",
     "preview": "vite preview"
   },
