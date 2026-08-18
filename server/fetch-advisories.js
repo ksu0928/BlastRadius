@@ -50,10 +50,10 @@ export async function enrichWithAdvisories(packages, opts = {}) {
       // skip failed lookups
     }
 
-    if ((i + 1) % 50 === 0) {
+    if ((i + 1) % 25 === 0) {
       log(`  … ${i + 1}/${names.length} queried, ${vulnerableCount} with advisories`);
     }
-    await delay(60);
+    await delay(40);
   }
 
   const enriched = packages.map((pkg) => {

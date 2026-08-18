@@ -21,6 +21,10 @@ dist-ssr
 # Local overrides
 *.local
 
+# Data cache directories
+data/
+!data/.gitkeep
+
 # Editor directories and files
 .cursor/
 .vscode/*

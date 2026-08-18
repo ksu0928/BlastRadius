@@ -4,7 +4,7 @@ const REGISTRY = "https://registry.npmjs.org";
 const delay = (ms) => new Promise((r) => setTimeout(r, ms));
 
 let lastFetch = 0;
-const MIN_INTERVAL_MS = 80;
+const MIN_INTERVAL_MS = 50;
 
 async function rateLimitedFetch(url, retries = 3, accept = "application/json") {
   const wait = MIN_INTERVAL_MS - (Date.now() - lastFetch);

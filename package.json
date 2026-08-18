@@ -7,6 +7,7 @@
     "dev": "vite",
     "dev:server": "node server/server.js",
     "fetch:data": "node server/build-data.js",
+    "fetch:data:quick": "node server/quick-build.js",
     "seed": "node server/seed.js",
     "dev:all": "concurrently \"npm run dev:server\" \"npm run dev\"",
     "build": "vite build",
