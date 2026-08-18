@@ -10,9 +10,19 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
+
+# Environment & secrets
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+
+# Local overrides
 *.local
 
 # Editor directories and files
+.cursor/
 .vscode/*
 !.vscode/extensions.json
 .idea
