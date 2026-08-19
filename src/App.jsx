@@ -1745,12 +1745,7 @@ export default function App() {
       .finally(() => setSugsLoading(false))
   }, [])
 
-  // Load initial data (event-stream as default)
-  useEffect(() => {
-    performSearch("event-stream@3.3.6")
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
-
-  const performSearch = async (q) => {
+  const performSearch = useCallback(async (q) => {
     if (!q.trim()) return
     setSearching(true)
     setError(null)
@@ -1764,11 +1759,16 @@ export default function App() {
     } finally {
       setSearching(false)
     }
-  }
+  }, [])
+
+  // Load initial data (event-stream as default)
+  useEffect(() => {
+    performSearch("event-stream@3.3.6")
+  }, [performSearch])
 
   const search = useCallback(() => {
     performSearch(query)
-  }, [query])
+  }, [query, performSearch])
 
   const sorted = [...(data?.services||[])].filter(s=>filter==="all"||s.severity===filter).sort((a,b)=>{
     if(sortBy==="severity") return a.severity===b.severity?a.resolvedMinutes-b.resolvedMinutes:a.severity==="direct"?-1:1
