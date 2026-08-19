@@ -1,43 +1,128 @@
 import { useState, useEffect, useRef, useCallback } from "react"
 
 // ─────────────────────────────────────────────────────────────────────────────
-// COLOR SYSTEM — Light Theme Production B2B SaaS
-// Figma (spacing) + Stripe (trust blue) + Linear (minimalism)
+// THEME SYSTEM — Light & Dark Mode
 // ─────────────────────────────────────────────────────────────────────────────
-const colors = {
+const lightTheme = {
   // Backgrounds (Light & Warm)
-  bgPrimary: "#FFFFFF",    // Pure white canvas
-  bgCard: "#F8F9FB",       // Warm off-white (Figma-inspired)
-  bgElevated: "#F3F4F6",   // Subtle elevated surfaces
-  bgHover: "#E5E7EB",      // Hover state (light gray)
+  bgPrimary: "#FFFFFF",
+  bgCard: "#F8F9FB",
+  bgElevated: "#F3F4F6",
+  bgHover: "#E5E7EB",
   
-  // Semantic (Supply Chain Operations)
-  critical: "#EA580C",     // Orange - "Needs Review" (supply chain alert)
-  warning: "#F59E0B",      // Amber - "Monitor" (secondary warning)
-  success: "#15803D",      // Green - "Safe/Approved" (darker for contrast)
-  info: "#0891B2",         // Teal - "Flow/Movement" (supply chain vibe)
+  // Semantic (Supply Chain)
+  critical: "#EA580C",
+  warning: "#F59E0B",
+  success: "#15803D",
+  info: "#0891B2",
   
-  // Accent (Trust Blue - Stripe/Figma Style)
-  accent: "#2563EB",       // Blue - CTAs, Trust, Primary Actions
-  accentHover: "#1D4ED8",  // Hover state (darker)
-  accentActive: "#1E40AF", // Active state (darkest)
+  // Accent (Trust Blue)
+  accent: "#2563EB",
+  accentHover: "#1D4ED8",
+  accentActive: "#1E40AF",
   
-  // Text (WCAG AAA+ Contrast - 14:1 on white)
-  textPrimary: "#111827",    // Dark gray, 14:1 contrast
-  textSecondary: "#374151",  // Medium gray, 10:1 contrast
-  textTertiary: "#6B7280",   // Light gray, 6:1 contrast
-  textDisabled: "#9CA3AF",   // Disabled state
+  // Text
+  textPrimary: "#111827",
+  textSecondary: "#374151",
+  textTertiary: "#6B7280",
+  textDisabled: "#9CA3AF",
   
-  // Borders (Subtle & Strong)
-  borderSubtle: "#D1D5DB",   // Default dividers
-  borderStrong: "#9CA3AF",   // Hover/active borders
-  borderAccent: "rgba(37, 99, 235, 0.3)",  // Blue focus rings
+  // Borders
+  borderSubtle: "#D1D5DB",
+  borderStrong: "#9CA3AF",
+  borderAccent: "rgba(37, 99, 235, 0.3)",
   
-  // Shadows (Figma/Linear Style)
+  // Shadows
   shadowSm: "0 1px 2px rgba(0, 0, 0, 0.05)",
   shadowMd: "0 4px 6px rgba(0, 0, 0, 0.07)",
   shadowLg: "0 10px 15px rgba(0, 0, 0, 0.1)",
   shadowXl: "0 20px 25px rgba(0, 0, 0, 0.15)",
+}
+
+const darkTheme = {
+  // Backgrounds (Dark)
+  bgPrimary: "#0F1419",
+  bgCard: "#1A1F2E",
+  bgElevated: "#1E242F",
+  bgHover: "rgba(37, 99, 235, 0.1)",
+  
+  // Semantic (Supply Chain)
+  critical: "#F97316",
+  warning: "#FBBF24",
+  success: "#22C55E",
+  info: "#06B6D4",
+  
+  // Accent (Trust Blue)
+  accent: "#3B82F6",
+  accentHover: "#60A5FA",
+  accentActive: "#2563EB",
+  
+  // Text
+  textPrimary: "#F9FAFB",
+  textSecondary: "#D1D5DB",
+  textTertiary: "#9CA3AF",
+  textDisabled: "#6B7280",
+  
+  // Borders
+  borderSubtle: "#374151",
+  borderStrong: "#4B5563",
+  borderAccent: "rgba(59, 130, 246, 0.3)",
+  
+  // Shadows
+  shadowSm: "0 1px 2px rgba(0, 0, 0, 0.5)",
+  shadowMd: "0 4px 6px rgba(0, 0, 0, 0.6)",
+  shadowLg: "0 10px 15px rgba(0, 0, 0, 0.7)",
+  shadowXl: "0 20px 25px rgba(0, 0, 0, 0.8)",
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// THEME TOGGLE BUTTON
+// ─────────────────────────────────────────────────────────────────────────────
+function ThemeToggle({isDark, onToggle, colors}) {
+  return (
+    <button
+      onClick={onToggle}
+      style={{
+        width: 40,
+        height: 40,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        borderRadius: 8,
+        border: `1px solid ${colors.borderSubtle}`,
+        background: colors.bgCard,
+        cursor: "pointer",
+        transition: "all 0.2s ease",
+        color: colors.textSecondary
+      }}
+      onMouseEnter={e => {
+        e.currentTarget.style.background = colors.bgHover
+        e.currentTarget.style.borderColor = colors.borderStrong
+      }}
+      onMouseLeave={e => {
+        e.currentTarget.style.background = colors.bgCard
+        e.currentTarget.style.borderColor = colors.borderSubtle
+      }}
+      title={isDark ? "Switch to light mode" : "Switch to dark mode"}>
+      {isDark ? (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="12" cy="12" r="5"/>
+          <line x1="12" y1="1" x2="12" y2="3"/>
+          <line x1="12" y1="21" x2="12" y2="23"/>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+          <line x1="1" y1="12" x2="3" y2="12"/>
+          <line x1="21" y1="12" x2="23" y2="12"/>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+        </svg>
+      ) : (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      )}
+    </button>
+  )
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -177,21 +262,21 @@ function Badge({sev}) {
       color: colors.critical,
       border: colors.critical,
       label: "DIRECT",
-      icon: "●"
+      icon: ""
     },
     transitive: {
       bg: "rgba(245, 158, 11, 0.1)",    // Amber background
       color: colors.warning,
       border: colors.warning,
       label: "TRANSITIVE",
-      icon: "◆"
+      icon: ""
     },
     safe: {
       bg: "rgba(21, 128, 61, 0.1)",     // Green background
       color: colors.success,
       border: colors.success,
       label: "SAFE",
-      icon: "✓"
+      icon: ""
     }
   }
   const style = config[sev] || config.safe
@@ -212,7 +297,6 @@ function Badge({sev}) {
       border: `1px solid ${style.border}`,
       fontFamily: "'IBM Plex Mono', monospace",
     }}>
-      <span>{style.icon}</span>
       {style.label}
     </span>
   )
@@ -1636,7 +1720,21 @@ export default function App() {
   const [suggestions, setSuggestions] = useState([])
   const [error, setError]       = useState(null)
   const [sugsLoading, setSugsLoading] = useState(false)
-  const [simulating, setSimulating] = useState(null) // packageId when modal is open
+  const [simulating, setSimulating] = useState(null)
+  
+  // Theme state (defaults to light mode)
+  const [isDark, setIsDark] = useState(() => {
+    const saved = localStorage.getItem('blastradius-theme')
+    return saved === 'dark'
+  })
+  
+  const colors = isDark ? darkTheme : lightTheme
+  
+  // Save theme preference
+  useEffect(() => {
+    localStorage.setItem('blastradius-theme', isDark ? 'dark' : 'light')
+    document.body.style.background = colors.bgPrimary
+  }, [isDark, colors.bgPrimary]) // packageId when modal is open
 
   // Load suggestions on mount
   useEffect(() => {
@@ -1765,6 +1863,7 @@ export default function App() {
             animation: "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite"
           }}/>
           <span style={{fontSize: 11, color: colors.textSecondary}}>Live</span>
+          <ThemeToggle isDark={isDark} onToggle={() => setIsDark(!isDark)} colors={colors}/>
         </div>
       </div>
 
@@ -1907,7 +2006,6 @@ export default function App() {
                       }}
                       onMouseEnter={e => e.currentTarget.style.background = colors.bgHover}
                       onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
-                      <span style={{color: colors.critical, fontSize: 10}}>●</span>
                       <span style={{
                         fontSize: 13,
                         color: colors.textPrimary,
@@ -1981,7 +2079,6 @@ export default function App() {
                   e.currentTarget.style.transform = "translateY(0)"
                   e.currentTarget.style.boxShadow = colors.shadowMd
                 }}>
-                <span style={{fontSize: 18}}>⚡</span>
                 <span>Simulate Live Compromise</span>
                 <span style={{
                   fontSize: 10,
@@ -2121,7 +2218,7 @@ export default function App() {
                       onMouseLeave={e => {
                         if (v !== view) e.currentTarget.style.background = "transparent"
                       }}>
-                      {v === "list" ? "☰ List" : v === "graph" ? "◉ Graph" : "👤 Intel"}
+                      {v === "list" ? "List" : v === "graph" ? "Graph" : "Intel"}
                     </button>
                   ))}
                 </div>
@@ -2138,7 +2235,6 @@ export default function App() {
                     color: colors.textTertiary,
                     fontSize: 14
                   }}>
-                    <div style={{fontSize: 48, marginBottom: 16, opacity: 0.3}}>🔍</div>
                     <div style={{fontWeight: 500, marginBottom: 8}}>No services match the current filter</div>
                     <div style={{fontSize: 12, color: colors.textDisabled}}>Try adjusting your filter settings</div>
                   </div>
