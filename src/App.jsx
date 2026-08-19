@@ -1813,39 +1813,6 @@ export default function App() {
         flexWrap: "wrap",
         gap: 12
       }}>
-        <div style={{display: "flex", alignItems: "center", gap: 12}}>
-          <div style={{
-            width: 24,
-            height: 24,
-            borderRadius: 6,
-            background: colors.accent,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            color: "#fff"
-          }}>
-            <IcShield/>
-          </div>
-          <span style={{
-            fontSize: 18,
-            fontWeight: 700,
-            color: colors.textPrimary,
-            letterSpacing: "-0.02em"
-          }}>
-            BlastRadius
-          </span>
-          <span style={{
-            fontSize: 11,
-            color: colors.textTertiary,
-            marginLeft: 4,
-            padding: "2px 8px",
-            border: `1px solid ${colors.borderSubtle}`,
-            borderRadius: 4,
-            fontFamily: "'IBM Plex Mono', monospace"
-          }}>
-            by HydraDB
-          </span>
-        </div>
         <div style={{display: "flex", alignItems: "center", gap: 16}}>
           <span style={{
             fontSize: 11,
