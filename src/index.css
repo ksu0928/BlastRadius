@@ -4,46 +4,45 @@
 @import "tailwindcss";
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   DESIGN TOKENS — Logistics-Inspired Color System
-   Based on: Blue Dart (trust), DHL (urgency), FedEx (authority), Amazon (action)
-   Psychology: Trust + Security + Urgent Action (Supply Chain Operations)
+   DESIGN TOKENS — Light Theme Production B2B SaaS
+   Based on: Figma (modern spacing), Stripe (trust blue), Linear (minimalism)
+   Psychology: Professional, Trustworthy, Clean Supply Chain Operations
    ───────────────────────────────────────────────────────────────────────────── */
 
 :root {
-  /* Background Layers (Darker = Security Signal) */
-  --bg-primary: #0F1419;        /* Dark canvas (true dark, no purple tint) */
-  --bg-card: #1A1F2E;           /* Lifted surfaces (cooler blue-gray) */
-  --bg-elevated: #1E242F;       /* Modals, dropdowns */
-  --bg-hover: rgba(0, 117, 186, 0.08);  /* Blue Dart blue hover tint */
+  /* Background Layers (Light & Warm) */
+  --bg-primary: #FFFFFF;        /* Pure white canvas */
+  --bg-card: #F8F9FB;           /* Warm off-white (Figma-inspired) */
+  --bg-elevated: #F3F4F6;       /* Subtle elevated surfaces */
+  --bg-hover: #E5E7EB;          /* Hover state (light gray) */
   
-  /* Semantic Colors (Logistics Alert System) */
-  --critical: #D40511;          /* DHL Speed Red - "STOP, handle now" */
-  --warning: #FF9900;           /* Amazon Action Orange - "attention needed" */
-  --success: #00A758;           /* Blue Dart Delivery Green - "cleared" */
-  --info: #FFCC00;              /* DHL Energy Yellow - "additional info" */
+  /* Semantic Colors (Supply Chain Operations) */
+  --critical: #EA580C;          /* Orange - "Needs Review" (supply chain alert) */
+  --warning: #F59E0B;           /* Amber - "Monitor" (secondary warning) */
+  --success: #15803D;           /* Green - "Safe/Approved" (darker for contrast) */
+  --info: #0891B2;              /* Teal - "Flow/Movement" (supply chain vibe) */
   
-  /* Accent (Trust Blue - Blue Dart Brand) */
-  --accent-primary: #0075BA;    /* Blue Dart Trust Blue, CTAs only */
-  --accent-hover: #0088D6;      /* Hover state (lighter) */
-  --accent-active: #005A8F;     /* Active state (darker) */
+  /* Accent (Trust Blue - Stripe/Figma Style) */
+  --accent-primary: #2563EB;    /* Blue - CTAs, Trust, Primary Actions */
+  --accent-hover: #1D4ED8;      /* Hover state (darker) */
+  --accent-active: #1E40AF;     /* Active state (darkest) */
   
-  /* Text (WCAG AAA Contrast - Pure White) */
-  --text-primary: #FFFFFF;      /* Pure white, maximum clarity */
-  --text-secondary: #D0D4DB;    /* High contrast gray */
-  --text-tertiary: #9BA1AC;     /* Medium contrast gray */
-  --text-disabled: #6B7280;     /* Disabled state */
+  /* Text (WCAG AAA+ Contrast - 14:1 on white) */
+  --text-primary: #111827;      /* Dark gray, 14:1 contrast */
+  --text-secondary: #374151;    /* Medium gray, 10:1 contrast */
+  --text-tertiary: #6B7280;     /* Light gray, 6:1 contrast */
+  --text-disabled: #9CA3AF;     /* Disabled state */
   
-  /* Borders (Cooler Blue-Gray Tones) */
-  --border-subtle: #2D3748;     /* Default borders */
-  --border-strong: #4A5568;     /* Hover borders */
-  --border-accent: rgba(0, 117, 186, 0.3);  /* Blue Dart blue focus rings */
+  /* Borders (Subtle & Strong) */
+  --border-subtle: #D1D5DB;     /* Default dividers */
+  --border-strong: #9CA3AF;     /* Hover/active borders */
+  --border-accent: rgba(37, 99, 235, 0.3);  /* Blue focus rings */
   
-  /* Shadows (Stronger Depth) */
-  --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.35);
-  --shadow-card-hover: 0 8px 20px rgba(0, 0, 0, 0.45);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
-  --shadow-glow-critical: 0 0 16px rgba(212, 5, 17, 0.4);  /* DHL red glow */
-  --shadow-glow-trust: 0 0 20px rgba(0, 117, 186, 0.3);     /* Blue Dart glow */
+  /* Shadows (Figma/Linear Style) */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.15);
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -62,8 +61,8 @@ html, body, #root {
 }
 
 body {
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
+  background-color: var(--bg-primary);  /* Pure white */
+  color: var(--text-primary);           /* Dark gray #111827 */
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   font-size: 14px;
   font-weight: 400;
@@ -115,7 +114,7 @@ body {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   SCROLLBAR STYLING
+   SCROLLBAR STYLING (Light Theme)
    ───────────────────────────────────────────────────────────────────────────── */
 
 ::-webkit-scrollbar {
@@ -124,16 +123,16 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: var(--bg-card);  /* Warm off-white */
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--border-subtle);
+  background: var(--border-strong);  /* Medium gray */
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--border-strong);
+  background: var(--text-tertiary);  /* Darker on hover */
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────

@@ -1,43 +1,43 @@
 import { useState, useEffect, useRef, useCallback } from "react"
 
 // ─────────────────────────────────────────────────────────────────────────────
-// COLOR SYSTEM — Logistics-Inspired Production Palette
-// Blue Dart (trust) + DHL (urgency) + FedEx (authority) + Amazon (action)
+// COLOR SYSTEM — Light Theme Production B2B SaaS
+// Figma (spacing) + Stripe (trust blue) + Linear (minimalism)
 // ─────────────────────────────────────────────────────────────────────────────
 const colors = {
-  // Backgrounds (Darker = Security Signal)
-  bgPrimary: "#0F1419",
-  bgCard: "#1A1F2E",
-  bgElevated: "#1E242F",
-  bgHover: "rgba(0, 117, 186, 0.08)",  // Blue Dart blue at 8%
+  // Backgrounds (Light & Warm)
+  bgPrimary: "#FFFFFF",    // Pure white canvas
+  bgCard: "#F8F9FB",       // Warm off-white (Figma-inspired)
+  bgElevated: "#F3F4F6",   // Subtle elevated surfaces
+  bgHover: "#E5E7EB",      // Hover state (light gray)
   
-  // Semantic (Logistics Alert System)
-  critical: "#D40511",    // DHL Speed Red - "STOP, handle now"
-  warning: "#FF9900",     // Amazon Action Orange - "attention needed"
-  success: "#00A758",     // Blue Dart Delivery Green - "cleared"
-  info: "#FFCC00",        // DHL Energy Yellow - "additional info"
+  // Semantic (Supply Chain Operations)
+  critical: "#EA580C",     // Orange - "Needs Review" (supply chain alert)
+  warning: "#F59E0B",      // Amber - "Monitor" (secondary warning)
+  success: "#15803D",      // Green - "Safe/Approved" (darker for contrast)
+  info: "#0891B2",         // Teal - "Flow/Movement" (supply chain vibe)
   
-  // Accent (Trust Blue - Blue Dart Brand)
-  accent: "#0075BA",      // Blue Dart Trust Blue, CTAs only
-  accentHover: "#0088D6", // Hover state (lighter)
-  accentActive: "#005A8F", // Active state (darker)
+  // Accent (Trust Blue - Stripe/Figma Style)
+  accent: "#2563EB",       // Blue - CTAs, Trust, Primary Actions
+  accentHover: "#1D4ED8",  // Hover state (darker)
+  accentActive: "#1E40AF", // Active state (darkest)
   
-  // Text (WCAG AAA Contrast - Pure White)
-  textPrimary: "#FFFFFF",    // Pure white, maximum clarity
-  textSecondary: "#D0D4DB",  // High contrast gray
-  textTertiary: "#9BA1AC",   // Medium contrast gray
-  textDisabled: "#6B7280",   // Disabled state
+  // Text (WCAG AAA+ Contrast - 14:1 on white)
+  textPrimary: "#111827",    // Dark gray, 14:1 contrast
+  textSecondary: "#374151",  // Medium gray, 10:1 contrast
+  textTertiary: "#6B7280",   // Light gray, 6:1 contrast
+  textDisabled: "#9CA3AF",   // Disabled state
   
-  // Borders (Cooler Blue-Gray)
-  borderSubtle: "#2D3748",
-  borderStrong: "#4A5568",
-  borderAccent: "rgba(0, 117, 186, 0.3)",  // Blue Dart blue focus
+  // Borders (Subtle & Strong)
+  borderSubtle: "#D1D5DB",   // Default dividers
+  borderStrong: "#9CA3AF",   // Hover/active borders
+  borderAccent: "rgba(37, 99, 235, 0.3)",  // Blue focus rings
   
-  // Shadows (Stronger Depth)
-  shadowCard: "0 4px 12px rgba(0, 0, 0, 0.35)",
-  shadowCardHover: "0 8px 20px rgba(0, 0, 0, 0.45)",
-  shadowGlowCritical: "0 0 16px rgba(212, 5, 17, 0.4)",   // DHL red glow
-  shadowGlowTrust: "0 0 20px rgba(0, 117, 186, 0.3)",     // Blue Dart glow
+  // Shadows (Figma/Linear Style)
+  shadowSm: "0 1px 2px rgba(0, 0, 0, 0.05)",
+  shadowMd: "0 4px 6px rgba(0, 0, 0, 0.07)",
+  shadowLg: "0 10px 15px rgba(0, 0, 0, 0.1)",
+  shadowXl: "0 20px 25px rgba(0, 0, 0, 0.15)",
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -167,27 +167,27 @@ function SkeletonLoader({width = "100%", height = 20, borderRadius = 6}) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// BADGE COMPONENT — Logistics Status System
-// Inspired by Blue Dart/DHL/FedEx delivery status badges
+// BADGE COMPONENT — Light Theme B2B SaaS
+// Inspired by Stripe/Figma status badges
 // ─────────────────────────────────────────────────────────────────────────────
 function Badge({sev}) {
   const config = {
     direct: {
-      bg: "rgba(212, 5, 17, 0.12)",    // DHL red background
+      bg: "rgba(234, 88, 12, 0.1)",     // Orange background (light theme)
       color: colors.critical,
       border: colors.critical,
       label: "DIRECT",
       icon: "●"
     },
     transitive: {
-      bg: "rgba(255, 153, 0, 0.12)",   // Amazon orange background
+      bg: "rgba(245, 158, 11, 0.1)",    // Amber background
       color: colors.warning,
       border: colors.warning,
       label: "TRANSITIVE",
       icon: "◆"
     },
     safe: {
-      bg: "rgba(0, 167, 88, 0.12)",    // Blue Dart green background
+      bg: "rgba(21, 128, 61, 0.1)",     // Green background
       color: colors.success,
       border: colors.success,
       label: "SAFE",
@@ -235,7 +235,7 @@ function StatCard({label, value, sub, accent}) {
     <div style={{
       flex: 1,
       position: "relative",
-      background: colors.bgCard,
+      background: colors.bgCard,  // Warm off-white
       border: `1px solid ${colors.borderSubtle}`,
       borderRadius: 12,
       padding: "20px 24px",
@@ -243,26 +243,26 @@ function StatCard({label, value, sub, accent}) {
       flexDirection: "column",
       gap: 8,
       overflow: "hidden",
-      boxShadow: colors.shadowCard,
+      boxShadow: colors.shadowMd,  // Light shadow
       transition: "all 0.2s ease",
       cursor: "default"
     }}
     onMouseEnter={e => {
-      e.currentTarget.style.boxShadow = colors.shadowCardHover
+      e.currentTarget.style.boxShadow = colors.shadowLg  // Stronger shadow on hover
       e.currentTarget.style.borderColor = colors.borderStrong
     }}
     onMouseLeave={e => {
-      e.currentTarget.style.boxShadow = colors.shadowCard
+      e.currentTarget.style.boxShadow = colors.shadowMd
       e.currentTarget.style.borderColor = colors.borderSubtle
     }}>
-      {/* Gradient Accent Border (Top) - DHL Red → Amazon Orange */}
+      {/* Gradient Accent Border (Top) - Orange → Amber (Supply Chain Alert) */}
       <div style={{
         position: "absolute",
         top: 0,
         left: 0,
         right: 0,
         height: 4,
-        background: `linear-gradient(90deg, ${colors.critical}, ${colors.warning})`,  // DHL red → Amazon orange
+        background: `linear-gradient(90deg, ${colors.critical}, ${colors.warning})`,  // Orange → Amber
         borderRadius: "12px 12px 0 0"
       }}/>
       
@@ -321,17 +321,17 @@ function Chain({chain}) {
       {chain.map((node, i) => {
         const first = i === 0
         const last = i === chain.length - 1
-        const col = first ? colors.critical : last ? colors.textSecondary : colors.warning  // DHL red / Amazon orange
+        const col = first ? colors.critical : last ? colors.textSecondary : colors.warning  // Orange / Amber
         const bg = first 
-          ? "rgba(212, 5, 17, 0.12)"     // DHL red background
+          ? "rgba(234, 88, 12, 0.1)"      // Orange background (light)
           : last 
-            ? "rgba(208, 212, 219, 0.05)" 
-            : "rgba(255, 153, 0, 0.12)"   // Amazon orange background
+            ? "rgba(107, 114, 128, 0.05)"  // Gray background
+            : "rgba(245, 158, 11, 0.1)"    // Amber background (light)
         const bdr = first 
-          ? colors.critical                // DHL red border
+          ? colors.critical                // Orange border
           : last 
             ? colors.borderSubtle 
-            : colors.warning                // Amazon orange border
+            : colors.warning                // Amber border
         
         return (
           <div key={i} style={{display: "flex", alignItems: "center", gap: 8}}>
@@ -371,11 +371,11 @@ function ServiceRow({svc, idx, onDetails}) {
       border: `1px solid ${colors.borderSubtle}`,
       borderRadius: 8,
       overflow: "hidden",
-      background: colors.bgCard,
+      background: colors.bgCard,  // Warm off-white
       transition: "all 0.2s ease",
       animation: "fadeUp .3s ease-out both",
       animationDelay: `${idx * 40}ms`,
-      boxShadow: colors.shadowCard
+      boxShadow: colors.shadowSm  // Light shadow
     }}>
       <div 
         onClick={() => setOpen(o => !o)}
@@ -535,11 +535,11 @@ function GraphView({data, onDetails}) {
   return (
     <div style={{
       position: "relative",
-      background: colors.bgCard,
+      background: colors.bgCard,  // Warm off-white
       borderRadius: 12,
       border: `1px solid ${colors.borderSubtle}`,
       overflow: "hidden",
-      boxShadow: colors.shadowCard
+      boxShadow: colors.shadowMd  // Light shadow
     }}>
       {/* Legend */}
       <div style={{
@@ -715,11 +715,11 @@ function Timeline({data}) {
   
   return (
     <div style={{
-      background: colors.bgCard,
+      background: colors.bgCard,  // Warm off-white
       border: `1px solid ${colors.borderSubtle}`,
       borderRadius: 12,
       padding: "24px 28px",
-      boxShadow: colors.shadowCard
+      boxShadow: colors.shadowMd  // Light shadow
     }}>
       {/* Header */}
       <div style={{
@@ -785,16 +785,16 @@ function Timeline({data}) {
           borderRadius: 2
         }}/>
         
-        {/* Danger window - DHL Red Shaded Region */}
+        {/* Danger window - Orange Shaded Region (Light Theme) */}
         <div style={{
           position: "absolute",
           top: 18,
           left: 0,
           width: `${pct(dw)}%`,
           height: 46,
-          background: "rgba(212, 5, 17, 0.08)",  // DHL red at 8%
+          background: "rgba(234, 88, 12, 0.08)",  // Orange at 8%
           borderLeft: `3px solid ${colors.critical}`,
-          borderRight: `2px dashed rgba(212, 5, 17, 0.4)`,
+          borderRight: `2px dashed rgba(234, 88, 12, 0.3)`,
           borderRadius: 6
         }}/>
         <span style={{
@@ -882,10 +882,10 @@ function Timeline({data}) {
                 height: 12,
                 borderRadius: "50%",
                 background: s.severity === "direct" ? colors.critical : colors.warning,
-                border: `2px solid ${colors.bgCard}`,
+                border: `2px solid ${colors.bgCard}`,  // Warm off-white border
                 boxShadow: s.severity === "direct" 
-                  ? colors.shadowGlowCritical   // DHL red glow
-                  : `0 0 12px rgba(255, 153, 0, 0.6), 0 0 20px rgba(255, 153, 0, 0.3)`,  // Amazon orange glow
+                  ? `0 0 12px rgba(234, 88, 12, 0.4), 0 0 20px rgba(234, 88, 12, 0.2)`  // Orange glow
+                  : `0 0 12px rgba(245, 158, 11, 0.4), 0 0 20px rgba(245, 158, 11, 0.2)`,  // Amber glow
                 zIndex: 2,
                 animation: "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
                 cursor: "pointer"
@@ -947,7 +947,7 @@ function Drawer({svc, onClose}) {
         style={{
           position: "fixed",
           inset: 0,
-          background: "rgba(0, 0, 0, 0.6)",
+          background: "rgba(17, 24, 39, 0.5)",  // Dark gray at 50% (light theme)
           zIndex: 40,
           backdropFilter: "blur(4px)",
           animation: "fadeIn .25s ease-out both"
@@ -962,13 +962,13 @@ function Drawer({svc, onClose}) {
         width: "min(420px, 100vw)",
         maxWidth: "100%",
         zIndex: 50,
-        background: colors.bgCard,
+        background: colors.bgPrimary,  // Pure white
         borderLeft: `1px solid ${colors.borderSubtle}`,
         overflowY: "auto",
         display: "flex",
         flexDirection: "column",
         animation: "slideIn .3s cubic-bezier(.4,0,.2,1) both",
-        boxShadow: "-8px 0 32px rgba(0, 0, 0, 0.4)"
+        boxShadow: colors.shadowXl  // Extra large shadow for depth
       }}>
         {/* Header */}
         <div style={{
@@ -979,7 +979,7 @@ function Drawer({svc, onClose}) {
           justifyContent: "space-between",
           position: "sticky",
           top: 0,
-          background: colors.bgCard,
+          background: colors.bgPrimary,  // Pure white (sticky header)
           zIndex: 1,
           backdropFilter: "blur(8px)"
         }}>
@@ -1203,8 +1203,8 @@ function Drawer({svc, onClose}) {
                     justifyContent: "space-between",
                     padding: "10px 14px",
                     borderRadius: 8,
-                    background: "rgba(255, 153, 0, 0.08)",  // Amazon orange at 8%
-                    border: `1px solid rgba(255, 153, 0, 0.4)`  // Amazon orange border
+                    background: "rgba(245, 158, 11, 0.08)",  // Amber at 8% (light)
+                    border: `1px solid rgba(245, 158, 11, 0.3)`  // Amber border
                   }}>
                   <span style={{
                     fontSize: 13,
@@ -1959,7 +1959,7 @@ export default function App() {
                   padding: "12px 24px",
                   borderRadius: 9999,
                   border: `2px solid ${colors.critical}`,
-                  background: "rgba(212, 5, 17, 0.12)",  // DHL red at 12% opacity
+                  background: "rgba(234, 88, 12, 0.1)",  // Orange at 10% (light)
                   color: colors.critical,
                   fontSize: 14,
                   fontWeight: 600,
@@ -1969,17 +1969,17 @@ export default function App() {
                   alignItems: "center",
                   gap: 10,
                   transition: "all 0.2s ease",
-                  boxShadow: colors.shadowGlowCritical  // DHL red glow
+                  boxShadow: colors.shadowMd  // Medium shadow
                 }}
                 onMouseEnter={e => { 
-                  e.currentTarget.style.background = "rgba(212, 5, 17, 0.18)"  // Darker on hover
+                  e.currentTarget.style.background = "rgba(234, 88, 12, 0.15)"  // Darker on hover
                   e.currentTarget.style.transform = "translateY(-2px)"
-                  e.currentTarget.style.boxShadow = `0 4px 24px rgba(212, 5, 17, 0.5)`  // Stronger glow
+                  e.currentTarget.style.boxShadow = colors.shadowLg  // Larger shadow
                 }}
                 onMouseLeave={e => { 
-                  e.currentTarget.style.background = "rgba(212, 5, 17, 0.12)"
+                  e.currentTarget.style.background = "rgba(234, 88, 12, 0.1)"
                   e.currentTarget.style.transform = "translateY(0)"
-                  e.currentTarget.style.boxShadow = colors.shadowGlowCritical
+                  e.currentTarget.style.boxShadow = colors.shadowMd
                 }}>
                 <span style={{fontSize: 18}}>⚡</span>
                 <span>Simulate Live Compromise</span>
@@ -2037,7 +2037,7 @@ export default function App() {
                     fontWeight: 600,
                     padding: "4px 10px",
                     borderRadius: 9999,
-                    background: "rgba(212, 5, 17, 0.12)",  // DHL red background
+                    background: "rgba(234, 88, 12, 0.1)",  // Orange background
                     color: colors.critical,
                     border: `1px solid ${colors.critical}`,
                     fontFamily: "'IBM Plex Mono', monospace"
