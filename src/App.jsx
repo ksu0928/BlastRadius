@@ -1747,10 +1747,8 @@ export default function App() {
 
   // Load initial data (event-stream as default)
   useEffect(() => {
-    if (!data) {
-      performSearch("event-stream@3.3.6")
-    }
-  }, [])
+    performSearch("event-stream@3.3.6")
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const performSearch = async (q) => {
     if (!q.trim()) return
