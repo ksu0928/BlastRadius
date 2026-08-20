@@ -106,4 +106,6 @@ app.post("/api/maintainer-analysis", async (req, res) => {
 });
 
 // Export for Vercel serverless
-export default app;
+export default async (req, res) => {
+  return app(req, res);
+};

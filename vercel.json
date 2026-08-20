@@ -1,27 +1,14 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "dist"
-      }
-    }
+  "buildCommand": "npm run vercel-build",
+  "outputDirectory": "dist",
+  "rewrites": [
+    { "source": "/api/:path*", "destination": "/api/serverless" }
   ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "/api/serverless.js"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
-    }
-  ],
-  "build": {
-    "env": {
-      "HYDRA_DB_API_KEY": "@hydra_db_api_key"
+  "functions": {
+    "api/serverless.js": {
+      "memory": 1024,
+      "maxDuration": 10
     }
   }
 }
