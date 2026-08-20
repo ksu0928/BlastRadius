@@ -36,3 +36,6 @@ data/
 *.njsproj
 *.sln
 *.sw?
+
+# Netlify
+.netlify
