@@ -8,12 +8,20 @@
     "dev:server": "node server/server.js",
     "fetch:data": "node server/build-data.js",
     "fetch:data:quick": "node server/quick-build.js",
+    "fetch:data:large": "node server/fetch-large-scale.js",
+    "fetch:data:10k": "node server/fetch-large-scale.js --max-packages=10000",
+    "fetch:data:5k": "node server/fetch-large-scale.js --max-packages=5000",
     "seed": "node server/seed.js",
     "dev:all": "concurrently \"npm run dev:server\" \"npm run dev\"",
     "build": "vite build",
     "vercel-build": "npm run fetch:data:quick && vite build",
     "lint": "oxlint",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "node tests/run-tests.js",
+    "validate:typosquats": "node server/validate-typosquats.js",
+    "validate:maintainer-risk": "node server/validate-maintainer-risk.js",
+    "analyze:cross-ecosystem": "node server/cross-ecosystem-analysis.js",
+    "analyze:persistence": "node server/cicd-persistence-tracking.js"
   },
   "dependencies": {
     "@hydradb/sdk": "^2.1.2",

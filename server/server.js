@@ -10,6 +10,8 @@ import express from "express";
 import cors from "cors";
 import { queryBlastRadius, listCompromisedPackages, getRelations, simulateCompromise } from "./hydra.js";
 import { analyzeMaintainerRisk } from "./maintainer-analysis.js";
+import { generateCrossEcosystemReport } from "./cross-ecosystem-analysis.js";
+import { generatePersistenceReport, analyzePersistenceRisk } from "./cicd-persistence-tracking.js";
 
 const PORT = process.env.PORT || 3001;
 const app = express();
@@ -108,6 +110,57 @@ app.post("/api/maintainer-analysis", async (req, res) => {
     console.error("[maintainer-analysis] error:", err.message);
     res.status(500).json({
       error: err.message || "Analysis failed",
+    });
+  }
+});
+
+// ── Cross-ecosystem correlation (npm + PyPI) ────────────────────────────────
+app.post("/api/cross-ecosystem", async (req, res) => {
+  try {
+    const { maintainer, npmPackages } = req.body;
+    if (!maintainer || typeof maintainer !== "string") {
+      return res.status(400).json({ error: "maintainer is required" });
+    }
+
+    console.log(`[cross-ecosystem] analyzing maintainer="${maintainer}"`);
+    const analysis = await generateCrossEcosystemReport(maintainer, npmPackages || []);
+    res.json(analysis);
+  } catch (err) {
+    console.error("[cross-ecosystem] error:", err.message);
+    res.status(500).json({
+      error: err.message || "Cross-ecosystem analysis failed",
+    });
+  }
+});
+
+// ── CI/CD persistence and infrastructure graph ──────────────────────────────
+app.get("/api/persistence-report", async (_req, res) => {
+  try {
+    console.log(`[persistence] generating report`);
+    const report = generatePersistenceReport();
+    res.json(report);
+  } catch (err) {
+    console.error("[persistence] error:", err.message);
+    res.status(500).json({
+      error: err.message || "Persistence report failed",
+    });
+  }
+});
+
+app.post("/api/persistence-risk", async (req, res) => {
+  try {
+    const { packageData } = req.body;
+    if (!packageData) {
+      return res.status(400).json({ error: "packageData is required" });
+    }
+
+    console.log(`[persistence-risk] analyzing package`);
+    const analysis = analyzePersistenceRisk(packageData);
+    res.json(analysis);
+  } catch (err) {
+    console.error("[persistence-risk] error:", err.message);
+    res.status(500).json({
+      error: err.message || "Persistence risk analysis failed",
     });
   }
 });

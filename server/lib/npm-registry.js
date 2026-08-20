@@ -1,37 +1,144 @@
-// Shared npm registry helpers with rate limiting.
+// Shared npm registry helpers with rate limiting and error handling.
 
 const REGISTRY = "https://registry.npmjs.org";
 const delay = (ms) => new Promise((r) => setTimeout(r, ms));
 
-let lastFetch = 0;
-const MIN_INTERVAL_MS = 50;
+// Enhanced rate limiting configuration
+const RATE_LIMIT_CONFIG = {
+  minIntervalMs: 50,
+  maxRetries: 3,
+  initialBackoffMs: 1000,
+  maxBackoffMs: 10000,
+  backoffMultiplier: 2,
+  timeout: 10000, // 10 second timeout
+};
 
-async function rateLimitedFetch(url, retries = 3, accept = "application/json") {
-  const wait = MIN_INTERVAL_MS - (Date.now() - lastFetch);
+let lastFetch = 0;
+let requestCount = 0;
+let errorCount = 0;
+
+/**
+ * Rate-limited fetch with exponential backoff and comprehensive error handling
+ */
+async function rateLimitedFetch(url, retries = RATE_LIMIT_CONFIG.maxRetries, accept = "application/json") {
+  // Rate limiting
+  const wait = RATE_LIMIT_CONFIG.minIntervalMs - (Date.now() - lastFetch);
   if (wait > 0) await delay(wait);
   lastFetch = Date.now();
 
-  for (let i = 0; i < retries; i++) {
+  for (let attempt = 0; attempt < retries; attempt++) {
     try {
+      requestCount++;
+      
+      // Create AbortController for timeout
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), RATE_LIMIT_CONFIG.timeout);
+      
       const res = await fetch(url, {
         headers: {
           Accept: accept,
           "User-Agent": "BlastRadius-Hackathon/1.0",
         },
+        signal: controller.signal,
       });
-      if (res.status === 404) return null;
+      
+      clearTimeout(timeoutId);
+
+      // Handle specific status codes
+      if (res.status === 404) {
+        return null; // Package not found - not an error
+      }
+      
       if (res.status === 429) {
-        await delay(2000 * (i + 1));
+        // Rate limited - exponential backoff
+        errorCount++;
+        const backoffTime = Math.min(
+          RATE_LIMIT_CONFIG.initialBackoffMs * Math.pow(RATE_LIMIT_CONFIG.backoffMultiplier, attempt),
+          RATE_LIMIT_CONFIG.maxBackoffMs
+        );
+        console.warn(`⚠ Rate limited, backing off ${backoffTime}ms (attempt ${attempt + 1}/${retries})`);
+        await delay(backoffTime);
         continue;
       }
-      if (!res.ok) throw new Error(`HTTP ${res.status} for ${url}`);
-      return await res.json();
+      
+      if (res.status === 503 || res.status === 502) {
+        // Service unavailable - retry with backoff
+        errorCount++;
+        const backoffTime = RATE_LIMIT_CONFIG.initialBackoffMs * Math.pow(RATE_LIMIT_CONFIG.backoffMultiplier, attempt);
+        console.warn(`⚠ Service unavailable (${res.status}), retrying in ${backoffTime}ms`);
+        await delay(backoffTime);
+        continue;
+      }
+      
+      if (!res.ok) {
+        errorCount++;
+        throw new Error(`HTTP ${res.status} ${res.statusText} for ${url}`);
+      }
+      
+      // Parse JSON with error handling
+      try {
+        const data = await res.json();
+        return data;
+      } catch (parseErr) {
+        errorCount++;
+        throw new Error(`Failed to parse JSON from ${url}: ${parseErr.message}`);
+      }
+      
     } catch (err) {
-      if (i === retries - 1) throw err;
-      await delay(1000 * (i + 1));
+      errorCount++;
+      
+      // Handle timeout
+      if (err.name === "AbortError") {
+        console.warn(`⚠ Request timeout for ${url} (attempt ${attempt + 1}/${retries})`);
+        if (attempt === retries - 1) {
+          throw new Error(`Request timeout after ${retries} attempts: ${url}`);
+        }
+        await delay(RATE_LIMIT_CONFIG.initialBackoffMs * (attempt + 1));
+        continue;
+      }
+      
+      // Network errors
+      if (err.message.includes("fetch failed") || err.code === "ECONNRESET" || err.code === "ETIMEDOUT") {
+        console.warn(`⚠ Network error for ${url} (attempt ${attempt + 1}/${retries}): ${err.message}`);
+        if (attempt === retries - 1) {
+          throw new Error(`Network error after ${retries} attempts: ${url}`);
+        }
+        await delay(RATE_LIMIT_CONFIG.initialBackoffMs * (attempt + 1));
+        continue;
+      }
+      
+      // Last attempt - throw error
+      if (attempt === retries - 1) {
+        throw err;
+      }
+      
+      // Retry with backoff
+      await delay(RATE_LIMIT_CONFIG.initialBackoffMs * (attempt + 1));
     }
   }
+  
   return null;
+}
+
+/**
+ * Get rate limiter statistics
+ */
+export function getRateLimitStats() {
+  return {
+    requestCount,
+    errorCount,
+    errorRate: requestCount > 0 ? (errorCount / requestCount * 100).toFixed(2) + "%" : "0%",
+    lastFetchMs: Date.now() - lastFetch,
+  };
+}
+
+/**
+ * Reset rate limiter statistics (useful for testing)
+ */
+export function resetRateLimitStats() {
+  requestCount = 0;
+  errorCount = 0;
+  lastFetch = 0;
 }
 
 /** Resolve semver range using version list from dist-tags or prefix match. */
