@@ -19,7 +19,9 @@
       "dest": "/index.html"
     }
   ],
-  "env": {
-    "HYDRA_DB_API_KEY": "@hydra_db_api_key"
+  "build": {
+    "env": {
+      "HYDRA_DB_API_KEY": "@hydra_db_api_key"
+    }
   }
 }
