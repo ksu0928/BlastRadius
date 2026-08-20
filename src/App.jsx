@@ -1,129 +1,66 @@
 import { useState, useEffect, useRef, useCallback } from "react"
 
-// ─────────────────────────────────────────────────────────────────────────────
-// THEME SYSTEM — Light & Dark Mode
-// ─────────────────────────────────────────────────────────────────────────────
-const lightTheme = {
-  // Backgrounds (Light & Warm)
-  bgPrimary: "#FFFFFF",
-  bgCard: "#F8F9FB",
-  bgElevated: "#F3F4F6",
-  bgHover: "#E5E7EB",
-  
-  // Semantic (Supply Chain)
-  critical: "#EA580C",
-  warning: "#F59E0B",
-  success: "#15803D",
-  info: "#0891B2",
-  
-  // Accent (Trust Blue)
-  accent: "#2563EB",
-  accentHover: "#1D4ED8",
-  accentActive: "#1E40AF",
-  
-  // Text
-  textPrimary: "#111827",
-  textSecondary: "#374151",
-  textTertiary: "#6B7280",
-  textDisabled: "#9CA3AF",
-  
-  // Borders
-  borderSubtle: "#D1D5DB",
-  borderStrong: "#9CA3AF",
-  borderAccent: "rgba(37, 99, 235, 0.3)",
-  
-  // Shadows
-  shadowSm: "0 1px 2px rgba(0, 0, 0, 0.05)",
-  shadowMd: "0 4px 6px rgba(0, 0, 0, 0.07)",
-  shadowLg: "0 10px 15px rgba(0, 0, 0, 0.1)",
-  shadowXl: "0 20px 25px rgba(0, 0, 0, 0.15)",
-}
-
-const darkTheme = {
-  // Backgrounds (Dark)
-  bgPrimary: "#0F1419",
-  bgCard: "#1A1F2E",
-  bgElevated: "#1E242F",
-  bgHover: "rgba(37, 99, 235, 0.1)",
-  
-  // Semantic (Supply Chain)
-  critical: "#F97316",
-  warning: "#FBBF24",
-  success: "#22C55E",
-  info: "#06B6D4",
-  
-  // Accent (Trust Blue)
-  accent: "#3B82F6",
-  accentHover: "#60A5FA",
-  accentActive: "#2563EB",
-  
-  // Text
-  textPrimary: "#F9FAFB",
-  textSecondary: "#D1D5DB",
-  textTertiary: "#9CA3AF",
-  textDisabled: "#6B7280",
-  
-  // Borders
-  borderSubtle: "#374151",
-  borderStrong: "#4B5563",
-  borderAccent: "rgba(59, 130, 246, 0.3)",
-  
-  // Shadows
-  shadowSm: "0 1px 2px rgba(0, 0, 0, 0.5)",
-  shadowMd: "0 4px 6px rgba(0, 0, 0, 0.6)",
-  shadowLg: "0 10px 15px rgba(0, 0, 0, 0.7)",
-  shadowXl: "0 20px 25px rgba(0, 0, 0, 0.8)",
-}
+// Import graph visualization images
+import graph3D from "./assets/graph-3d.png"
+import graphNetwork from "./assets/graph-network.png"
+import graphBlueprint from "./assets/graph-blueprint.png"
 
 // ─────────────────────────────────────────────────────────────────────────────
-// THEME TOGGLE BUTTON
+// THEME SYSTEM — Dark Mode Security Dashboard
+// Visual Language: SOC/DevSecOps tool, high information density
 // ─────────────────────────────────────────────────────────────────────────────
-function ThemeToggle({isDark, onToggle, colors}) {
-  return (
-    <button
-      onClick={onToggle}
-      style={{
-        width: 40,
-        height: 40,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        borderRadius: 8,
-        border: `1px solid ${colors.borderSubtle}`,
-        background: colors.bgCard,
-        cursor: "pointer",
-        transition: "all 0.2s ease",
-        color: colors.textSecondary
-      }}
-      onMouseEnter={e => {
-        e.currentTarget.style.background = colors.bgHover
-        e.currentTarget.style.borderColor = colors.borderStrong
-      }}
-      onMouseLeave={e => {
-        e.currentTarget.style.background = colors.bgCard
-        e.currentTarget.style.borderColor = colors.borderSubtle
-      }}
-      title={isDark ? "Switch to light mode" : "Switch to dark mode"}>
-      {isDark ? (
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <circle cx="12" cy="12" r="5"/>
-          <line x1="12" y1="1" x2="12" y2="3"/>
-          <line x1="12" y1="21" x2="12" y2="23"/>
-          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
-          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-          <line x1="1" y1="12" x2="3" y2="12"/>
-          <line x1="21" y1="12" x2="23" y2="12"/>
-          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
-          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-        </svg>
-      ) : (
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-        </svg>
-      )}
-    </button>
-  )
+const colors = {
+  // Backgrounds (Near-black, not pure black)
+  bgPrimary: "#0B0D12",      // Primary background - very dark blue-black
+  bgCard: "#12141A",         // Card background - slightly lighter
+  bgElevated: "#1A1D25",     // Elevated surfaces
+  bgHover: "#21242D",        // Hover states
+  bgInput: "#16181E",        // Input fields
+  
+  // Severity System (White-based, high contrast)
+  critical: "#FFFFFF",       // Pure white for critical alerts
+  criticalGlow: "rgba(255, 255, 255, 0.4)",
+  high: "#F5F5F7",           // Near-white for high severity
+  highGlow: "rgba(245, 245, 247, 0.3)",
+  medium: "#E5E5EA",         // Light gray for medium
+  mediumGlow: "rgba(229, 229, 234, 0.2)",
+  low: "#98989D",            // Mid gray for low
+  safe: "#FFFFFF",           // Pure white for safe/verified
+  
+  // Accent (White for interactive elements)
+  accent: "#FFFFFF",
+  accentHover: "#F5F5F7",
+  accentGlow: "rgba(255, 255, 255, 0.3)",
+  
+  // Text (White hierarchy)
+  textPrimary: "#FFFFFF",    // Pure white for primary text
+  textSecondary: "#E5E5EA",  // Light gray for secondary text
+  textTertiary: "#98989D",   // Mid gray for tertiary
+  textDisabled: "#636366",   // Dark gray for disabled
+  
+  // Monospace text (for package names, versions, hashes)
+  textMono: "#FFFFFF",
+  
+  // Borders
+  borderSubtle: "#21242D",
+  borderMedium: "#2C2F38",
+  borderStrong: "#3A3D47",
+  borderAccent: "rgba(255, 255, 255, 0.4)",
+  borderCritical: "rgba(255, 255, 255, 0.5)",
+  
+  // Shadows (Subtle in dark mode)
+  shadowSm: "0 1px 3px rgba(0, 0, 0, 0.5)",
+  shadowMd: "0 4px 8px rgba(0, 0, 0, 0.6)",
+  shadowLg: "0 10px 20px rgba(0, 0, 0, 0.7)",
+  shadowXl: "0 20px 40px rgba(0, 0, 0, 0.8)",
+  
+  // Graph visualization
+  graphNode: "#FFFFFF",
+  graphNodeCritical: "#FFFFFF",
+  graphNodeHigh: "#F5F5F7",
+  graphEdge: "#3A3D47",
 }
+
 
 // ─────────────────────────────────────────────────────────────────────────────
 // API CLIENT
@@ -231,20 +168,20 @@ const IcClock = () => (
 // ─────────────────────────────────────────────────────────────────────────────
 // SKELETON LOADER (Shimmer Effect for Loading States)
 // ─────────────────────────────────────────────────────────────────────────────
-function SkeletonLoader({width = "100%", height = 20, borderRadius = 6}) {
+function SkeletonLoader({width = "100%", height = 20, borderRadius = 4, colors}) {
   return (
     <div style={{
       width,
       height,
       borderRadius,
-      background: colors.bgElevated,
+      background: colors.bgCard,
       position: "relative",
       overflow: "hidden"
     }}>
       <div style={{
         position: "absolute",
         inset: 0,
-        background: `linear-gradient(90deg, transparent, ${colors.bgHover}, transparent)`,
+        background: `linear-gradient(90deg, transparent, ${colors.bgElevated}, transparent)`,
         animation: "shimmer 2s infinite"
       }}/>
     </div>
@@ -252,31 +189,38 @@ function SkeletonLoader({width = "100%", height = 20, borderRadius = 6}) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// BADGE COMPONENT — Light Theme B2B SaaS
-// Inspired by Stripe/Figma status badges
+// BADGE COMPONENT — Dark Mode Security Dashboard
+// Severity-coded badges with white color system
 // ─────────────────────────────────────────────────────────────────────────────
-function Badge({sev}) {
+function Badge({sev, colors}) {
   const config = {
     direct: {
-      bg: "rgba(234, 88, 12, 0.1)",     // Orange background (light theme)
+      bg: "rgba(255, 255, 255, 0.15)",
       color: colors.critical,
       border: colors.critical,
       label: "DIRECT",
-      icon: ""
+      glow: colors.criticalGlow
     },
     transitive: {
-      bg: "rgba(245, 158, 11, 0.1)",    // Amber background
-      color: colors.warning,
-      border: colors.warning,
+      bg: "rgba(245, 245, 247, 0.12)",
+      color: colors.high,
+      border: colors.high,
       label: "TRANSITIVE",
-      icon: ""
+      glow: colors.highGlow
+    },
+    compromised: {
+      bg: "rgba(255, 255, 255, 0.2)",
+      color: colors.critical,
+      border: colors.critical,
+      label: "COMPROMISED",
+      glow: colors.criticalGlow
     },
     safe: {
-      bg: "rgba(21, 128, 61, 0.1)",     // Green background
-      color: colors.success,
-      border: colors.success,
+      bg: "rgba(255, 255, 255, 0.15)",
+      color: colors.safe,
+      border: colors.safe,
       label: "SAFE",
-      icon: ""
+      glow: "rgba(255, 255, 255, 0.2)"
     }
   }
   const style = config[sev] || config.safe
@@ -286,16 +230,17 @@ function Badge({sev}) {
       display: "inline-flex",
       alignItems: "center",
       gap: 6,
-      padding: "6px 12px",
-      borderRadius: 9999,
-      fontSize: 11,
-      fontWeight: 600,
-      letterSpacing: "0.5px",
+      padding: "4px 10px",
+      borderRadius: 4,
+      fontSize: 10,
+      fontWeight: 700,
+      letterSpacing: "0.8px",
       textTransform: "uppercase",
       background: style.bg,
       color: style.color,
       border: `1px solid ${style.border}`,
-      fontFamily: "'IBM Plex Mono', monospace",
+      fontFamily: "'JetBrains Mono', 'IBM Plex Mono', monospace",
+      boxShadow: `0 0 12px ${style.glow}`,
     }}>
       {style.label}
     </span>
@@ -303,71 +248,78 @@ function Badge({sev}) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// STAT CARD (KPI Card Component) — Production Design System
+// STAT CARD (KPI Card Component) — Dark Mode Security Dashboard
+// Compact, high-density information tiles
 // ─────────────────────────────────────────────────────────────────────────────
-function StatCard({label, value, sub, accent}) {
+function StatCard({label, value, sub, accent, colors}) {
   const accentColors = {
     critical: colors.critical,
-    warning: colors.warning,
-    success: colors.success,
-    info: colors.info,
+    high: colors.high,
+    medium: colors.medium,
+    low: colors.low,
+    safe: colors.safe,
     accent: colors.accent
   }
   const accentColor = accentColors[accent] || colors.textPrimary
+  const accentGlow = accent === 'critical' ? colors.criticalGlow : 
+                     accent === 'high' ? colors.highGlow :
+                     accent === 'accent' ? colors.accentGlow : 'transparent'
   
   return (
     <div style={{
       flex: 1,
+      minWidth: 180,
       position: "relative",
-      background: colors.bgCard,  // Warm off-white
-      border: `1px solid ${colors.borderSubtle}`,
-      borderRadius: 12,
-      padding: "20px 24px",
+      background: colors.bgCard,
+      border: `1px solid ${colors.borderMedium}`,
+      borderRadius: 8,
+      padding: "16px 20px",
       display: "flex",
       flexDirection: "column",
-      gap: 8,
+      gap: 6,
       overflow: "hidden",
-      boxShadow: colors.shadowMd,  // Light shadow
       transition: "all 0.2s ease",
       cursor: "default"
     }}
     onMouseEnter={e => {
-      e.currentTarget.style.boxShadow = colors.shadowLg  // Stronger shadow on hover
       e.currentTarget.style.borderColor = colors.borderStrong
+      e.currentTarget.style.background = colors.bgElevated
     }}
     onMouseLeave={e => {
-      e.currentTarget.style.boxShadow = colors.shadowMd
-      e.currentTarget.style.borderColor = colors.borderSubtle
+      e.currentTarget.style.borderColor = colors.borderMedium
+      e.currentTarget.style.background = colors.bgCard
     }}>
-      {/* Gradient Accent Border (Top) - Orange → Amber (Supply Chain Alert) */}
+      {/* Top accent border */}
       <div style={{
         position: "absolute",
         top: 0,
         left: 0,
         right: 0,
-        height: 4,
-        background: `linear-gradient(90deg, ${colors.critical}, ${colors.warning})`,  // Orange → Amber
-        borderRadius: "12px 12px 0 0"
+        height: 2,
+        background: accentColor,
+        boxShadow: `0 0 8px ${accentGlow}`
       }}/>
       
       {/* Label */}
       <span style={{
-        fontSize: 12,
-        fontWeight: 500,
-        color: colors.textTertiary,
-        letterSpacing: "0.06em",
-        textTransform: "uppercase"
+        fontSize: 10,
+        fontWeight: 600,
+        color: colors.textSecondary,
+        letterSpacing: "0.8px",
+        textTransform: "uppercase",
+        fontFamily: "'Inter', system-ui, sans-serif"
       }}>
         {label}
       </span>
       
       {/* Value (Large Number) */}
       <span style={{
-        fontSize: 60,
+        fontSize: 44,
         fontWeight: 700,
         lineHeight: 1,
         color: accentColor,
-        fontFamily: "'IBM Plex Mono', monospace"
+        fontFamily: "'JetBrains Mono', 'IBM Plex Mono', monospace",
+        textShadow: `0 0 20px ${accentGlow}`
       }}>
         {value}
       </span>
@@ -375,9 +327,10 @@ function StatCard({label, value, sub, accent}) {
       {/* Subtitle Detail */}
       {sub && (
         <span style={{
-          fontSize: 14,
-          color: colors.textSecondary,
-          marginTop: 4
+          fontSize: 12,
+          color: colors.textTertiary,
+          marginTop: 2,
+          fontFamily: "'Inter', system-ui, sans-serif"
         }}>
           {sub}
         </span>
@@ -387,52 +340,52 @@ function StatCard({label, value, sub, accent}) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// ─────────────────────────────────────────────────────────────────────────────
 // CHAIN BREADCRUMB (Dependency Path Visualization)
+// Shows attack propagation path through dependency tree with white color scheme
 // ─────────────────────────────────────────────────────────────────────────────
-function Chain({chain}) {
+function Chain({chain, colors}) {
   return (
     <div style={{
       display: "flex",
       alignItems: "center",
       flexWrap: "wrap",
-      gap: 8,
-      padding: "12px 16px",
-      background: colors.bgElevated,
-      borderRadius: 8,
-      border: `1px solid ${colors.borderSubtle}`
+      gap: 6,
+      padding: "10px 14px",
+      background: colors.bgCard,
+      borderRadius: 6,
+      border: `1px solid ${colors.borderMedium}`
     }}>
       {chain.map((node, i) => {
         const first = i === 0
         const last = i === chain.length - 1
-        const col = first ? colors.critical : last ? colors.textSecondary : colors.warning  // Orange / Amber
+        const col = first ? colors.critical : last ? colors.textSecondary : colors.high
         const bg = first 
-          ? "rgba(234, 88, 12, 0.1)"      // Orange background (light)
+          ? "rgba(255, 255, 255, 0.15)"
           : last 
-            ? "rgba(107, 114, 128, 0.05)"  // Gray background
-            : "rgba(245, 158, 11, 0.1)"    // Amber background (light)
+            ? "rgba(152, 152, 157, 0.1)"
+            : "rgba(245, 245, 247, 0.12)"
         const bdr = first 
-          ? colors.critical                // Orange border
+          ? colors.critical
           : last 
-            ? colors.borderSubtle 
-            : colors.warning                // Amber border
+            ? colors.borderMedium
+            : colors.high
         
         return (
-          <div key={i} style={{display: "flex", alignItems: "center", gap: 8}}>
+          <div key={i} style={{display: "flex", alignItems: "center", gap: 6}}>
             <span style={{
-              fontSize: 12,
-              fontWeight: 500,
-              padding: "5px 12px",
-              borderRadius: 6,
+              fontSize: 11,
+              fontWeight: 600,
+              padding: "4px 10px",
+              borderRadius: 4,
               color: col,
               background: bg,
               border: `1px solid ${bdr}`,
-              fontFamily: "'IBM Plex Mono', monospace"
+              fontFamily: "'JetBrains Mono', 'IBM Plex Mono', monospace"
             }}>
               {node}
             </span>
             {!last && (
-              <span style={{color: colors.textTertiary, fontSize: 14}}>
+              <span style={{color: colors.textTertiary, fontSize: 12}}>
                 <IcArrow/>
               </span>
             )}
@@ -444,22 +397,34 @@ function Chain({chain}) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// SERVICE ROW (Alert Feed Item) — Dark Mode Security Dashboard
+// High information density, severity-coded
 // ─────────────────────────────────────────────────────────────────────────────
-// SERVICE ROW (List Panel Item) — Production Design System
-// ─────────────────────────────────────────────────────────────────────────────
-function ServiceRow({svc, idx, onDetails}) {
+function ServiceRow({svc, idx, onDetails, colors}) {
   const [open, setOpen] = useState(false)
+  
+  const severityColor = svc.severity === 'direct' ? colors.critical : colors.high
+  const severityGlow = svc.severity === 'direct' ? colors.criticalGlow : colors.highGlow
   
   return (
     <div style={{
-      border: `1px solid ${colors.borderSubtle}`,
-      borderRadius: 8,
+      border: `1px solid ${colors.borderMedium}`,
+      borderLeft: `3px solid ${severityColor}`,
+      borderRadius: 6,
       overflow: "hidden",
-      background: colors.bgCard,  // Warm off-white
+      background: colors.bgCard,
       transition: "all 0.2s ease",
       animation: "fadeUp .3s ease-out both",
-      animationDelay: `${idx * 40}ms`,
-      boxShadow: colors.shadowSm  // Light shadow
+      animationDelay: `${idx * 30}ms`,
+      boxShadow: `0 0 0 1px ${severityGlow}`
+    }}
+    onMouseEnter={e => {
+      e.currentTarget.style.borderLeftColor = severityColor
+      e.currentTarget.style.boxShadow = `0 0 12px ${severityGlow}, 0 2px 8px rgba(0,0,0,0.4)`
+    }}
+    onMouseLeave={e => {
+      e.currentTarget.style.borderLeftColor = severityColor
+      e.currentTarget.style.boxShadow = `0 0 0 1px ${severityGlow}`
     }}>
       <div 
         onClick={() => setOpen(o => !o)}
@@ -467,19 +432,10 @@ function ServiceRow({svc, idx, onDetails}) {
           display: "flex",
           alignItems: "center",
           gap: 12,
-          padding: "14px 16px",
+          padding: "12px 14px",
           cursor: "pointer",
-          borderBottom: open ? `1px solid ${colors.borderSubtle}` : "none",
-          borderLeft: `3px solid transparent`,
-          transition: "all 0.2s ease"
-        }}
-        onMouseEnter={e => {
-          e.currentTarget.style.background = colors.bgHover
-          e.currentTarget.style.borderLeftColor = colors.accent
-        }}
-        onMouseLeave={e => {
-          e.currentTarget.style.background = "transparent"
-          e.currentTarget.style.borderLeftColor = "transparent"
+          borderBottom: open ? `1px solid ${colors.borderMedium}` : "none",
+          transition: "all 0.15s ease"
         }}>
         
         <span style={{color: colors.textTertiary, flexShrink: 0}}>
@@ -494,28 +450,28 @@ function ServiceRow({svc, idx, onDetails}) {
           minWidth: 0
         }}>
           <span style={{
-            fontSize: 13,
-            fontWeight: 500,
+            fontSize: 12,
+            fontWeight: 600,
             color: colors.textPrimary,
-            fontFamily: "'IBM Plex Mono', monospace",
+            fontFamily: "'JetBrains Mono', 'IBM Plex Mono', monospace",
             whiteSpace: "nowrap"
           }}>
             {svc.name}
           </span>
-          <Badge sev={svc.severity}/>
+          <Badge sev={svc.severity} colors={colors}/>
         </span>
         
         <span style={{
           display: "flex",
           alignItems: "center",
           gap: 6,
-          fontSize: 11,
+          fontSize: 10,
           color: colors.textTertiary,
           flexShrink: 0
         }}>
           <IcClock/>
           <span style={{
-            fontFamily: "'IBM Plex Mono', monospace",
+            fontFamily: "'JetBrains Mono', 'IBM Plex Mono', monospace",
             color: colors.textSecondary
           }}>
             {minDisp(svc.resolvedMinutes)}
@@ -523,8 +479,8 @@ function ServiceRow({svc, idx, onDetails}) {
         </span>
         
         <span style={{
-          fontFamily: "'IBM Plex Mono', monospace",
-          fontSize: 11,
+          fontFamily: "'JetBrains Mono', 'IBM Plex Mono', monospace",
+          fontSize: 10,
           color: colors.textTertiary,
           flexShrink: 0
         }}>
@@ -534,43 +490,48 @@ function ServiceRow({svc, idx, onDetails}) {
         <button 
           onClick={e => {e.stopPropagation(); onDetails(svc)}}
           style={{
-            fontSize: 12,
-            padding: "6px 14px",
-            borderRadius: 6,
-            border: `1px solid ${colors.borderSubtle}`,
-            background: "transparent",
+            fontSize: 11,
+            padding: "5px 12px",
+            borderRadius: 4,
+            border: `1px solid ${colors.borderMedium}`,
+            background: colors.bgInput,
             color: colors.accent,
             cursor: "pointer",
-            fontFamily: "inherit",
-            fontWeight: 500,
+            fontFamily: "'Inter', system-ui, sans-serif",
+            fontWeight: 600,
             flexShrink: 0,
-            transition: "all 0.2s ease"
+            transition: "all 0.15s ease"
           }}
           onMouseEnter={e => {
-            e.currentTarget.style.background = colors.bgHover
+            e.currentTarget.style.background = colors.accent
+            e.currentTarget.style.color = colors.bgPrimary
             e.currentTarget.style.borderColor = colors.accent
+            e.currentTarget.style.boxShadow = `0 0 12px ${colors.accentGlow}`
           }}
           onMouseLeave={e => {
-            e.currentTarget.style.background = "transparent"
-            e.currentTarget.style.borderColor = colors.borderSubtle
+            e.currentTarget.style.background = colors.bgInput
+            e.currentTarget.style.color = colors.accent
+            e.currentTarget.style.borderColor = colors.borderMedium
+            e.currentTarget.style.boxShadow = 'none'
           }}>
-          Details →
+          DETAILS →
         </button>
       </div>
       
       {open && (
-        <div style={{padding: "14px 16px", background: colors.bgPrimary}}>
+        <div style={{padding: "12px 14px", background: colors.bgInput}}>
           <div style={{
-            fontSize: 11,
-            color: colors.textTertiary,
-            letterSpacing: "0.06em",
+            fontSize: 10,
+            color: colors.textSecondary,
+            letterSpacing: "0.8px",
             textTransform: "uppercase",
-            marginBottom: 12,
-            fontWeight: 600
+            marginBottom: 10,
+            fontWeight: 600,
+            fontFamily: "'Inter', system-ui, sans-serif"
           }}>
-            Dependency Chain · {svc.chain.length - 1} hop{svc.chain.length - 2 !== 1 ? "s" : ""}
+            DEPENDENCY CHAIN · {svc.chain.length - 1} HOP{svc.chain.length - 2 !== 1 ? "S" : ""}
           </div>
-          <Chain chain={svc.chain}/>
+          <Chain chain={svc.chain} colors={colors}/>
         </div>
       )}
     </div>
@@ -580,7 +541,7 @@ function ServiceRow({svc, idx, onDetails}) {
 // ─────────────────────────────────────────────────────────────────────────────
 // GRAPH VIEW
 // ─────────────────────────────────────────────────────────────────────────────
-function GraphView({data, onDetails}) {
+function GraphView({data, onDetails, colors}) {
   const [hov, setHov] = useState(null)
   const W=800,H=440,CX=W/2,CY=H/2,IR=105,OR=195
   const svcs = data.services
@@ -790,7 +751,7 @@ function GraphView({data, onDetails}) {
 // ─────────────────────────────────────────────────────────────────────────────
 // TIMELINE STRIP (Exposure Timeline with Pulse Animations)
 // ─────────────────────────────────────────────────────────────────────────────
-function Timeline({data}) {
+function Timeline({data, colors}) {
   const {services: svcs, stats} = data
   const maxM = Math.max(...svcs.map(s => s.resolvedMinutes)) + 2
   const pct = m => (m / maxM) * 100
@@ -1015,7 +976,7 @@ function Timeline({data}) {
 // ─────────────────────────────────────────────────────────────────────────────
 // SLIDE-OVER DRAWER (Service Details Panel) — Production Design System
 // ─────────────────────────────────────────────────────────────────────────────
-function Drawer({svc, onClose}) {
+function Drawer({svc, onClose, colors}) {
   const mt = svc.maintainer
   useEffect(() => {
     const h = e => { if (e.key === "Escape") onClose() }
@@ -1127,7 +1088,7 @@ function Drawer({svc, onClose}) {
             }}>
               Severity
             </div>
-            <Badge sev={svc.severity}/>
+            <Badge sev={svc.severity} colors={colors}/>
           </div>
           
           {/* Time */}
@@ -1189,7 +1150,7 @@ function Drawer({svc, onClose}) {
             }}>
               Dependency Chain
             </div>
-            <Chain chain={svc.chain}/>
+            <Chain chain={svc.chain} colors={colors}/>
           </div>
           
           {/* Maintainer */}
@@ -1322,7 +1283,7 @@ function Drawer({svc, onClose}) {
 // ─────────────────────────────────────────────────────────────────────────────
 // MAINTAINER INTELLIGENCE VIEW
 // ─────────────────────────────────────────────────────────────────────────────
-function MaintainerIntelligence({data}) {
+function MaintainerIntelligence({data, colors}) {
   const [analysis, setAnalysis] = useState(null)
   const [loading, setLoading] = useState(true)
   const [selectedMaint, setSelectedMaint] = useState(null)
@@ -1352,14 +1313,14 @@ function MaintainerIntelligence({data}) {
               borderRadius: 12,
               padding: "20px 24px"
             }}>
-            <SkeletonLoader width="40%" height={16} borderRadius={4}/>
+            <SkeletonLoader width="40%" height={16} borderRadius={4} colors={colors}/>
             <div style={{marginTop: 12}}>
-              <SkeletonLoader width="60%" height={14} borderRadius={4}/>
+              <SkeletonLoader width="60%" height={14} borderRadius={4} colors={colors}/>
             </div>
             <div style={{marginTop: 16, display: "flex", gap: 8}}>
-              <SkeletonLoader width={80} height={24} borderRadius={6}/>
-              <SkeletonLoader width={100} height={24} borderRadius={6}/>
-              <SkeletonLoader width={90} height={24} borderRadius={6}/>
+              <SkeletonLoader width={80} height={24} borderRadius={6} colors={colors}/>
+              <SkeletonLoader width={100} height={24} borderRadius={6} colors={colors}/>
+              <SkeletonLoader width={90} height={24} borderRadius={6} colors={colors}/>
             </div>
           </div>
         ))}
@@ -1370,17 +1331,33 @@ function MaintainerIntelligence({data}) {
   if (!analysis) return null
 
   const riskColor = (level) => ({
-    critical: "#ef4444",
-    high: "#f59e0b",
-    moderate: "#eab308",
-    low: "#22c55e"
-  }[level] || "#71717a")
+    critical: colors.critical,
+    high: colors.high,
+    moderate: colors.medium,
+    low: colors.low
+  }[level] || colors.textTertiary)
 
   return (
-    <div style={{display:"flex",flexDirection:"column",gap:24}}>
+    <div style={{display:"flex",flexDirection:"column",gap:24, position: "relative"}}>
+      
+      {/* Blueprint Background */}
+      <div style={{
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
+        height: "400px",
+        opacity: 0.04,
+        pointerEvents: "none",
+        backgroundImage: `url(${graphBlueprint})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        zIndex: 0
+      }} />
       
       {/* Overview Stats */}
-      <div style={{display:"grid",gridTemplateColumns:"repeat(4, 1fr)",gap:12}}>
+      <div style={{display:"grid",gridTemplateColumns:"repeat(4, 1fr)",gap:12, position: "relative", zIndex: 1}}>
         <div style={{background:"#111",border:"1px solid #1c1c1f",borderRadius:8,padding:"16px 20px",position:"relative",overflow:"hidden"}}>
           <div style={{position:"absolute",top:0,left:0,right:0,height:2,background:"#71717a"}}/>
           <div style={{fontSize:10,color:"#52525b",marginBottom:6,textTransform:"uppercase",letterSpacing:"0.05em"}}>Total Maintainers</div>
@@ -1722,19 +1699,10 @@ export default function App() {
   const [sugsLoading, setSugsLoading] = useState(false)
   const [simulating, setSimulating] = useState(null)
   
-  // Theme state (defaults to light mode)
-  const [isDark, setIsDark] = useState(() => {
-    const saved = localStorage.getItem('blastradius-theme')
-    return saved === 'dark'
-  })
-  
-  const colors = isDark ? darkTheme : lightTheme
-  
-  // Save theme preference
+  // Set background color
   useEffect(() => {
-    localStorage.setItem('blastradius-theme', isDark ? 'dark' : 'light')
     document.body.style.background = colors.bgPrimary
-  }, [isDark, colors.bgPrimary]) // packageId when modal is open
+  }, []) // packageId when modal is open
 
   // Load suggestions on mount
   useEffect(() => {
@@ -1793,18 +1761,18 @@ export default function App() {
         *{box-sizing:border-box}
       `}</style>
 
-      {error && <ErrorBanner msg={error} onDismiss={() => setError(null)} />}
+      {error && <ErrorBanner msg={error} onDismiss={() => setError(null)} colors={colors} />}
 
-      {/* ── HERO HEADER ──────────────────────────────────────────────────────── */}
+      {/* ── HEADER BAR ──────────────────────────────────────────────────────── */}
       <div style={{
-        borderBottom: `1px solid ${colors.borderSubtle}`,
-        padding: "0 clamp(16px, 4vw, 32px)",
+        borderBottom: `1px solid ${colors.borderMedium}`,
+        padding: "0 clamp(20px, 4vw, 40px)",
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
-        minHeight: 64,
+        minHeight: 56,
         background: colors.bgCard,
-        backdropFilter: "blur(8px)",
+        backdropFilter: "blur(12px)",
         position: "sticky",
         top: 0,
         zIndex: 30,
@@ -1813,67 +1781,124 @@ export default function App() {
       }}>
         <div style={{display: "flex", alignItems: "center", gap: 16}}>
           <span style={{
-            fontSize: 11,
-            color: colors.textTertiary,
-            fontFamily: "'IBM Plex Mono', monospace"
+            fontSize: 16,
+            fontWeight: 700,
+            color: colors.textPrimary,
+            fontFamily: "'Inter', system-ui, sans-serif",
+            letterSpacing: "-0.02em"
           }}>
-            supply-chain &middot; threat-intel
+            BLASTRADIUS
           </span>
+          <div style={{
+            width: 1,
+            height: 20,
+            background: colors.borderMedium
+          }}/>
+          <span style={{
+            fontSize: 10,
+            color: colors.textTertiary,
+            fontFamily: "'JetBrains Mono', 'IBM Plex Mono', monospace",
+            letterSpacing: "0.5px"
+          }}>
+            supply-chain · threat-intel
+          </span>
+        </div>
+        <div style={{display: "flex", alignItems: "center", gap: 12}}>
           <div style={{
             width: 8,
             height: 8,
             borderRadius: "50%",
-            background: colors.success,
-            boxShadow: `0 0 8px ${colors.success}80`,
+            background: colors.safe,
+            boxShadow: `0 0 12px ${colors.safe}, 0 0 4px ${colors.safe}`,
             animation: "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite"
           }}/>
-          <span style={{fontSize: 11, color: colors.textSecondary}}>Live</span>
-          <ThemeToggle isDark={isDark} onToggle={() => setIsDark(!isDark)} colors={colors}/>
+          <span style={{
+            fontSize: 11,
+            color: colors.textSecondary,
+            fontFamily: "'JetBrains Mono', 'IBM Plex Mono', monospace",
+            fontWeight: 600
+          }}>
+            LIVE
+          </span>
         </div>
       </div>
 
       <div style={{
-        maxWidth: 1200,
+        maxWidth: 1400,
         margin: "0 auto",
-        padding: "0 clamp(16px, 4vw, 32px)"
+        padding: "0 clamp(20px, 4vw, 40px)"
       }}>
 
-        {/* ── HERO SEARCH ──────────────────────────────────────────────────────── */}
-        <div style={{padding: "48px 0 40px", display: "flex", flexDirection: "column", alignItems: "center", gap: 16}}>
-          <div style={{textAlign: "center", marginBottom: 8}}>
+        {/* ── SEARCH INTERFACE ──────────────────────────────────────────────────────── */}
+        <div style={{padding: "40px 0 32px", display: "flex", flexDirection: "column", alignItems: "center", gap: 20, position: "relative"}}>
+          
+          {/* Background Graph Image */}
+          <div style={{
+            position: "absolute",
+            top: "-60px",
+            left: "50%",
+            transform: "translateX(-50%)",
+            width: "600px",
+            height: "300px",
+            opacity: 0.08,
+            pointerEvents: "none",
+            zIndex: 0,
+            backgroundImage: `url(${graph3D})`,
+            backgroundSize: "contain",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+            filter: "brightness(1.5)"
+          }} />
+          
+          <div style={{textAlign: "center", marginBottom: 4, position: "relative", zIndex: 1}}>
             <h1 style={{
-              fontSize: 48,
-              fontWeight: 700,
-              letterSpacing: "-0.02em",
+              fontSize: 40,
+              fontWeight: 800,
+              letterSpacing: "-0.03em",
               color: colors.textPrimary,
-              margin: "0 0 12px 0",
-              lineHeight: 1.1
+              margin: "0 0 8px 0",
+              lineHeight: 1.1,
+              fontFamily: "'Inter', system-ui, sans-serif"
             }}>
               Supply Chain Threat Analysis
             </h1>
             <p style={{
-              fontSize: 16,
+              fontSize: 14,
               color: colors.textSecondary,
               margin: 0,
-              letterSpacing: "-0.01em"
+              letterSpacing: "-0.01em",
+              fontFamily: "'Inter', system-ui, sans-serif"
             }}>
-              Understand your attack surface in seconds
+              Real-time dependency graph analysis · Identify attack vectors · Calculate blast radius
             </p>
           </div>
           
-          <div style={{position: "relative", width: "100%", maxWidth: 640}}>
+          <div style={{position: "relative", width: "100%", maxWidth: 680, zIndex: 1}}>
             <div style={{
               display: "flex",
               alignItems: "center",
-              background: colors.bgCard,
-              border: `1px solid ${colors.borderSubtle}`,
-              borderRadius: 9999,
-              padding: "0 6px 0 20px",
+              background: colors.bgInput,
+              border: `1px solid ${colors.borderMedium}`,
+              borderRadius: 8,
+              padding: "0 6px 0 16px",
               gap: 12,
-              transition: "all 0.2s ease"
+              transition: "all 0.2s ease",
+              boxShadow: `0 0 0 0 ${colors.accentGlow}`
             }}
-            onMouseEnter={e => e.currentTarget.style.borderColor = colors.borderStrong}
-            onMouseLeave={e => e.currentTarget.style.borderColor = colors.borderSubtle}>
+            onMouseEnter={e => {
+              e.currentTarget.style.borderColor = colors.borderStrong
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.borderColor = colors.borderMedium
+            }}
+            onFocus={e => {
+              e.currentTarget.style.borderColor = colors.accent
+              e.currentTarget.style.boxShadow = `0 0 0 3px ${colors.accentGlow}`
+            }}
+            onBlur={e => {
+              e.currentTarget.style.borderColor = colors.borderMedium
+              e.currentTarget.style.boxShadow = `0 0 0 0 ${colors.accentGlow}`
+            }}>
               <span style={{color: colors.textTertiary, flexShrink: 0}}>
                 <IcSearch/>
               </span>
@@ -1883,16 +1908,16 @@ export default function App() {
                 onKeyDown={e => e.key === "Enter" && search()}
                 onFocus={() => setShowSug(true)}
                 onBlur={() => setTimeout(() => setShowSug(false), 150)}
-                placeholder="Search npm package, org, or CVE…"
+                placeholder="Search npm package, org, or CVE (e.g. event-stream@3.3.6)"
                 style={{
                   flex: 1,
                   background: "transparent",
                   border: "none",
                   outline: "none",
-                  fontFamily: "'IBM Plex Mono', monospace",
-                  fontSize: 14,
+                  fontFamily: "'JetBrains Mono', 'IBM Plex Mono', monospace",
+                  fontSize: 13,
                   color: colors.textPrimary,
-                  padding: "14px 0",
+                  padding: "13px 0",
                   caretColor: colors.accent
                 }}
               />
@@ -1901,7 +1926,7 @@ export default function App() {
                   width: 18,
                   height: 18,
                   borderRadius: "50%",
-                  border: `2px solid ${colors.borderSubtle}`,
+                  border: `2px solid ${colors.borderStrong}`,
                   borderTopColor: colors.accent,
                   animation: "spin .6s linear infinite",
                   flexShrink: 0,
@@ -1913,19 +1938,34 @@ export default function App() {
                   style={{
                     padding: "10px 24px",
                     borderRadius: 9999,
-                    border: "none",
-                    background: colors.accent,
-                    color: "#fff",
-                    fontFamily: "inherit",
-                    fontSize: 13,
-                    fontWeight: 600,
-                    cursor: "pointer",
-                    flexShrink: 0,
-                    transition: "all 0.2s ease"
+                  borderTop: `2px solid ${colors.accent}`,
+                  borderRadius: 8,
+                  padding: "12px 28px",
+                  outline: "none",
+                  border: "none",
+                  background: colors.accent,
+                  color: colors.bgPrimary,
+                  fontFamily: "'Inter', system-ui, sans-serif",
+                  fontSize: 12,
+                  fontWeight: 700,
+                  cursor: "pointer",
+                  flexShrink: 0,
+                  letterSpacing: "0.5px",
+                  textTransform: "uppercase",
+                  transition: "all 0.2s ease",
+                  boxShadow: `0 0 20px ${colors.accentGlow}`
                   }}
-                  onMouseEnter={e => e.currentTarget.style.background = colors.accentHover}
-                  onMouseLeave={e => e.currentTarget.style.background = colors.accent}>
-                  Analyze
+                  onMouseEnter={e => {
+                    e.currentTarget.style.background = colors.accentHover
+                    e.currentTarget.style.transform = "translateY(-1px)"
+                    e.currentTarget.style.boxShadow = `0 0 30px ${colors.accentGlow}, 0 4px 12px rgba(0,0,0,0.4)`
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.background = colors.accent
+                    e.currentTarget.style.transform = "translateY(0)"
+                    e.currentTarget.style.boxShadow = `0 0 20px ${colors.accentGlow}`
+                  }}>
+                  ANALYZE
                 </button>
               )}
             </div>
@@ -1935,25 +1975,26 @@ export default function App() {
                 top: "calc(100% + 8px)",
                 left: 0,
                 right: 0,
-                background: colors.bgCard,
-                border: `1px solid ${colors.borderSubtle}`,
-                borderRadius: 12,
+                background: colors.bgElevated,
+                border: `1px solid ${colors.borderMedium}`,
+                borderRadius: 8,
                 zIndex: 20,
                 overflow: "hidden",
-                boxShadow: colors.shadowCardHover
+                boxShadow: `0 8px 32px rgba(0, 0, 0, 0.6)`
               }}>
                 <div style={{
                   padding: "10px 16px 6px",
-                  fontSize: 11,
-                  color: colors.textTertiary,
+                  fontSize: 10,
+                  color: colors.textSecondary,
                   textTransform: "uppercase",
-                  letterSpacing: "0.06em",
-                  fontWeight: 600
+                  letterSpacing: "0.8px",
+                  fontWeight: 600,
+                  fontFamily: "'Inter', system-ui, sans-serif"
                 }}>
-                  {sugsLoading ? "Loading..." : "Known compromised packages"}
+                  {sugsLoading ? "LOADING..." : "KNOWN COMPROMISED PACKAGES"}
                 </div>
                 {suggestions.length === 0 ? (
-                  <div style={{padding: "16px", fontSize: 12, color: colors.textSecondary}}>
+                  <div style={{padding: "16px", fontSize: 11, color: colors.textTertiary, fontFamily: "'JetBrains Mono', monospace"}}>
                     No suggestions available. Backend may not be running.
                   </div>
                 ) : (
@@ -1962,19 +2003,34 @@ export default function App() {
                       key={s.id}
                       onMouseDown={() => {setQuery(s.name); setShowSug(false)}}
                       style={{
-                        padding: "12px 16px",
+                        padding: "10px 16px",
                         cursor: "pointer",
                         display: "flex",
                         alignItems: "center",
                         gap: 10,
-                        transition: "all 0.2s ease"
+                        transition: "all 0.15s ease",
+                        borderLeft: "3px solid transparent"
                       }}
-                      onMouseEnter={e => e.currentTarget.style.background = colors.bgHover}
-                      onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
+                      onMouseEnter={e => {
+                        e.currentTarget.style.background = colors.bgCard
+                        e.currentTarget.style.borderLeftColor = colors.critical
+                      }}
+                      onMouseLeave={e => {
+                        e.currentTarget.style.background = "transparent"
+                        e.currentTarget.style.borderLeftColor = "transparent"
+                      }}>
                       <span style={{
-                        fontSize: 13,
+                        width: 6,
+                        height: 6,
+                        borderRadius: "50%",
+                        background: colors.critical,
+                        boxShadow: `0 0 8px ${colors.critical}`
+                      }}/>
+                      <span style={{
+                        fontSize: 12,
                         color: colors.textPrimary,
-                        fontFamily: "'IBM Plex Mono', monospace"
+                        fontFamily: "'JetBrains Mono', 'IBM Plex Mono', monospace",
+                        fontWeight: 600
                       }}>
                         {s.name}
                       </span>
@@ -1985,12 +2041,16 @@ export default function App() {
             )}
           </div>
           {activeQ && (
-            <div style={{display: "flex", gap: 8, fontSize: 12}}>
-              <span style={{color: colors.textTertiary}}>Showing results for</span>
+            <div style={{display: "flex", gap: 8, fontSize: 11, alignItems: "center"}}>
+              <span style={{color: colors.textTertiary, fontFamily: "'Inter', system-ui, sans-serif"}}>Query:</span>
               <span style={{
                 color: colors.accent,
-                fontFamily: "'IBM Plex Mono', monospace",
-                fontWeight: 600
+                fontFamily: "'JetBrains Mono', 'IBM Plex Mono', monospace",
+                fontWeight: 700,
+                padding: "4px 10px",
+                background: colors.bgCard,
+                borderRadius: 4,
+                border: `1px solid ${colors.borderMedium}`
               }}>
                 {activeQ}
               </span>
@@ -2003,16 +2063,16 @@ export default function App() {
           <>
             <div style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
-              gap: 16,
-              marginBottom: 24
+              gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+              gap: 14,
+              marginBottom: 28
             }}>
-              <StatCard label="Packages Affected" value={data.stats.packagesAffected} sub="transitive + direct" accent="warning"/>
-              <StatCard label="Services Exposed" value={data.stats.servicesExposed} sub={`${data.services.filter(s=>s.severity==="direct").length} direct • ${data.services.filter(s=>s.severity==="transitive").length} transitive`} accent="critical"/>
-              <StatCard label="Time to Detection" value={`${data.stats.detectionMinutes}m ${data.stats.detectionSeconds}s`} sub={`compromise: ${fmtTime(data.compromisedAt)}`} accent={data.stats.detectionMinutes<10?"success":"critical"}/>
-              <StatCard label="Deepest Chain" value={`${data.stats.deepestChain} hops`} sub="longest dependency path" accent="info"/>
+              <StatCard label="Packages Affected" value={data.stats.packagesAffected} sub="transitive + direct" accent="high" colors={colors}/>
+              <StatCard label="Services Exposed" value={data.stats.servicesExposed} sub={`${data.services.filter(s=>s.severity==="direct").length} direct · ${data.services.filter(s=>s.severity==="transitive").length} transitive`} accent="critical" colors={colors}/>
+              <StatCard label="Time to Detection" value={`${data.stats.detectionMinutes}m ${data.stats.detectionSeconds}s`} sub={`compromise: ${fmtTime(data.compromisedAt)}`} accent={data.stats.detectionMinutes<10?"safe":"critical"} colors={colors}/>
+              <StatCard label="Deepest Chain" value={`${data.stats.deepestChain} hops`} sub="longest dependency path" accent="accent" colors={colors}/>
             </div>
-            <div style={{marginBottom: 28, display: "flex", alignItems: "center", justifyContent: "center", gap: 10}}>
+            <div style={{marginBottom: 24, display: "flex", alignItems: "center", justifyContent: "center", gap: 10}}>
               <button 
                 onClick={() => {
                   const pkgId = data.services[0]?.chain[0] ? `pkg:${data.services[0].chain[0]}` : `pkg:${activeQ}`
@@ -2071,61 +2131,63 @@ export default function App() {
 
         {/* ── CONTROLS BAR ─────────────────────────────────────────────────────── */}
         {data && (
-          <div style={{marginBottom: 28}}>
+          <div style={{marginBottom: 24}}>
             <div style={{
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
-              marginBottom: 20,
-              padding: "16px 20px",
+              marginBottom: 16,
+              padding: "14px 18px",
               background: colors.bgCard,
-              border: `1px solid ${colors.borderSubtle}`,
-              borderRadius: 12,
+              border: `1px solid ${colors.borderMedium}`,
+              borderRadius: 8,
               flexWrap: "wrap",
               gap: 12
             }}>
               <div style={{display: "flex", alignItems: "center", gap: 12}}>
                 <span style={{
-                  fontSize: 16,
-                  fontWeight: 600,
+                  fontSize: 14,
+                  fontWeight: 700,
                   color: colors.textPrimary,
-                  letterSpacing: "-0.01em"
+                  letterSpacing: "-0.01em",
+                  fontFamily: "'Inter', system-ui, sans-serif",
+                  textTransform: "uppercase"
                 }}>
-                  {view === "maintainers" ? "Maintainer Intelligence" : "Exposed Services"}
+                  {view === "maintainers" ? "Maintainer Intelligence" : "Alert Feed"}
                 </span>
                 {view !== "maintainers" && (
                   <span style={{
-                    fontSize: 12,
-                    fontWeight: 600,
+                    fontSize: 11,
+                    fontWeight: 700,
                     padding: "4px 10px",
-                    borderRadius: 9999,
-                    background: "rgba(234, 88, 12, 0.1)",  // Orange background
+                    borderRadius: 4,
+                    background: "rgba(255, 255, 255, 0.15)",
                     color: colors.critical,
                     border: `1px solid ${colors.critical}`,
-                    fontFamily: "'IBM Plex Mono', monospace"
+                    fontFamily: "'JetBrains Mono', 'IBM Plex Mono', monospace"
                   }}>
                     {data.services.length}
                   </span>
                 )}
               </div>
               
-              <div style={{display: "flex", alignItems: "center", gap: 12}}>
+              <div style={{display: "flex", alignItems: "center", gap: 10}}>
                 {view === "list" && (
                   <>
                     <select 
                       value={filter} 
                       onChange={e => setFilter(e.target.value)}
                       style={{
-                        fontSize: 12,
-                        background: colors.bgPrimary,
+                        fontSize: 11,
+                        background: colors.bgInput,
                         color: colors.textSecondary,
-                        border: `1px solid ${colors.borderSubtle}`,
-                        borderRadius: 8,
-                        padding: "8px 12px",
+                        border: `1px solid ${colors.borderMedium}`,
+                        borderRadius: 6,
+                        padding: "7px 12px",
                         cursor: "pointer",
                         outline: "none",
-                        fontFamily: "inherit",
-                        fontWeight: 500
+                        fontFamily: "'Inter', system-ui, sans-serif",
+                        fontWeight: 600
                       }}>
                       <option value="all">All Severities</option>
                       <option value="direct">Direct Only</option>
@@ -2135,16 +2197,16 @@ export default function App() {
                       value={sortBy} 
                       onChange={e => setSortBy(e.target.value)}
                       style={{
-                        fontSize: 12,
-                        background: colors.bgPrimary,
+                        fontSize: 11,
+                        background: colors.bgInput,
                         color: colors.textSecondary,
-                        border: `1px solid ${colors.borderSubtle}`,
-                        borderRadius: 8,
-                        padding: "8px 12px",
+                        border: `1px solid ${colors.borderMedium}`,
+                        borderRadius: 6,
+                        padding: "7px 12px",
                         cursor: "pointer",
                         outline: "none",
-                        fontFamily: "inherit",
-                        fontWeight: 500
+                        fontFamily: "'Inter', system-ui, sans-serif",
+                        fontWeight: 600
                       }}>
                       <option value="severity">Sort: Severity</option>
                       <option value="time">Sort: Time</option>
@@ -2156,34 +2218,43 @@ export default function App() {
                 <div style={{
                   display: "flex",
                   alignItems: "center",
-                  background: colors.bgPrimary,
-                  border: `1px solid ${colors.borderSubtle}`,
-                  borderRadius: 8,
-                  padding: 3
+                  background: colors.bgInput,
+                  border: `1px solid ${colors.borderMedium}`,
+                  borderRadius: 6,
+                  padding: 2
                 }}>
                   {["list", "graph", "maintainers"].map(v => (
                     <button 
                       key={v} 
                       onClick={() => setView(v)}
                       style={{
-                        padding: "8px 16px",
-                        borderRadius: 6,
+                        padding: "7px 16px",
+                        borderRadius: 4,
                         border: "none",
                         background: v === view ? colors.accent : "transparent",
-                        color: v === view ? "#fff" : colors.textSecondary,
-                        fontSize: 12,
-                        fontWeight: v === view ? 600 : 500,
+                        color: v === view ? colors.bgPrimary : colors.textSecondary,
+                        fontSize: 11,
+                        fontWeight: v === view ? 700 : 600,
                         cursor: "pointer",
-                        fontFamily: "inherit",
-                        transition: "all 0.2s ease"
+                        fontFamily: "'Inter', system-ui, sans-serif",
+                        letterSpacing: "0.3px",
+                        textTransform: "uppercase",
+                        transition: "all 0.15s ease",
+                        boxShadow: v === view ? `0 0 12px ${colors.accentGlow}` : "none"
                       }}
                       onMouseEnter={e => {
-                        if (v !== view) e.currentTarget.style.background = colors.bgHover
+                        if (v !== view) {
+                          e.currentTarget.style.background = colors.bgCard
+                          e.currentTarget.style.color = colors.textPrimary
+                        }
                       }}
                       onMouseLeave={e => {
-                        if (v !== view) e.currentTarget.style.background = "transparent"
+                        if (v !== view) {
+                          e.currentTarget.style.background = "transparent"
+                          e.currentTarget.style.color = colors.textSecondary
+                        }
                       }}>
-                      {v === "list" ? "List" : v === "graph" ? "Graph" : "Intel"}
+                      {v === "list" ? "Alerts" : v === "graph" ? "Graph" : "Intel"}
                     </button>
                   ))}
                 </div>
@@ -2192,36 +2263,49 @@ export default function App() {
 
             {/* List View Panel */}
             {view === "list" && (
-              <div style={{display: "flex", flexDirection: "column", gap: 8}}>
+              <div style={{display: "flex", flexDirection: "column", gap: 10}}>
                 {sorted.length === 0 ? (
                   <div style={{
                     textAlign: "center",
-                    padding: "80px 40px",
+                    padding: "60px 40px",
                     color: colors.textTertiary,
-                    fontSize: 14
+                    fontSize: 13,
+                    fontFamily: "'Inter', system-ui, sans-serif",
+                    position: "relative"
                   }}>
-                    <div style={{fontWeight: 500, marginBottom: 8}}>No services match the current filter</div>
-                    <div style={{fontSize: 12, color: colors.textDisabled}}>Try adjusting your filter settings</div>
+                    {/* Empty State Graph Image */}
+                    <div style={{
+                      width: "200px",
+                      height: "150px",
+                      margin: "0 auto 20px",
+                      opacity: 0.15,
+                      backgroundImage: `url(${graphNetwork})`,
+                      backgroundSize: "contain",
+                      backgroundPosition: "center",
+                      backgroundRepeat: "no-repeat"
+                    }} />
+                    <div style={{fontWeight: 600, marginBottom: 6, color: colors.textSecondary}}>No alerts match the current filter</div>
+                    <div style={{fontSize: 11, color: colors.textTertiary}}>Try adjusting your filter settings</div>
                   </div>
                 ) : (
-                  sorted.map((s, i) => <ServiceRow key={s.id} svc={s} idx={i} onDetails={setDrawer}/>)
+                  sorted.map((s, i) => <ServiceRow key={s.id} svc={s} idx={i} onDetails={setDrawer} colors={colors}/>)
                 )}
               </div>
             )}
             
             {/* Graph View Panel */}
-            {view === "graph" && <GraphView data={data} onDetails={setDrawer}/>}
+            {view === "graph" && <GraphView data={data} onDetails={setDrawer} colors={colors}/>}
             
             {/* Maintainer Intelligence Panel */}
-            {view === "maintainers" && <MaintainerIntelligence data={data}/>}
+            {view === "maintainers" && <MaintainerIntelligence data={data} colors={colors}/>}
           </div>
         )}
 
-        {data && <Timeline data={data}/>}
+        {data && <Timeline data={data} colors={colors}/>}
       </div>
 
-      {drawer && <Drawer svc={drawer} onClose={()=>setDrawer(null)}/>}
-      {simulating && <SimulationModal packageId={simulating} onClose={()=>setSimulating(null)}/>}
+      {drawer && <Drawer svc={drawer} onClose={()=>setDrawer(null)} colors={colors}/>}
+      {simulating && <SimulationModal packageId={simulating} onClose={()=>setSimulating(null)} colors={colors}/>}
     </div>
   )
 }
