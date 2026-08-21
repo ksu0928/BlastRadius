@@ -1,0 +1,47 @@
+{
+  "name": "hydradb",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "dev:server": "node server/server.js",
+    "fetch:data": "node server/build-data.js",
+    "fetch:data:quick": "node server/quick-build.js",
+    "fetch:data:large": "node server/fetch-large-scale.js",
+    "fetch:data:10k": "node server/fetch-large-scale.js --max-packages=10000",
+    "fetch:data:5k": "node server/fetch-large-scale.js --max-packages=5000",
+    "seed": "node server/seed.js",
+    "dev:all": "concurrently \"npm run dev:server\" \"npm run dev\"",
+    "build": "vite build",
+    "vercel-build": "npm run fetch:data:quick && vite build",
+    "lint": "oxlint",
+    "preview": "vite preview",
+    "test": "node tests/run-tests.js",
+    "validate:typosquats": "node server/validate-typosquats.js",
+    "validate:maintainer-risk": "node server/validate-maintainer-risk.js",
+    "analyze:cross-ecosystem": "node server/cross-ecosystem-analysis.js",
+    "analyze:persistence": "node server/cicd-persistence-tracking.js"
+  },
+  "dependencies": {
+    "@hydradb/sdk": "^2.1.2",
+    "concurrently": "^10.0.5",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "react-force-graph-2d": "^1.29.1",
+    "react-router-dom": "^7.18.2",
+    "recharts": "^3.10.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.4",
+    "oxlint": "^1.75.0",
+    "tailwindcss": "^4.3.3",
+    "vite": "^8.2.0"
+  }
+}

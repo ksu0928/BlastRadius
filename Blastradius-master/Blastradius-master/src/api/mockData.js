@@ -1,0 +1,256 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// BlastRadius — Mock Data for offline/demo rendering
+// Matches the real API response shapes from the backend
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const MOCK_SUGGESTIONS = [
+  { id: "pkg:event-stream@3.3.6", name: "event-stream@3.3.6", ecosystem: "npm", severity: "critical" },
+  { id: "pkg:ua-parser-js@0.7.29", name: "ua-parser-js@0.7.29", ecosystem: "npm", severity: "critical" },
+  { id: "pkg:colors@1.4.1", name: "colors@1.4.1", ecosystem: "npm", severity: "high" },
+  { id: "pkg:faker@6.6.6", name: "faker@6.6.6", ecosystem: "npm", severity: "high" },
+  { id: "pkg:coa@2.0.3", name: "coa@2.0.3", ecosystem: "npm", severity: "critical" },
+  { id: "pkg:rc@1.2.9", name: "rc@1.2.9", ecosystem: "npm", severity: "high" },
+  { id: "pkg:crossenv@1.0.0", name: "crossenv@1.0.0", ecosystem: "npm", severity: "critical" },
+  { id: "pkg:loadash@1.0.0", name: "loadash@1.0.0", ecosystem: "npm", severity: "high" },
+  { id: "pkg:babelcli@1.0.0", name: "babelcli@1.0.0", ecosystem: "npm", severity: "high" },
+  { id: "pkg:python3-dateutil@0.1.0", name: "python3-dateutil@0.1.0", ecosystem: "pypi", severity: "critical" },
+];
+
+export const MOCK_SEARCH_RESULT = {
+  compromisedAt: "2024-11-26T08:30:00Z",
+  detectedAt: "2024-11-26T08:45:00Z",
+  stats: {
+    packagesAffected: 21,
+    servicesExposed: 11,
+    detectionMinutes: 15,
+    detectionSeconds: 0,
+    deepestChain: 3,
+  },
+  services: [
+    {
+      id: "svc:auth-service",
+      name: "auth-service",
+      severity: "direct",
+      exposedAt: "2024-11-26T08:31:15Z",
+      resolvedMinutes: 0.25,
+      chain: ["event-stream@3.3.6", "auth-service"],
+      maintainer: { name: "dominictarr", handle: "dominictarr", email: "dominic.tarr@example.com", packages: ["event-stream", "through", "pull-stream", "rc"], typosquats: ["event_stream", "eventstream", "evnt-stream"] },
+    },
+    {
+      id: "svc:payment-gateway",
+      name: "payment-gateway",
+      severity: "direct",
+      exposedAt: "2024-11-26T08:31:45Z",
+      resolvedMinutes: 0.5,
+      chain: ["event-stream@3.3.6", "payment-gateway"],
+      maintainer: { name: "dominictarr", handle: "dominictarr", email: "dominic.tarr@example.com", packages: ["event-stream", "through"], typosquats: ["event_stream"] },
+    },
+    {
+      id: "svc:user-analytics",
+      name: "user-analytics",
+      severity: "transitive",
+      exposedAt: "2024-11-26T08:33:00Z",
+      resolvedMinutes: 2.5,
+      chain: ["event-stream@3.3.6", "flatmap-stream@0.1.1", "user-analytics"],
+      maintainer: { name: "hugeglass", handle: "hugeglass", email: "hugeglass@protonmail.com", packages: ["flatmap-stream"], typosquats: [] },
+    },
+    {
+      id: "svc:notification-hub",
+      name: "notification-hub",
+      severity: "transitive",
+      exposedAt: "2024-11-26T08:35:00Z",
+      resolvedMinutes: 4.5,
+      chain: ["event-stream@3.3.6", "flatmap-stream@0.1.1", "stream-utils@2.1.0", "notification-hub"],
+      maintainer: { name: "hugeglass", handle: "hugeglass", email: "hugeglass@protonmail.com", packages: ["flatmap-stream"], typosquats: [] },
+    },
+    {
+      id: "svc:data-pipeline",
+      name: "data-pipeline",
+      severity: "transitive",
+      exposedAt: "2024-11-26T08:36:00Z",
+      resolvedMinutes: 5.5,
+      chain: ["event-stream@3.3.6", "through@2.3.8", "data-pipeline"],
+      maintainer: { name: "dominictarr", handle: "dominictarr", email: "dominic.tarr@example.com", packages: ["event-stream", "through"], typosquats: [] },
+    },
+    {
+      id: "svc:cdn-proxy",
+      name: "cdn-proxy",
+      severity: "direct",
+      exposedAt: "2024-11-26T08:32:00Z",
+      resolvedMinutes: 1.0,
+      chain: ["event-stream@3.3.6", "cdn-proxy"],
+      maintainer: { name: "dominictarr", handle: "dominictarr", email: "dominic.tarr@example.com", packages: ["event-stream", "through"], typosquats: [] },
+    },
+    {
+      id: "svc:logging-aggregator",
+      name: "logging-aggregator",
+      severity: "transitive",
+      exposedAt: "2024-11-26T08:38:00Z",
+      resolvedMinutes: 7.5,
+      chain: ["event-stream@3.3.6", "through@2.3.8", "winston-transport@4.5.0", "logging-aggregator"],
+      maintainer: { name: "indexzero", handle: "indexzero", email: "charlie@nodejitsu.com", packages: ["winston", "nconf"], typosquats: ["winstonjs"] },
+    },
+    {
+      id: "svc:session-store",
+      name: "session-store",
+      severity: "direct",
+      exposedAt: "2024-11-26T08:31:30Z",
+      resolvedMinutes: 0.4,
+      chain: ["event-stream@3.3.6", "session-store"],
+      maintainer: { name: "dominictarr", handle: "dominictarr", email: "dominic.tarr@example.com", packages: ["event-stream"], typosquats: [] },
+    },
+  ],
+  graphContext: {
+    nodes: [
+      { id: "event-stream@3.3.6", type: "package", severity: "critical", weight: 10 },
+      { id: "flatmap-stream@0.1.1", type: "package", severity: "critical", weight: 6 },
+      { id: "through@2.3.8", type: "package", severity: "high", weight: 5 },
+      { id: "stream-utils@2.1.0", type: "package", severity: "medium", weight: 3 },
+      { id: "winston-transport@4.5.0", type: "package", severity: "medium", weight: 3 },
+      { id: "auth-service", type: "service", severity: "critical", weight: 2 },
+      { id: "payment-gateway", type: "service", severity: "critical", weight: 2 },
+      { id: "cdn-proxy", type: "service", severity: "high", weight: 2 },
+      { id: "session-store", type: "service", severity: "high", weight: 2 },
+      { id: "user-analytics", type: "service", severity: "medium", weight: 2 },
+      { id: "notification-hub", type: "service", severity: "medium", weight: 2 },
+      { id: "data-pipeline", type: "service", severity: "medium", weight: 2 },
+      { id: "logging-aggregator", type: "service", severity: "low", weight: 2 },
+    ],
+    edges: [
+      { source: "event-stream@3.3.6", target: "flatmap-stream@0.1.1", type: "dependency" },
+      { source: "event-stream@3.3.6", target: "through@2.3.8", type: "dependency" },
+      { source: "flatmap-stream@0.1.1", target: "stream-utils@2.1.0", type: "dependency" },
+      { source: "through@2.3.8", target: "winston-transport@4.5.0", type: "dependency" },
+      { source: "event-stream@3.3.6", target: "auth-service", type: "dependency" },
+      { source: "event-stream@3.3.6", target: "payment-gateway", type: "dependency" },
+      { source: "event-stream@3.3.6", target: "cdn-proxy", type: "dependency" },
+      { source: "event-stream@3.3.6", target: "session-store", type: "dependency" },
+      { source: "flatmap-stream@0.1.1", target: "user-analytics", type: "dependency" },
+      { source: "stream-utils@2.1.0", target: "notification-hub", type: "dependency" },
+      { source: "through@2.3.8", target: "data-pipeline", type: "dependency" },
+      { source: "winston-transport@4.5.0", target: "logging-aggregator", type: "dependency" },
+      { source: "event-stream@3.3.6", target: "flatmap-stream@0.1.1", type: "shared-maintainer" },
+    ],
+  },
+};
+
+export const MOCK_MAINTAINER_ANALYSIS = {
+  stats: {
+    totalMaintainers: 4,
+    criticalMaintainers: 1,
+    totalTyposquats: 5,
+    singlePointsOfFailure: 2,
+  },
+  maintainers: [
+    {
+      handle: "dominictarr",
+      email: "dominic.tarr@example.com",
+      packageCount: 47,
+      packages: ["event-stream", "through", "pull-stream", "rc", "split", "map-stream", "duplexer", "from", "pause-stream"],
+      exposureCount: 5,
+      typosquats: ["event_stream", "eventstream", "evnt-stream"],
+      typosquatAnalysis: [
+        { name: "event_stream", distance: 1, severity: "critical", risk: "Underscore variant of popular package" },
+        { name: "eventstream", distance: 1, severity: "high", risk: "Missing hyphen variant" },
+        { name: "evnt-stream", distance: 1, severity: "high", risk: "Vowel omission variant" },
+      ],
+      riskScore: { total: 82, level: "critical", breakdown: { packageControl: 35, typosquatRisk: 22, incidentInvolvement: 25 } },
+    },
+    {
+      handle: "hugeglass",
+      email: "hugeglass@protonmail.com",
+      packageCount: 1,
+      packages: ["flatmap-stream"],
+      exposureCount: 2,
+      typosquats: [],
+      typosquatAnalysis: [],
+      riskScore: { total: 71, level: "high", breakdown: { packageControl: 5, typosquatRisk: 0, incidentInvolvement: 66 } },
+    },
+    {
+      handle: "indexzero",
+      email: "charlie@nodejitsu.com",
+      packageCount: 12,
+      packages: ["winston", "nconf", "winston-transport", "prompt"],
+      exposureCount: 1,
+      typosquats: ["winstonjs"],
+      typosquatAnalysis: [{ name: "winstonjs", distance: 2, severity: "moderate", risk: "Suffix variant" }],
+      riskScore: { total: 38, level: "moderate", breakdown: { packageControl: 18, typosquatRisk: 8, incidentInvolvement: 12 } },
+    },
+    {
+      handle: "mafintosh",
+      email: "mathias@example.com",
+      packageCount: 89,
+      packages: ["pump", "tar-stream", "sodium-native", "hypercore"],
+      exposureCount: 0,
+      typosquats: ["pumpp"],
+      typosquatAnalysis: [{ name: "pumpp", distance: 1, severity: "moderate", risk: "Double letter variant" }],
+      riskScore: { total: 29, level: "low", breakdown: { packageControl: 22, typosquatRisk: 5, incidentInvolvement: 2 } },
+    },
+  ],
+  recommendations: [
+    { severity: "critical", title: "Account Takeover Risk", description: "dominictarr controls 47 packages with 5 exposed services", action: "Enable 2FA and review collaborator access" },
+    { severity: "high", title: "Anonymous Maintainer", description: "hugeglass uses anonymous email and controls a malicious package", action: "Flag for enhanced monitoring" },
+    { severity: "moderate", title: "Typosquat Exposure", description: "5 typosquat variants detected across maintained packages", action: "Register defensive package names" },
+  ],
+};
+
+export const MOCK_CROSS_ECOSYSTEM = {
+  maintainer: "hacktask",
+  npmPackages: ["crossenv", "d3-time"],
+  pypiMatches: ["python3-dateutil", "jeIlyfish"],
+  crossEcosystemMatches: [
+    { pypiPackage: "python3-dateutil", pypiMaintainer: "hacktask", matchType: "exact", confidence: 1.0 },
+    { pypiPackage: "jeIlyfish", pypiMaintainer: "hacktask", matchType: "exact", confidence: 1.0 },
+  ],
+  risk: {
+    riskScore: 85,
+    level: "critical",
+    npmPackageCount: 2,
+    pypiPackageCount: 2,
+    totalPackageControl: 4,
+    crossEcosystemControl: true,
+    blastRadiusMultiplier: 2.5,
+  },
+  generatedAt: new Date().toISOString(),
+};
+
+export const MOCK_PERSISTENCE_REPORT = {
+  incident: {
+    id: "tanstack-worm-2026",
+    discoveredDate: "2026-05-15",
+    initialVector: "compromised-maintainer-account",
+    persistenceMechanisms: [
+      { type: "ai-config", file: ".claude/config.json", payload: "Embedded malicious MCP server that exfiltrated code on AI queries", propagation: "Developers using Claude Code copied infected workspace configs" },
+      { type: "ide-config", file: ".vscode/tasks.json", payload: "Auto-run task that modified package.json on file save", propagation: "VSCode workspaces shared via Git" },
+      { type: "git-hook", file: ".git/hooks/pre-commit", payload: "Injected dependency on malicious package before every commit", propagation: "Cloned repositories inherited infected hooks" },
+    ],
+    affectedPackages: ["@tanstack/query", "@tanstack/router", "@tanstack/table"],
+    estimatedReach: 50000,
+    detectionTime: "72 hours",
+    persistenceAfterDetection: "~2 weeks (config files in repos)",
+  },
+  graphEdges: [],
+  blastRadius: {
+    baseAffected: 15000,
+    adjustedAffected: 40950,
+    multiplier: 2.73,
+    persistenceDays: 14,
+    mechanisms: ["ai-config", "ide-config", "git-hook"],
+  },
+  infrastructureGraph: { nodes: [], edges: [] },
+  generatedAt: new Date().toISOString(),
+};
+
+export const MOCK_SIMULATION_RESULT = {
+  stats: {
+    packagesAffected: 14,
+    servicesExposed: 7,
+    deepestChain: 3,
+  },
+  simulation: {
+    latencyMs: 347,
+    traversalDepth: 3,
+    nodesExplored: 42,
+  },
+  services: MOCK_SEARCH_RESULT.services.slice(0, 5),
+};
